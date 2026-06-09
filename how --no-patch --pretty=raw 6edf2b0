@@ -1,0 +1,30 @@
+*   [33m6edf2b0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m and
+[31m|[m[32m\[m  
+[31m|[m *   [33m0231bb2[m[33m ([m[1;31morigin/lwc[m[33m, [m[1;32mlwc[m[33m)[m erge branch 'kdh' of https://github.com/2026-SMHRD-IS-GAI-3/project_bk into lwc
+[31m|[m [33m|[m[34m\[m  
+[31m|[m * [34m\[m   [33ma9f7db4[m Merge branch 'kdh' of https://github.com/2026-SMHRD-IS-GAI-3/project_bk into lwc
+[31m|[m [35m|[m[36m\[m [34m\[m  
+[31m|[m * [36m|[m [34m|[m [33md3cedb2[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m mybatis추가
+[31m|[m * [36m|[m [34m|[m [33m9f8072f[m view Delete
+[31m|[m * [36m|[m [34m|[m   [33mb57a794[m 충동해결
+[31m|[m [1;31m|[m[1;32m\[m [36m\[m [34m\[m  
+[31m|[m * [1;32m|[m [36m|[m [34m|[m [33md344f4f[m 검도 리 히 테 나 워  프로젝트 추가
+[31m|[m  [1;32m/[m [36m/[m [34m/[m  
+* [1;32m|[m [36m|[m [34m/[m [33m2369cd5[m[33m ([m[1;31morigin/kdh[m[33m, [m[1;32mkdh[m[33m)[m del mapper
+[34m|[m [1;32m|[m[34m_[m[36m|[m[34m/[m  
+[34m|[m[34m/[m[1;32m|[m [36m|[m   
+* [1;32m|[m [36m|[m [33md7df8ce[m repactoring mapper
+[36m|[m [1;32m|[m[36m/[m  
+[36m|[m[36m/[m[1;32m|[m   
+* [1;32m|[m [33m3e77362[m mapper join login sql
+* [1;32m|[m [33mcd7807a[m add JoinService
+* [1;32m|[m [33mf7135c4[m check
+* [1;32m|[m [33m3c6cf3c[m Delete src/main/java/com/genai/database/SqlSessionManager.java
+[1;32m|[m [1;32m|[m * [33ma978e67[m[33m ([m[1;32mmain[m[33m)[m check
+[1;32m|[m [1;32m|[m[1;32m/[m  
+[1;32m|[m[1;32m/[m[1;32m|[m   
+* [1;32m|[m [33mc2edc0c[m db
+[1;32m|[m[1;32m/[m  
+* [33m75216b2[m file add
+* [33md0f1204[m JoinService add
+* [33ma346912[m basic
