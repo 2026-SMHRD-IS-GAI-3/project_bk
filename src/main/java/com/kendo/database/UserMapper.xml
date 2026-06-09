@@ -25,7 +25,7 @@
         )
         VALUES
         (
-            MEMBER_SEQ.NEXTVAL,
+            M_NUM.NEXTVAL,
             #{id},
             #{pw},
             #{name},
@@ -145,7 +145,7 @@
         )
         VALUES
         (
-            POINT_SHOP_HIS_SEQ.NEXTVAL,
+            P_S_NUM.NEXTVAL,
             #{mNum},
             #{goodsNum},
             #{goodsName},
