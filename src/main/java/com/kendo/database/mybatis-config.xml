@@ -9,8 +9,8 @@
 	<properties resource="com/genai/database/db.properties"></properties>
 	
 	<typeAliases>
-		<typeAlias type="com.genai.model." alias=""/>
-		<typeAlias type="com.genai.model." alias=""/>
+		<typeAlias type="com.genai.model.UserDTO" alias="UserDTO"/>
+		<typeAlias type="com.genai.model.PoseDTO" alias="PoseDTO"/>
 	</typeAliases>
 	
   <environments default="development">
@@ -28,6 +28,5 @@
   <!-- 사용자가 수행할 sql문장을 파일로 연결하여 관리하는 태그 -->
   <mappers>
     <mapper resource="com/genai/database/MemberMapper.xml"/>
-    <mapper resource="com/genai/database/Mapper.xml"/>
   </mappers>
 </configuration>
