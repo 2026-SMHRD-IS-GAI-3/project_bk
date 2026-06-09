@@ -4,10 +4,6 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!--
-    UserMapper.xml
-    MEMBER 테이블에 대한 SQL을 모아둔 MyBatis Mapper 파일
--->
 <mapper namespace="UserMapper">
 
     <!-- 회원가입 -->
@@ -71,7 +67,7 @@
         WHERE ID = #{id}
     </select>
 
-    <!-- 전체 회원 조회 -->
+    <!-- 전체 회원 조회 SQL -->
     <select id="selectAllUser" resultType="UserDTO">
         SELECT
             M_NUM AS mNum,
@@ -91,14 +87,14 @@
     </select>
 
 	<!-- 비밀번호 변경 -->
-	<update id="changePw">
+	<update id="changePw" parameterType="UserDTO">
 		UPDATE MEMBER 
 		SET PW=#{newPw} 
 		WHERE ID=#{id}
 	</update>
 	
 	<!-- 마이페이지 -->
-	<select id="myPage">
+	<select id="myPage" resultType="UserDTO">
 		SELECT * 
 		FROM MEMBER 
 		WHERE ID=#{id}
