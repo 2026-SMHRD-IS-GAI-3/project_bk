@@ -418,8 +418,7 @@
 
         </form>
 
-        <form class="setup-form" id="initialSetupForm" onsubmit="return saveInitialSetup(event)">
-          <div class="form-group">
+<form class="setup-form" id="initialSetupForm" action="ProfileSetService" method="post">          <div class="form-group">
             <label class="form-label" for="initialTrainingDivision">훈련 종목</label>
             <select class="form-input" id="initialTrainingDivision" name="initialTrainingDivision">
               <option value="1">대한검도</option>
@@ -429,8 +428,7 @@
 
           <div class="form-group">
             <label class="form-label" for="initialDifficulty">현재 나의 난이도</label>
-            <select class="form-input" id="initialDifficulty" name="initialDifficulty"></select>
-          </div>
+<select class="form-input" id="initialDifficulty" name="kGrade"></select>          </div>
 
           <button type="submit" class="login-btn">
            설정 저장하기
@@ -505,33 +503,34 @@
     }
 
     function renderInitialDifficulty() {
-      const trainingDivision = document.getElementById("initialTrainingDivision").value;
-      const difficultySelect = document.getElementById("initialDifficulty");
-      const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
-      const appSetting = loadAppSetting();
+    	  const trainingDivision = document.getElementById("initialTrainingDivision").value;
+    	  const difficultySelect = document.getElementById("initialDifficulty");
+    	  const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
 
-      difficultySelect.innerHTML = options.map((item) =>
-      '<option value="' + item.value + '" ' +
-      (appSetting.DIFFICULTY === item.value ? 'selected' : '') +
-      '>' + item.label + '</option>'
-    ).join('');
+    	  difficultySelect.innerHTML = options.map((item, index) =>
+    	    '<option value="' + (index + 1) + '">' + item.label + '</option>'
+    	  ).join('');
+    	}
+
     function showInitialSetup() {
-      const appSetting = loadAppSetting();
-      const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
-      const params = new URLSearchParams(location.search);
+    	  const params = new URLSearchParams(location.search);
+    	  const appSetting = loadAppSetting();
+    	  const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
 
-      document.getElementById("loginForm").classList.add("hidden");
-      document.getElementById("forgotLink").classList.add("hidden");
-      document.getElementById("signupArea").classList.add("hidden");
-      document.getElementById("initialSetupForm").classList.add("active");
-      document.querySelector(".login-card").classList.add("setup-mode");
-      document.querySelector(".title").innerText = "수련 설정";
-      document.querySelector(".subtitle").innerText = params.get("setup") === "training"
-        ? "훈련 종목과 난이도를 선택하세요"
-        : "처음 시작할 훈련 종목과 난이도를 선택하세요";
-      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION || "1";
-      renderInitialDifficulty();
-    }
+    	  document.getElementById("loginForm").classList.add("hidden");
+    	  document.getElementById("forgotLink").classList.add("hidden");
+    	  document.getElementById("signupArea").classList.add("hidden");
+    	  document.getElementById("initialSetupForm").classList.add("active");
+    	  document.querySelector(".login-card").classList.add("setup-mode");
+    	  document.querySelector(".title").innerText = "수련 설정";
+    	  document.querySelector(".subtitle").innerText =
+    	    params.get("setup") === "training"
+    	      ? "훈련 종목과 난이도를 선택하세요"
+    	      : "처음 시작할 훈련 종목과 난이도를 선택하세요";
+
+    	  trainingDivisionSelect.value = appSetting.TRAIN_DIVISION || "1";
+    	  renderInitialDifficulty();
+    	}
 
     function togglePassword() {
       const PWInput = document.getElementById('PW');
@@ -588,6 +587,12 @@
         }
       } catch (error) {}
     })();
+    
+
+    
+    
+    
+
   </script>
 </body>
 </html>

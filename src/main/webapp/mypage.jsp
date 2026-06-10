@@ -638,7 +638,7 @@
         </div>
       </section>
 
-      <button type="button" class="logout-btn" onclick="location.href='home.jsp'">로그아웃</button>
+      <button type="button" class="logout-btn" onclick="location.href='index.jsp'">로그아웃</button>
     </main>
 
     <nav class="bottom-nav">
@@ -844,7 +844,7 @@
     }
 
     function goTrainingSetup() {
-      location.href = "login.jsp?setup=training&redirect=mypage.jsp";
+        location.href = "login.jsp?setup=training";
     }
 
     function renderStats() {

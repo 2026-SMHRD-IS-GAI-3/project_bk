@@ -29,15 +29,23 @@ public class ProfileSetService extends HttpServlet {
             return;
         }
 
-        String kGradeParam = request.getParameter("kGrade");
-        String lGradeParam = request.getParameter("lGrade");
+        String division = request.getParameter("initialTrainingDivision");
+        String gradeParam = request.getParameter("kGrade");
 
-        System.out.println("kGradeParam = " + kGradeParam);
-        System.out.println("lGradeParam = " + lGradeParam);
+        int kGrade = 1;
+        int lGrade = 1;
+
+        if ("1".equals(division)) {
+            kGrade = Integer.parseInt(gradeParam);
+        } else if ("2".equals(division)) {
+            lGrade = Integer.parseInt(gradeParam);
+        }
+
+        System.out.println("division = " + division);
+        System.out.println("gradeParam = " + gradeParam);
+        System.out.println("kGrade = " + kGrade);
+        System.out.println("lGrade = " + lGrade);
         System.out.println("mNum = " + loginUser.getmNum());
-
-        int kGrade = Integer.parseInt(kGradeParam);
-        int lGrade = Integer.parseInt(lGradeParam);
 
         loginUser.setkGrade(kGrade);
         loginUser.setlGrade(lGrade);
@@ -54,13 +62,6 @@ public class ProfileSetService extends HttpServlet {
             response.sendRedirect("main.jsp");
         } else {
             response.sendRedirect("settings.jsp");
-            
-            
-      
-            
-            
-            
-            
         }
     }
 }

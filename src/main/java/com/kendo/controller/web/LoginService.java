@@ -41,9 +41,8 @@ public class LoginService extends HttpServlet {
             if ("Y".equals(loginUser.getProfileSet())) {
                 response.sendRedirect("main.jsp");
             } else {
-                response.sendRedirect("settings.jsp");
+                response.sendRedirect("login.jsp?setup=training");
             }
-
         } else {
             response.sendRedirect("login.jsp");
         }
