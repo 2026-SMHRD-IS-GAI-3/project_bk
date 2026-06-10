@@ -183,8 +183,8 @@
       height: 78px;
       margin: 0 auto 8px;
       border-radius: 14px;
-      border: 3px solid #4f7574;
-      background-color: #5f8482;
+      border: 3px solid #111111;
+      background-color: #111111;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -200,14 +200,14 @@
     .posture-icon svg {
       width: 34px;
       height: 34px;
-      stroke: #f6fbf8;
+      stroke: #ffffff;
       stroke-width: 2.2;
       fill: none;
     }
 
     .posture-item.current .posture-icon {
-      border-color: #385b60;
-      background-color: #44676b;
+      border-color: #111111;
+      background-color: #111111;
     }
 
     .posture-item.locked {
@@ -231,7 +231,7 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background-color: #607d82;
+      background-color: #111111;
       color: #ffffff;
       display: flex;
       align-items: center;
@@ -439,6 +439,25 @@
 
     .mobile-frame.dark-mode .nav-item.active .nav-icon {
       stroke: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .posture-icon,
+    .mobile-frame.dark-mode .posture-item.current .posture-icon {
+      border-color: rgba(255, 255, 255, 0.86);
+      background-color: #111111;
+    }
+
+    .mobile-frame.dark-mode .posture-icon svg {
+      stroke: #ffffff;
+    }
+
+    .mobile-frame.dark-mode .posture-item.locked .posture-icon {
+      border-color: rgba(238, 247, 242, 0.24);
+      background-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .mobile-frame.dark-mode .posture-item.locked .posture-icon svg {
+      stroke: rgba(238, 247, 242, 0.60);
     }
 
   </style>
@@ -808,4 +827,3 @@
   </script>
 </body>
 </html>
-
