@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 
 <%
@@ -381,8 +381,55 @@ if(loginUser == null){
         <h1 class="page-title">환경설정</h1>
       </header>
 
-      <section aria-label="프로필 설정">
-        <h2 class="section-title">프로필 설정</h2>
+     <section aria-label="프로필 설정">
+  <h2 class="section-title">프로필 설정</h2>
+
+  <form action="ProfileSetService" method="post">
+
+    <article class="setting-card">
+      <div class="setting-left">
+        <div class="setting-info">
+          <h3 class="setting-name">대한검도 급수</h3>
+        </div>
+      </div>
+
+      <select class="select-control" name="kGrade">
+        <option value="1">1급</option>
+        <option value="2">2급</option>
+        <option value="3">3급</option>
+        <option value="4">4급</option>
+        <option value="5">5급</option>
+        <option value="6">6급</option>
+        <option value="7">7급</option>
+        <option value="8">8급</option>
+        <option value="9">9급</option>
+        <option value="10">10급</option>
+      </select>
+    </article>
+
+    <article class="setting-card">
+      <div class="setting-left">
+        <div class="setting-info">
+          <h3 class="setting-name">리히테나워 급수</h3>
+        </div>
+      </div>
+
+      <select class="select-control" name="lGrade">
+        <option value="1">초급</option>
+        <option value="2">중급</option>
+        <option value="3">고급</option>
+      </select>
+    </article>
+    		  <div style="margin-top:20px;">
+      <button type="submit"
+              style="width:100%;height:50px;border:none;border-radius:10px;">
+        설정 완료
+      </button>
+    </div>
+
+  </form>
+    	
+    
         <div class="setting-list">
           <article class="setting-card">
             <div class="setting-left">
@@ -438,7 +485,8 @@ if(loginUser == null){
                 <p class="setting-desc">화면을 어두운 톤으로 전환합니다.</p>
               </div>
             </div>
-            <button type="button" class="toggle" data-setting="DARK_MODE" aria-label="다크모드"></button>
+
+</form>
           </article>
 
           <article class="setting-card">
@@ -459,18 +507,7 @@ if(loginUser == null){
         </div>
       </section>
       
-      
-      <div style="margin-top:20px;">
-    <button type="button"
-            onclick="location.href='ProfileSetService'"
-            style="width:100%;height:50px;border:none;border-radius:10px;">
-        설정 완료
-    </button> 
-</div>
-      
-      
-      
-   
+          
     </main>
 
     <nav class="bottom-nav">

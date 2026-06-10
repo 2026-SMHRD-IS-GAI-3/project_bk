@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
@@ -70,7 +70,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-   		url("Project_Logo/logo_02.png") center/cover;
+        url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -166,59 +166,77 @@
       color: #d8e87f;
     }
 
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+    .summary-card {
       margin-bottom: 22px;
-    }
-
-    .summary-item {
-      min-height: 76px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.76);
       background-color: rgba(255, 255, 255, 0.54);
       box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
-      padding: 10px 8px 11px;
-      text-align: center;
+      padding: 16px;
       font-family: 'Pretendard', sans-serif;
     }
 
-    .summary-icon {
-      width: 24px;
-      height: 24px;
-      margin: 0 auto 5px;
-      border-radius: 8px;
-      background-color: rgba(68, 103, 107, 0.13);
-      color: #44676b;
+    .summary-title {
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-
-    .summary-icon svg {
-      width: 16px;
-      height: 16px;
-      stroke: currentColor;
-      stroke-width: 2.2;
-      fill: none;
-    }
-
-    .summary-value {
-      display: block;
-      font-size: 19px;
+      gap: 8px;
+      font-size: 14px;
       font-weight: 800;
       color: #213638;
-      line-height: 1.1;
+      margin-bottom: 14px;
     }
 
-    .summary-label {
-      display: block;
-      margin-top: 7px;
+    .summary-level {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background-color: rgba(68, 103, 107, 0.12);
+      color: rgba(33, 54, 56, 0.62);
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .summary-rate {
+      font-size: 13px;
+      font-weight: 800;
+      color: rgba(33, 54, 56, 0.76);
+      margin-bottom: 10px;
+    }
+
+    .summary-progress-row {
+      margin-bottom: 13px;
+    }
+
+    .summary-progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background-color: rgba(33, 54, 56, 0.11);
+      overflow: hidden;
+    }
+
+    .summary-progress-fill {
+      width: var(--summary-progress);
+      height: 100%;
+      border-radius: 999px;
+      background-color: #111111;
+    }
+
+    .summary-detail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
       font-size: 10px;
       font-weight: 800;
       color: rgba(33, 54, 56, 0.58);
       word-break: keep-all;
+    }
+
+    .summary-divider {
+      color: rgba(33, 54, 56, 0.28);
     }
 
     .section-head {
@@ -250,15 +268,19 @@
       gap: 10px;
     }
 
+    .challenge-list.spaced {
+      margin-top: 14px;
+    }
+
     .challenge-card {
       border: 1px solid rgba(255, 255, 255, 0.76);
       border-radius: 8px;
       background-color: rgba(255, 255, 255, 0.56);
       box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
-      padding: 14px;
+      padding: 12px;
       display: grid;
-      grid-template-columns: 48px 1fr;
-      gap: 12px;
+      grid-template-columns: 42px 1fr;
+      gap: 10px;
       font-family: 'Pretendard', sans-serif;
     }
 
@@ -268,14 +290,14 @@
     }
 
     .challenge-icon {
-      width: 48px;
-      height: 48px;
+      width: 42px;
+      height: 42px;
       border-radius: 8px;
-      background-color: #44676b;
+      background-color: #111111;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #f6fbf8;
+      color: #ffffff;
       box-shadow: 0 10px 18px rgba(33, 54, 56, 0.14);
     }
 
@@ -285,8 +307,8 @@
     }
 
     .challenge-icon svg {
-      width: 27px;
-      height: 27px;
+      width: 24px;
+      height: 24px;
       stroke: currentColor;
       stroke-width: 2;
       fill: none;
@@ -301,7 +323,7 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .challenge-title {
@@ -312,9 +334,30 @@
       word-break: keep-all;
     }
 
+    .title-group {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background-color: rgba(158, 180, 80, 0.16);
+      color: #60752d;
+      display: inline-flex;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
     .reward-badge {
       height: 24px;
-      padding: 0 8px;
+      padding: 0 9px;
       border-radius: 999px;
       background-color: rgba(33, 54, 56, 0.08);
       color: rgba(33, 54, 56, 0.66);
@@ -332,19 +375,19 @@
       font-weight: 700;
       line-height: 1.45;
       color: rgba(33, 54, 56, 0.58);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       word-break: keep-all;
     }
 
     .progress-row {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
     }
 
     .progress-track {
       flex: 1;
-      height: 8px;
+      height: 7px;
       border-radius: 999px;
       background-color: rgba(33, 54, 56, 0.10);
       overflow: hidden;
@@ -354,7 +397,7 @@
       width: var(--progress);
       height: 100%;
       border-radius: 999px;
-      background-color: #44676b;
+      background-color: #111111;
     }
 
     .challenge-card.done .progress-fill {
@@ -362,7 +405,7 @@
     }
 
     .progress-text {
-      width: 48px;
+      width: 38px;
       text-align: right;
       font-size: 10px;
       font-weight: 800;
@@ -373,9 +416,9 @@
     .action-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 10px;
-      margin-top: 11px;
+      margin-top: 9px;
     }
 
     .status-text {
@@ -385,10 +428,10 @@
     }
 
     .claim-btn {
-      height: 32px;
+      height: 30px;
       border: none;
       border-radius: 8px;
-      padding: 0 12px;
+      padding: 0 11px;
       background-color: #213638;
       color: #f6fbf8;
       font-size: 11px;
@@ -401,6 +444,11 @@
       cursor: default;
       background-color: rgba(33, 54, 56, 0.13);
       color: rgba(33, 54, 56, 0.42);
+    }
+
+    .claim-btn.ready {
+      background-color: #213638;
+      color: #f6fbf8;
     }
 
     .bottom-nav {
@@ -547,7 +595,7 @@
     .mobile-frame.dark-mode .title,
     .mobile-frame.dark-mode .page-title,
     .mobile-frame.dark-mode .card-title,
-    .mobile-frame.dark-mode .summary-value,
+    .mobile-frame.dark-mode .summary-title,
     .mobile-frame.dark-mode .posture-name,
     .mobile-frame.dark-mode .challenge-title,
     .mobile-frame.dark-mode .item-name,
@@ -562,7 +610,8 @@
     .mobile-frame.dark-mode .visual-quote,
     .mobile-frame.dark-mode .challenge-desc,
     .mobile-frame.dark-mode .item-desc,
-    .mobile-frame.dark-mode .summary-label,
+    .mobile-frame.dark-mode .summary-rate,
+    .mobile-frame.dark-mode .summary-detail,
     .mobile-frame.dark-mode .status-text,
     .mobile-frame.dark-mode .section-caption,
     .mobile-frame.dark-mode .version,
@@ -575,7 +624,7 @@
 
     .mobile-frame.dark-mode .login-card,
     .mobile-frame.dark-mode .signup-box,
-    .mobile-frame.dark-mode .summary-item,
+    .mobile-frame.dark-mode .summary-card,
     .mobile-frame.dark-mode .challenge-card,
     .mobile-frame.dark-mode .training-card,
     .mobile-frame.dark-mode .training-panel,
@@ -586,6 +635,46 @@
       background-color: rgba(255, 255, 255, 0.10);
       border-color: rgba(255, 255, 255, 0.18);
       color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .summary-progress-track {
+      background-color: rgba(238, 247, 242, 0.16);
+    }
+
+    .mobile-frame.dark-mode .summary-progress-fill {
+      background-color: #ffffff;
+    }
+
+    .mobile-frame.dark-mode .summary-divider {
+      color: rgba(238, 247, 242, 0.28);
+    }
+
+    .mobile-frame.dark-mode .summary-level {
+      background-color: rgba(216, 232, 127, 0.16);
+      color: rgba(238, 247, 242, 0.86);
+    }
+
+    .mobile-frame.dark-mode .status-badge {
+      background-color: rgba(216, 232, 127, 0.18);
+      color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .reward-badge {
+      background-color: rgba(216, 232, 127, 0.14);
+      color: rgba(238, 247, 242, 0.86);
+    }
+
+    .mobile-frame.dark-mode .progress-track {
+      background-color: rgba(238, 247, 242, 0.16);
+    }
+
+    .mobile-frame.dark-mode .progress-fill {
+      background-color: #ffffff;
+    }
+
+    .mobile-frame.dark-mode .claim-btn.ready {
+      background-color: #d8e87f;
+      color: #213638;
     }
 
     .mobile-frame.dark-mode .nav-item {
@@ -623,27 +712,21 @@
         </div>
       </section>
 
-      <section class="summary-grid" aria-label="도전과제 요약">
-        <div class="summary-item">
-          <span class="summary-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M8 12L11 15L16 9"></path>
-            </svg>
-          </span>
-          <span class="summary-value" id="completeCount">0</span>
-          <span class="summary-label">완료된 과제</span>
+      <section class="summary-card" aria-label="도전과제 진행 현황">
+        <h2 class="summary-title">진행 현황 <span class="summary-level" id="trainingLevelText">대한검도 · 2급</span></h2>
+        <p class="summary-rate">완료율 <span id="summaryPercent">0%</span></p>
+        <div class="summary-progress-row">
+          <div class="summary-progress-track">
+            <div class="summary-progress-fill" id="summaryProgressFill" style="--summary-progress: 0%"></div>
+          </div>
         </div>
-        <div class="summary-item">
-          <span class="summary-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M12 7V12L15 15"></path>
-            </svg>
-          </span>
-          <span class="summary-value" id="activeCount">0</span>
-          <span class="summary-label">진행 중인 과제</span>
-        </div>
+        <p class="summary-detail">
+          <span>전체 <span id="totalCount">0</span>건</span>
+          <span class="summary-divider">|</span>
+          <span>완료 <span id="completeCount">0</span>건</span>
+          <span class="summary-divider">|</span>
+          <span>진행 중 <span id="activeCount">0</span>건</span>
+        </p>
       </section>
 
       <section aria-label="완료한 도전과제">
@@ -657,12 +740,12 @@
         <div class="section-head">
           <h2 class="section-title">진행 중</h2>
         </div>
-        <div class="challenge-list" id="activeChallengeList"></div>
+        <div class="challenge-list spaced" id="activeChallengeList"></div>
       </section>
     </main>
 
     <nav class="bottom-nav">
-    <a href="main.jsp" class="nav-item">
+      <a href="main.jsp" class="nav-item">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M4 20L20 4"></path>
@@ -675,7 +758,7 @@
         <span>훈련</span>
       </a>
 
-    <a href="challenge.jsp" class="nav-item active">
+      <a href="challenge.jsp" class="nav-item active">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
@@ -700,7 +783,7 @@
         <span>상점</span>
       </a>
 
-    <a href="mypage.jsp" class="nav-item">
+      <a href="mypage.jsp" class="nav-item">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <circle cx="12" cy="8" r="4"></circle>
@@ -713,9 +796,30 @@
   </div>
 
   <script>
-  const M_NUM = <%= loginUser.getmNum() %>;
+  	const M_NUM = <%= loginUser.getmNum() %>;
     const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
     const CHALLENGE_STORAGE_KEY = `BGS_MEMBER_CHALLENGE_${M_NUM}`;
+    const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
+
+    const DIFFICULTY_OPTIONS = {
+      "1": [
+        { value: "k1", label: "1급" },
+        { value: "k2", label: "2급" },
+        { value: "k3", label: "3급" },
+        { value: "k4", label: "4급" },
+        { value: "k5", label: "5급" },
+        { value: "k6", label: "6급" },
+        { value: "k7", label: "7급" },
+        { value: "k8", label: "8급" },
+        { value: "k9", label: "9급" },
+        { value: "k10", label: "10급" }
+      ],
+      "2": [
+        { value: "l_beginner", label: "초급" },
+        { value: "l_middle", label: "중급" },
+        { value: "l_advanced", label: "고급" }
+      ]
+    };
 
     const TRAIN_HIS_LIST = [
       { HIS_NUM: 1, M_NUM, T_DATE: "2026-06-09", DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1 },
@@ -773,7 +877,7 @@
     const DEFAULT_MEMBER_CHALLENGE_LIST = [
       { M_NUM, CHALLENGE_NUM: 1, ACHIEVE_YN: "Y", REWARD_YN: "Y", ACHIEVE_DATE: "2026-06-06" },
       { M_NUM, CHALLENGE_NUM: 2, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-      { M_NUM, CHALLENGE_NUM: 3, ACHIEVE_YN: "Y", REWARD_YN: "N", ACHIEVE_DATE: "2026-06-09" },
+      { M_NUM, CHALLENGE_NUM: 3, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
       { M_NUM, CHALLENGE_NUM: 4, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
       { M_NUM, CHALLENGE_NUM: 5, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null }
     ];
@@ -796,6 +900,30 @@
 
     function saveMemberChallengeList() {
       localStorage.setItem(CHALLENGE_STORAGE_KEY, JSON.stringify(MEMBER_CHALLENGE_LIST));
+    }
+
+    function getAppSetting() {
+      try {
+        return {
+          TRAIN_DIVISION: "1",
+          DIFFICULTY: "k2",
+          ...JSON.parse(localStorage.getItem(APP_SETTING_KEY) || "{}")
+        };
+      } catch (error) {
+        return {
+          TRAIN_DIVISION: "1",
+          DIFFICULTY: "k2"
+        };
+      }
+    }
+
+    function renderTrainingLevel() {
+      const appSetting = getAppSetting();
+      const divisionName = appSetting.TRAIN_DIVISION === "2" ? "리히테나워" : "대한검도";
+      const difficultyOptions = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
+      const difficultyItem = difficultyOptions.find((item) => item.value === appSetting.DIFFICULTY) || difficultyOptions[0];
+
+      document.getElementById("trainingLevelText").innerText = `${divisionName} · ${difficultyItem.label}`;
     }
 
     function getMemberPoint() {
@@ -858,12 +986,13 @@
     function getChallengeState(challenge) {
       const memberChallenge = getMemberChallenge(challenge.CHALLENGE_NUM);
       const currentCount = getChallengeProgress(challenge);
-      const isAchieved = memberChallenge.ACHIEVE_YN === "Y" || currentCount >= challenge.TARGET_COUNT;
+      const isAchieved = currentCount >= challenge.TARGET_COUNT;
+      const isRewarded = isAchieved && memberChallenge.REWARD_YN === "Y";
 
       return {
         currentCount: Math.min(currentCount, challenge.TARGET_COUNT),
         isAchieved,
-        isRewarded: memberChallenge.REWARD_YN === "Y",
+        isRewarded,
         progressPercent: Math.min(100, Math.round((currentCount / challenge.TARGET_COUNT) * 100))
       };
     }
@@ -903,15 +1032,24 @@
 
     function createChallengeCard(challenge) {
       const state = getChallengeState(challenge);
-      const buttonText = state.isRewarded ? "완료" : "받기";
+      const buttonText = state.isRewarded
+        ? "수령 완료"
+        : state.isAchieved
+          ? "보상 받기"
+          : "진행 중";
+      const buttonClass = state.isAchieved && !state.isRewarded ? "claim-btn ready" : "claim-btn";
+      const statusBadge = state.isAchieved ? `<span class="status-badge">${getStatusText(state)}</span>` : "";
 
       return `
         <article class="challenge-card ${state.isAchieved ? "done" : ""}">
           <div class="challenge-icon">${getChallengeIcon(state)}</div>
           <div class="challenge-main">
             <div class="challenge-top">
-              <h3 class="challenge-title">${challenge.C_NAME}</h3>
-              <span class="reward-badge">${challenge.REWARD_POINT}P</span>
+              <div class="title-group">
+                <h3 class="challenge-title">${challenge.C_NAME}</h3>
+                ${statusBadge}
+              </div>
+              <span class="reward-badge">보상 ${challenge.REWARD_POINT}P</span>
             </div>
             <p class="challenge-desc">${challenge.C_DESC}</p>
             <div class="progress-row">
@@ -921,10 +1059,9 @@
               <span class="progress-text">${state.currentCount}/${challenge.TARGET_COUNT}</span>
             </div>
             <div class="action-row">
-              <span class="status-text">${getStatusText(state)}</span>
               <button
                 type="button"
-                class="claim-btn"
+                class="${buttonClass}"
                 data-challenge-num="${challenge.CHALLENGE_NUM}"
                 ${!state.isAchieved || state.isRewarded ? "disabled" : ""}
               >${buttonText}</button>
@@ -934,20 +1071,42 @@
       `;
     }
 
+    function sortByCompletionPriority(challenges) {
+      return [...challenges].sort((a, b) => {
+        const stateA = getChallengeState(a);
+        const stateB = getChallengeState(b);
+        const ratioA = stateA.currentCount / a.TARGET_COUNT;
+        const ratioB = stateB.currentCount / b.TARGET_COUNT;
+
+        if (ratioB !== ratioA) {
+          return ratioB - ratioA;
+        }
+
+        return a.TARGET_COUNT - b.TARGET_COUNT;
+      });
+    }
+
     function renderSummary() {
       const challengeStates = CHALLENGE_LIST.map(getChallengeState);
       const completeCount = challengeStates.filter((state) => state.isAchieved).length;
       const activeCount = challengeStates.filter((state) => !state.isAchieved).length;
+      const totalCount = challengeStates.length;
+      const summaryPercent = totalCount ? Math.round((completeCount / totalCount) * 100) : 0;
 
+      document.getElementById("totalCount").innerText = totalCount;
       document.getElementById("completeCount").innerText = completeCount;
       document.getElementById("activeCount").innerText = activeCount;
+      document.getElementById("summaryPercent").innerText = `${summaryPercent}%`;
+      document.getElementById("summaryProgressFill").style.setProperty("--summary-progress", `${summaryPercent}%`);
     }
 
     function renderChallengeList() {
       const activeChallengeList = document.getElementById("activeChallengeList");
       const doneChallengeList = document.getElementById("doneChallengeList");
 
-      const activeChallenges = CHALLENGE_LIST.filter((challenge) => !getChallengeState(challenge).isAchieved);
+      const activeChallenges = sortByCompletionPriority(
+        CHALLENGE_LIST.filter((challenge) => !getChallengeState(challenge).isAchieved)
+      );
       const doneChallenges = CHALLENGE_LIST.filter((challenge) => getChallengeState(challenge).isAchieved);
 
       activeChallengeList.innerHTML = activeChallenges.map(createChallengeCard).join("");
@@ -988,20 +1147,17 @@
 
     initializeMemberPoint();
     saveMemberChallengeList();
+    renderTrainingLevel();
     renderMemberPoint();
     renderSummary();
     renderChallengeList();
   </script>
   <script>
     (function applyDarkMode() {
-      try {
-    	  const appSetting = JSON.parse(
-    			  localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}"
-    			);
-        if (appSetting.DARK_MODE) {
-          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
-        }
-      } catch (error) {}
+      const appSetting = getAppSetting();
+      if (appSetting.DARK_MODE) {
+        document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+      }
     })();
   </script>
 </body>

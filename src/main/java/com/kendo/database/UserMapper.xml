@@ -61,9 +61,12 @@
         AND PW = #{pw}
     </select>
 	<!-- 초기프로필 설정  -->    
-    <update id="updateProfileSet" parameterType="UserDTO">
+ <update id="updateProfileSet" parameterType="UserDTO">
     UPDATE MEMBER
-    SET PROFILE_SET = 'Y'
+    SET
+        K_GRADE = #{kGrade},
+        L_GRADE = #{lGrade},
+        PROFILE_SET = 'Y'
     WHERE M_NUM = #{mNum}
 </update>
 

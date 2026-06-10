@@ -1,5 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
-pageEncoding="UTF-8" isELIgnored="true"%>
+<%@ page import="com.kendo.model.UserDTO" %>
+<%
+    UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
+
+    if (loginUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -550,7 +558,9 @@ pageEncoding="UTF-8" isELIgnored="true"%>
           <div>
             <span class="profile-title" id="equippedTitle">초심의 검</span>
             <h1 class="profile-name" id="memberName">수련생</h1>
-            <p class="profile-meta">오늘도 자세를 세우는 중입니다.</p>
+            <p class="profile-meta">    오늘도 자세를 세우는 중입니다.<br>
+    				대한검도 급수 : <%= loginUser.getkGrade() %>급<br>
+    				리히테나워 급수 : <%= loginUser.getlGrade() %>급</p>
           </div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
@@ -70,7 +70,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.88), rgba(45, 77, 78, 0.82)),
-       url("Project_Logo/logo_02.png") center/cover;
+   		 url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -193,8 +193,8 @@
       height: 78px;
       margin: 0 auto 8px;
       border-radius: 14px;
-      border: 3px solid #4f7574;
-      background-color: #5f8482;
+      border: 3px solid #111111;
+      background-color: #111111;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -210,14 +210,14 @@
     .posture-icon svg {
       width: 34px;
       height: 34px;
-      stroke: #f6fbf8;
+      stroke: #ffffff;
       stroke-width: 2.2;
       fill: none;
     }
 
     .posture-item.current .posture-icon {
-      border-color: #385b60;
-      background-color: #44676b;
+      border-color: #111111;
+      background-color: #111111;
     }
 
     .posture-item.locked {
@@ -241,7 +241,7 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background-color: #607d82;
+      background-color: #111111;
       color: #ffffff;
       display: flex;
       align-items: center;
@@ -451,6 +451,25 @@
       stroke: #eef7f2;
     }
 
+    .mobile-frame.dark-mode .posture-icon,
+    .mobile-frame.dark-mode .posture-item.current .posture-icon {
+      border-color: rgba(255, 255, 255, 0.86);
+      background-color: #111111;
+    }
+
+    .mobile-frame.dark-mode .posture-icon svg {
+      stroke: #ffffff;
+    }
+
+    .mobile-frame.dark-mode .posture-item.locked .posture-icon {
+      border-color: rgba(238, 247, 242, 0.24);
+      background-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .mobile-frame.dark-mode .posture-item.locked .posture-icon svg {
+      stroke: rgba(238, 247, 242, 0.60);
+    }
+
   </style>
 </head>
 
@@ -528,7 +547,7 @@
   </div>
 
   <script>
-  	const M_NUM = <%= loginUser.getmNum() %>;
+ 	const M_NUM = <%= loginUser.getmNum() %>;
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
     function getSavedTrainingSetting() {
@@ -637,7 +656,7 @@
     function setTrainingQuote() {
       const trainingQuote = document.getElementById("trainingQuote");
       const randomIndex = Math.floor(Math.random() * TRAINING_QUOTES.length);
-      trainingQuote.innerText = `"\${TRAINING_QUOTES[randomIndex]}"`;
+      trainingQuote.innerText = `"${TRAINING_QUOTES[randomIndex]}"`;
     }
 
     function getTrainingIcon(TRAIN_NUM) {
@@ -659,14 +678,14 @@
       trainingGrid.innerHTML = selectedList.map((training) => `
         <button
           type="button"
-          class="training-card \${training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM ? "active" : ""}"
-          data-train-num="\${training.TRAIN_NUM}"
-          data-posture-num="\${training.POSTURE_NUM}"
+          class="training-card ${training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM ? "active" : ""}"
+          data-train-num="${training.TRAIN_NUM}"
+          data-posture-num="${training.POSTURE_NUM}"
         >
           <span class="card-icon">
-            \${getTrainingIcon(training.TRAIN_NUM)}
+            ${getTrainingIcon(training.TRAIN_NUM)}
           </span>
-          <span class="card-title">\${training.TRAIN_NAME}</span>
+          <span class="card-title">${training.TRAIN_NAME}</span>
         </button>
       `).join("");
 
@@ -761,19 +780,19 @@
       }) || DEFAULT_TRAINING;
       const selectedPostures = getPosturesByTraining(TRAIN_HIS.TRAIN_NUM);
 
-      postureSectionTitle.innerText = `\${selectedTraining.TRAIN_NAME} 목록`;
+      postureSectionTitle.innerText = `${selectedTraining.TRAIN_NAME} 목록`;
       postureGrid.innerHTML = selectedPostures.map((posture) => `
         <button
           type="button"
-          class="posture-item \${posture.STATUS}"
-          data-posture-num="\${posture.POSTURE_NUM}"
-          \${posture.STATUS === "locked" ? "disabled" : ""}
+          class="posture-item ${posture.STATUS}"
+          data-posture-num="${posture.POSTURE_NUM}"
+          ${posture.STATUS === "locked" ? "disabled" : ""}
         >
           <span class="posture-icon">
-            \${posture.IS_REWARD ? '<span class="posture-crown">♕</span>' : ""}
-            \${getPostureIcon(posture.STATUS)}
+            ${posture.IS_REWARD ? '<span class="posture-crown">♕</span>' : ""}
+            ${getPostureIcon(posture.STATUS)}
           </span>
-          <span class="posture-name">\${posture.G_NAME}</span>
+          <span class="posture-name">${posture.G_NAME}</span>
         </button>
       `).join("");
 
@@ -799,7 +818,7 @@
         T_DATE: TRAIN_HIS.T_DATE
       });
 
-      location.href = `trainning.jsp?\${trainingParams.toString()}`;
+      location.href = `trainning.jsp?${trainingParams.toString()}`;
     }
 
     setTrainingQuote();
@@ -809,7 +828,7 @@
   <script>
     (function applyDarkMode() {
       try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}");
         if (appSetting.DARK_MODE) {
           document.querySelector(".mobile-frame")?.classList.add("dark-mode");
         }
