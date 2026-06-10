@@ -458,6 +458,19 @@ if(loginUser == null){
           </article>
         </div>
       </section>
+      
+      
+      <div style="margin-top:20px;">
+    <button type="button"
+            onclick="location.href='ProfileSetService'"
+            style="width:100%;height:50px;border:none;border-radius:10px;">
+        설정 완료
+    </button> 
+</div>
+      
+      
+      
+   
     </main>
 
     <nav class="bottom-nav">
@@ -634,6 +647,7 @@ if(loginUser == null){
 
     renderProfileControls();
     renderAppSettings();
+    
   </script>
 </body>
 </html>

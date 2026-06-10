@@ -140,6 +140,27 @@ public class UserDAO {
         return result;
     }
     
+    public int updateProfileSet(UserDTO dto) {
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+            result = sqlSession.update("UserMapper.updateProfileSet", dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
+    
+    
     
     
 }

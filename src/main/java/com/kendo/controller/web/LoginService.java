@@ -27,6 +27,7 @@ public class LoginService extends HttpServlet {
 
         String id = request.getParameter("id");
         String pw = request.getParameter("pw");
+        String profileSet = request.getParameter("profileSet");
 
         UserDTO dto = new UserDTO(id, pw);
         UserDAO dao = new UserDAO();
@@ -34,11 +35,15 @@ public class LoginService extends HttpServlet {
         UserDTO loginUser = dao.login(dto);
 
         if (loginUser != null) {
-            // 로그인 성공 시 세션에 회원 정보 저장
             HttpSession session = request.getSession();
             session.setAttribute("loginUser", loginUser);
 
-            response.sendRedirect("main.jsp");
+            if ("Y".equals(loginUser.getProfileSet())) {
+                response.sendRedirect("main.jsp");
+            } else {
+                response.sendRedirect("settings.jsp");
+            }
+
         } else {
             response.sendRedirect("login.jsp");
         }

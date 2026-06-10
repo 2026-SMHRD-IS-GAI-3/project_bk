@@ -82,8 +82,27 @@
       backdrop-filter: blur(8px);
     }
 
+    .login-card.setup-mode {
+      padding-top: 26px;
+    }
+
     .login-form {
       width: 100%;
+    }
+
+    .login-form.hidden,
+    .forgot-link.hidden,
+    .signup-area.hidden {
+      display: none;
+    }
+
+    .setup-form {
+      display: none;
+      width: 100%;
+    }
+
+    .setup-form.active {
+      display: block;
     }
 
     .form-group {
@@ -112,6 +131,20 @@
       color: #213638;
       outline: none;
       transition: 0.2s;
+    }
+
+    select.form-input {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #44676b 50%), linear-gradient(135deg, #44676b 50%, transparent 50%);
+      background-position: calc(100% - 20px) 22px, calc(100% - 14px) 22px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      cursor: pointer;
+    }
+
+    select.form-input option {
+      color: #213638;
+      background-color: #ffffff;
     }
 
     .form-input::placeholder {
@@ -262,6 +295,71 @@
         box-shadow: 0 30px 80px rgba(28, 55, 58, 0.24);
       }
     }
+    .mobile-frame.dark-mode {
+      background: linear-gradient(145deg, #182527 0%, #243638 52%, #11191d 100%);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .section-title,
+    .mobile-frame.dark-mode .title,
+    .mobile-frame.dark-mode .page-title,
+    .mobile-frame.dark-mode .card-title,
+    .mobile-frame.dark-mode .posture-name,
+    .mobile-frame.dark-mode .challenge-title,
+    .mobile-frame.dark-mode .item-name,
+    .mobile-frame.dark-mode .form-label,
+    .mobile-frame.dark-mode label {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .subtitle,
+    .mobile-frame.dark-mode .desc,
+    .mobile-frame.dark-mode .visual-desc,
+    .mobile-frame.dark-mode .visual-quote,
+    .mobile-frame.dark-mode .challenge-desc,
+    .mobile-frame.dark-mode .item-desc,
+    .mobile-frame.dark-mode .summary-label,
+    .mobile-frame.dark-mode .status-text,
+    .mobile-frame.dark-mode .section-caption,
+    .mobile-frame.dark-mode .version,
+    .mobile-frame.dark-mode .forgot-link,
+    .mobile-frame.dark-mode .signup-text,
+    .mobile-frame.dark-mode .signup-link,
+    .mobile-frame.dark-mode .back-login a {
+      color: rgba(238, 247, 242, 0.64);
+    }
+
+    .mobile-frame.dark-mode .login-card,
+    .mobile-frame.dark-mode .signup-box,
+    .mobile-frame.dark-mode .summary-item,
+    .mobile-frame.dark-mode .challenge-card,
+    .mobile-frame.dark-mode .training-card,
+    .mobile-frame.dark-mode .training-panel,
+    .mobile-frame.dark-mode .bottom-nav,
+    .mobile-frame.dark-mode .form-input,
+    .mobile-frame.dark-mode .input-group input,
+    .mobile-frame.dark-mode .input-group select {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .nav-item {
+      color: rgba(238, 247, 242, 0.58);
+    }
+
+    .mobile-frame.dark-mode .nav-icon {
+      stroke: rgba(238, 247, 242, 0.58);
+    }
+
+    .mobile-frame.dark-mode .nav-item.active {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .nav-item.active .nav-icon {
+      stroke: #eef7f2;
+    }
+
   </style>
 </head>
 
@@ -278,7 +376,7 @@
 
       <div class="login-card">
 
-        <form class="login-form" action="LoginService" method="post">
+       <form class="login-form" id="loginForm" action="LoginService" method="post">
 
           <div class="form-group">
             <label class="form-label" for="ID">아이디</label>
@@ -319,15 +417,34 @@
 
         </form>
 
-        <a href="findPassword.jsp" class="forgot-link">
+        <form class="setup-form" id="initialSetupForm" onsubmit="return saveInitialSetup(event)">
+          <div class="form-group">
+            <label class="form-label" for="initialTrainingDivision">훈련 종목</label>
+            <select class="form-input" id="initialTrainingDivision" name="initialTrainingDivision">
+              <option value="1">대한검도</option>
+              <option value="2">리히테나워</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="initialDifficulty">현재 나의 난이도</label>
+            <select class="form-input" id="initialDifficulty" name="initialDifficulty"></select>
+          </div>
+
+          <button type="submit" class="login-btn">
+           설정 저장하기
+          </button>
+        </form>
+
+       <a href="findPassword.jsp" class="forgot-link" id="forgotLink">
           비밀번호를 잊으셨나요?
         </a>
 
       </div>
 
-      <div class="signup-area">
+      <div class="signup-area" id="signupArea">
         <span class="signup-text">아직 계정이 없으신가요? </span>
-     <a href="join.jsp" class="signup-link">회원가입</a>
+       <a href="join.jsp"  class="signup-link">회원가입</a>
       </div>
 
       <div class="version">v1.0.0</div>
@@ -337,6 +454,84 @@
   </div>
 
   <script>
+    const APP_SETTING_KEY = "BGS_APP_SETTING_1";
+    const INITIAL_SETUP_VERSION = 1;
+    const DEFAULT_APP_SETTING = {
+      DARK_MODE: false,
+      TRAIN_NOTICE: false,
+      TRAIN_DIVISION: "1",
+      DIFFICULTY: "k2",
+      INITIAL_SETUP_DONE: false,
+      INITIAL_SETUP_VERSION: 0
+    };
+
+    const DIFFICULTY_OPTIONS = {
+      "1": [
+        { value: "k1", label: "1급" },
+        { value: "k2", label: "2급" },
+        { value: "k3", label: "3급" },
+        { value: "k4", label: "4급" },
+        { value: "k5", label: "5급" },
+        { value: "k6", label: "6급" },
+        { value: "k7", label: "7급" },
+        { value: "k8", label: "8급" },
+        { value: "k9", label: "9급" },
+        { value: "k10", label: "10급" }
+      ],
+      "2": [
+        { value: "l_beginner", label: "초급" },
+        { value: "l_middle", label: "중급" },
+        { value: "l_advanced", label: "고급" }
+      ]
+    };
+
+    function loadAppSetting() {
+      const savedValue = localStorage.getItem(APP_SETTING_KEY);
+
+      if (!savedValue) {
+        return { ...DEFAULT_APP_SETTING };
+      }
+
+      try {
+        return { ...DEFAULT_APP_SETTING, ...JSON.parse(savedValue) };
+      } catch (error) {
+        return { ...DEFAULT_APP_SETTING };
+      }
+    }
+
+    function saveAppSetting(appSetting) {
+      localStorage.setItem(APP_SETTING_KEY, JSON.stringify(appSetting));
+    }
+
+    function renderInitialDifficulty() {
+      const trainingDivision = document.getElementById("initialTrainingDivision").value;
+      const difficultySelect = document.getElementById("initialDifficulty");
+      const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
+      const appSetting = loadAppSetting();
+
+      difficultySelect.innerHTML = options.map((item) => `
+        <option value="\${item.value}" \${appSetting.DIFFICULTY === item.value ? "selected" : ""}>\${item.label}</option>
+      `).join("");
+    }
+
+    function showInitialSetup() {
+      const appSetting = loadAppSetting();
+      const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
+      const params = new URLSearchParams(location.search);
+
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("forgotLink").classList.add("hidden");
+      document.getElementById("signupArea").classList.add("hidden");
+      document.getElementById("initialSetupForm").classList.add("active");
+      document.querySelector(".login-card").classList.add("setup-mode");
+      document.querySelector(".title").innerText = "수련 설정";
+      document.querySelector(".subtitle").innerText = params.get("setup") === "training"
+        ? "훈련 종목과 난이도를 선택하세요"
+        : "처음 시작할 훈련 종목과 난이도를 선택하세요";
+      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION || "1";
+      renderInitialDifficulty();
+    }
+
     function togglePassword() {
       const PWInput = document.getElementById('PW');
       const eyeIcon = document.getElementById('eye-icon');
@@ -353,8 +548,45 @@
       }
     }
 
- 
-  </script>
 
+
+    function saveInitialSetup(event) {
+      event.preventDefault();
+
+      const trainingDivision = document.getElementById("initialTrainingDivision").value;
+      const difficulty = document.getElementById("initialDifficulty").value;
+      const appSetting = loadAppSetting();
+
+      appSetting.TRAIN_DIVISION = trainingDivision;
+      appSetting.DIFFICULTY = difficulty;
+      appSetting.INITIAL_SETUP_DONE = true;
+      appSetting.INITIAL_SETUP_VERSION = INITIAL_SETUP_VERSION;
+      saveAppSetting(appSetting);
+
+      const params = new URLSearchParams(location.search);
+      location.href = params.get("redirect") || "main.html";
+      return false;
+    }
+
+    document.getElementById("initialTrainingDivision").addEventListener("change", renderInitialDifficulty);
+
+    (function openSetupFromQuery() {
+      const params = new URLSearchParams(location.search);
+
+      if (params.get("setup") === "training") {
+        showInitialSetup();
+      }
+    })();
+  </script>
+  <script>
+    (function applyDarkMode() {
+      try {
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
+        if (appSetting.DARK_MODE) {
+          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+        }
+      } catch (error) {}
+    })();
+  </script>
 </body>
 </html>

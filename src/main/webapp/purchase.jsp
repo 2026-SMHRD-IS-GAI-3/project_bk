@@ -1,15 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
-
 <%
-UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
+    UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
-if(loginUser == null){
-    response.sendRedirect("login.jsp");
-    return;
-}
+    if (loginUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
 %>
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -71,7 +70,7 @@ if(loginUser == null){
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-        url("Project_Logo/logo_02.png") center/cover;
+       url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 20px;
@@ -431,6 +430,39 @@ if(loginUser == null){
       color: #eef7f2;
     }
 
+    .mobile-frame.dark-mode .item-card {
+      background-color: rgba(238, 247, 242, 0.16);
+      border-color: rgba(238, 247, 242, 0.34);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.20);
+    }
+
+    .mobile-frame.dark-mode .item-kind {
+      background-color: rgba(216, 232, 127, 0.16);
+      color: rgba(238, 247, 242, 0.86);
+    }
+
+    .mobile-frame.dark-mode .item-desc {
+      color: rgba(238, 247, 242, 0.78);
+    }
+
+    .mobile-frame.dark-mode .buy-btn {
+      background-color: #d8e87f;
+      color: #213638;
+    }
+
+    .mobile-frame.dark-mode .buy-price {
+      color: rgba(33, 54, 56, 0.72);
+    }
+
+    .mobile-frame.dark-mode .buy-btn:disabled {
+      background-color: rgba(238, 247, 242, 0.18);
+      color: rgba(238, 247, 242, 0.72);
+    }
+
+    .mobile-frame.dark-mode .buy-btn:disabled .buy-price {
+      color: rgba(238, 247, 242, 0.60);
+    }
+
     .mobile-frame.dark-mode .nav-item {
       color: rgba(238, 247, 242, 0.58);
     }
@@ -641,7 +673,7 @@ if(loginUser == null){
 
       itemList.innerHTML = ITEM_LIST.map((item) => `
         <article class="item-card">
-          <div class="item-icon">\${getItemIcon(item.ITEM_ICON)}</div>
+          <div class="item-icon">${getItemIcon(item.ITEM_ICON)}</div>
           <div>
             <span class="item-kind">${item.ITEM_KIND}</span>
             <h2 class="item-name">${item.ITEM_NAME}</h2>
@@ -686,7 +718,9 @@ if(loginUser == null){
   <script>
     (function applyDarkMode() {
       try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}");
+    	  const appSetting = JSON.parse(
+    			  localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}"
+    			);
         if (appSetting.DARK_MODE) {
           document.querySelector(".mobile-frame")?.classList.add("dark-mode");
         }

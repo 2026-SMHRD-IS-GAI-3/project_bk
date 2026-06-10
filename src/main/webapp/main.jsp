@@ -7,10 +7,8 @@
         response.sendRedirect("login.jsp");
         return;
     }
-
-    int mNum = loginUser.getmNum();
 %>
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -479,7 +477,7 @@
     </main>
 
     <nav class="bottom-nav">
-   <a href="main.jsp" class="nav-item active">
+      <a href="main.jsp" class="nav-item active">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M4 20L20 4"></path>
@@ -492,7 +490,7 @@
         <span>훈련</span>
       </a>
 
-			 <a href="challenge.jsp" class="nav-item">
+      <a href="challenge.jsp" class="nav-item">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
@@ -505,7 +503,7 @@
         <span>도전과제</span>
       </a>
 
-   	 <a href="purchase.jsp" class="nav-item">
+      <a href="purchase.jsp" class="nav-item">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M6 6H21L19 14H8L6 6Z"></path>
@@ -530,7 +528,8 @@
   </div>
 
   <script>
-  const M_NUM = <%= mNum %>;
+  	const M_NUM = <%= loginUser.getmNum() %>;
+    const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
     function getSavedTrainingSetting() {
       try {
@@ -607,19 +606,19 @@
     ];
 
     const POSTURE_LIST = [
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1, G_NAME: "기본 자세 - 중단세", STATUS: "done" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 2, G_NAME: "기본 베기 - 정면 베기", STATUS: "done" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 3, G_NAME: "발 동작 - 전진/후진", STATUS: "current" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 4, G_NAME: "자세 교정 - 중단세 심화", STATUS: "locked", IS_REWARD: true },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 5, G_NAME: "연속 베기 - 좌우 베기", STATUS: "current" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 6, G_NAME: "동작 교정 - 베기 분석", STATUS: "locked", IS_REWARD: true },
-      { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 7, G_NAME: "머리치기 - 기본", STATUS: "current" },
-      { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 8, G_NAME: "머리치기 - 연속", STATUS: "locked" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 11, G_NAME: "기본 자세 - Vom Tag", STATUS: "done" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 12, G_NAME: "기본 자세 - Pflug", STATUS: "current" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 13, G_NAME: "기본 자세 - Ochs", STATUS: "locked" },
-      { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 14, G_NAME: "Oberhau - 기본", STATUS: "current" },
-      { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 15, G_NAME: "Oberhau - 연결", STATUS: "locked" }
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1, G_NAME: "기본 자세 - 중단세" },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 2, G_NAME: "기본 베기 - 정면 베기" },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 3, G_NAME: "발 동작 - 전진/후진" },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 4, G_NAME: "자세 교정 - 중단세 심화", REQUIRED_POSTURE_NUM: 1, IS_REWARD: true },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 5, G_NAME: "연속 베기 - 좌우 베기" },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 6, G_NAME: "동작 교정 - 베기 분석", REQUIRED_POSTURE_NUM: 5, IS_REWARD: true },
+      { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 7, G_NAME: "머리치기 - 기본" },
+      { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 8, G_NAME: "머리치기 - 연속", REQUIRED_POSTURE_NUM: 7 },
+      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 11, G_NAME: "기본 자세 - Vom Tag" },
+      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 12, G_NAME: "기본 자세 - Pflug" },
+      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 13, G_NAME: "기본 자세 - Ochs", REQUIRED_POSTURE_NUM: 11 },
+      { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 14, G_NAME: "Oberhau - 기본" },
+      { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 15, G_NAME: "Oberhau - 연결", REQUIRED_POSTURE_NUM: 14 }
     ];
 
     const DEFAULT_TRAINING = TRAINING_LIST.find((training) => {
@@ -644,12 +643,12 @@
     function getTrainingIcon(TRAIN_NUM) {
       if (TRAIN_NUM === 1) {
         return `
-        <img src="Project_Logo/icon02.png" alt="자세훈련 아이콘" class="training-icon posture">
+          <img src="Project_Logo/icon02.png" alt="자세훈련 아이콘" class="training-icon posture">
         `;
       }
 
       return `
-      <img src="Project_Logo/icon01.png" alt="행동훈련 아이콘" class="training-icon action">
+        <img src="Project_Logo/icon01.png" alt="행동훈련 아이콘" class="training-icon action">
       `;
     }
 
@@ -660,12 +659,12 @@
       trainingGrid.innerHTML = selectedList.map((training) => `
         <button
           type="button"
-        	  class="training-card \${training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM ? "active" : ""}"
+          class="training-card \${training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM ? "active" : ""}"
           data-train-num="\${training.TRAIN_NUM}"
           data-posture-num="\${training.POSTURE_NUM}"
         >
           <span class="card-icon">
-           \${getTrainingIcon(training.TRAIN_NUM)}
+            \${getTrainingIcon(training.TRAIN_NUM)}
           </span>
           <span class="card-title">\${training.TRAIN_NAME}</span>
         </button>
@@ -673,9 +672,8 @@
 
       document.querySelectorAll(".training-card").forEach((card) => {
         card.addEventListener("click", () => {
-          const firstPosture = POSTURE_LIST.find((posture) => {
-            return posture.DIVISION === TRAIN_HIS.DIVISION && posture.TRAIN_NUM === Number(card.dataset.trainNum);
-          });
+          const postures = getPosturesByTraining(Number(card.dataset.trainNum));
+          const firstPosture = postures.find((posture) => posture.STATUS !== "locked") || postures[0];
 
           TRAIN_HIS.TRAIN_NUM = Number(card.dataset.trainNum);
           TRAIN_HIS.POSTURE_NUM = firstPosture ? firstPosture.POSTURE_NUM : Number(card.dataset.postureNum);
@@ -683,6 +681,49 @@
           renderTrainingList();
         });
       });
+    }
+
+    function getTrainingHistory() {
+      const savedHistory = localStorage.getItem(TRAIN_HISTORY_KEY);
+
+      if (!savedHistory) {
+        return [];
+      }
+
+      try {
+        return JSON.parse(savedHistory);
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function isPostureCompleted(postureNum) {
+      return getTrainingHistory().some((history) => {
+        return Number(history.M_NUM) === M_NUM && Number(history.POSTURE_NUM) === Number(postureNum);
+      });
+    }
+
+    function getPostureStatus(posture) {
+      if (isPostureCompleted(posture.POSTURE_NUM)) {
+        return "done";
+      }
+
+      if (posture.REQUIRED_POSTURE_NUM && !isPostureCompleted(posture.REQUIRED_POSTURE_NUM)) {
+        return "locked";
+      }
+
+      return "current";
+    }
+
+    function getPosturesByTraining(trainNum) {
+      return POSTURE_LIST
+        .filter((posture) => {
+          return posture.DIVISION === TRAIN_HIS.DIVISION && posture.TRAIN_NUM === trainNum;
+        })
+        .map((posture) => ({
+          ...posture,
+          STATUS: getPostureStatus(posture)
+        }));
     }
 
     function getPostureIcon(status) {
@@ -718,9 +759,7 @@
       const selectedTraining = TRAINING_LIST.find((training) => {
         return training.DIVISION === TRAIN_HIS.DIVISION && training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM;
       }) || DEFAULT_TRAINING;
-      const selectedPostures = POSTURE_LIST.filter((posture) => {
-        return posture.DIVISION === TRAIN_HIS.DIVISION && posture.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM;
-      });
+      const selectedPostures = getPosturesByTraining(TRAIN_HIS.TRAIN_NUM);
 
       postureSectionTitle.innerText = `\${selectedTraining.TRAIN_NAME} 목록`;
       postureGrid.innerHTML = selectedPostures.map((posture) => `
@@ -760,7 +799,7 @@
         T_DATE: TRAIN_HIS.T_DATE
       });
 
-      location.href = `pose.jsp?\${trainingParams.toString()}`;
+      location.href = `trainning.jsp?\${trainingParams.toString()}`;
     }
 
     setTrainingQuote();

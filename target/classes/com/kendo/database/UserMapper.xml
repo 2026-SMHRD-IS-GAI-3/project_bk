@@ -54,11 +54,18 @@
             L_GRADE AS lGrade,
             ADMIN_M AS adminM,
             POINT AS point,
-            J_DATE AS jDate
+            J_DATE AS jDate,
+            PROFILE_SET AS profileSet
         FROM MEMBER
         WHERE ID = #{id}
         AND PW = #{pw}
     </select>
+	<!-- 초기프로필 설정  -->    
+    <update id="updateProfileSet" parameterType="UserDTO">
+    UPDATE MEMBER
+    SET PROFILE_SET = 'Y'
+    WHERE M_NUM = #{mNum}
+</update>
 
     <!-- 아이디 중복 체크 -->
     <select id="checkId" parameterType="String" resultType="int">

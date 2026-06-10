@@ -6,11 +6,10 @@
 <!-- configuration : mybatis 설정을 기술하는 태그 -->
 <configuration>
 
-	<properties resource="com/genai/database/db.properties"></properties>
+<properties resource="com/kendo/database/db.properties"></properties>
 	
 	<typeAliases>
-		<typeAlias type="com.genai.model." alias=""/>
-		<typeAlias type="com.genai.model." alias=""/>
+		<typeAlias type="com.kendo.model.UserDTO" alias="UserDTO"/>
 	</typeAliases>
 	
   <environments default="development">
@@ -26,8 +25,8 @@
   </environments>
   
   <!-- 사용자가 수행할 sql문장을 파일로 연결하여 관리하는 태그 -->
-  <mappers>
-    <mapper resource="com/genai/database/Mapper.xml"/>
-    <mapper resource="com/genai/database/Mapper.xml"/>
-  </mappers>
+ 
+	<mappers>
+  		<mapper resource="com/kendo/database/UserMapper.xml"/>
+	</mappers>
 </configuration>

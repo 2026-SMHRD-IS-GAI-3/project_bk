@@ -1,6 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-﻿<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+<%@ page import="com.kendo.model.UserDTO" %>
+<%
+    UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
+
+    if (loginUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -62,7 +70,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-   		  url("Project_Logo/logo_02.png") center/cover;
+   		url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -84,7 +92,15 @@
       position: relative;
       z-index: 1;
       width: 100%;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .visual-text {
+      min-width: 0;
     }
 
     .eyebrow {
@@ -104,13 +120,50 @@
 
     .visual-desc {
       max-width: 292px;
-      margin: 0 auto;
+      margin: 0;
       font-family: 'Pretendard', sans-serif;
       font-size: 12px;
       font-weight: 700;
       line-height: 1.48;
       color: rgba(246, 251, 248, 0.78);
       word-break: keep-all;
+    }
+
+    .point-value {
+      min-width: 94px;
+      min-height: 50px;
+      border-radius: 8px;
+      background-color: rgba(246, 251, 248, 0.18);
+      border: 1px solid rgba(246, 251, 248, 0.24);
+      padding: 9px 10px;
+      font-family: 'Pretendard', sans-serif;
+      text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      flex-shrink: 0;
+    }
+
+    .point-caption {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 9px;
+      font-weight: 800;
+      color: rgba(246, 251, 248, 0.70);
+      white-space: nowrap;
+    }
+
+    .point-amount {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .point-unit {
+      font-size: 12px;
+      margin-left: 4px;
+      color: #d8e87f;
     }
 
     .summary-grid {
@@ -433,6 +486,15 @@
         font-size: 25px;
       }
 
+      .visual-copy {
+        gap: 12px;
+      }
+
+      .point-value {
+        min-width: 88px;
+        min-height: 48px;
+      }
+
       .challenge-card {
         grid-template-columns: 44px 1fr;
         gap: 10px;
@@ -485,6 +547,7 @@
     .mobile-frame.dark-mode .title,
     .mobile-frame.dark-mode .page-title,
     .mobile-frame.dark-mode .card-title,
+    .mobile-frame.dark-mode .summary-value,
     .mobile-frame.dark-mode .posture-name,
     .mobile-frame.dark-mode .challenge-title,
     .mobile-frame.dark-mode .item-name,
@@ -549,8 +612,14 @@
     <main class="challenge-page">
       <section class="challenge-visual" aria-label="도전과제 안내">
         <div class="visual-copy">
-          <h1 class="visual-title">오늘의 도전과제</h1>
-          <p class="visual-desc">도전과제를 완료하면 포인트를 받을 수 있어요.</p>
+          <div class="visual-text">
+            <h1 class="visual-title">오늘의 도전과제</h1>
+            <p class="visual-desc">도전과제를 완료하면 포인트를 받을 수 있어요.</p>
+          </div>
+          <p class="point-value">
+            <span class="point-caption">나의 포인트</span>
+            <span class="point-amount"><span id="memberPoint">0</span><span class="point-unit">P</span></span>
+          </p>
         </div>
       </section>
 
@@ -593,7 +662,7 @@
     </main>
 
     <nav class="bottom-nav">
-      <a href="main.jsp" class="nav-item">
+    <a href="main.jsp" class="nav-item">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M4 20L20 4"></path>
@@ -606,7 +675,7 @@
         <span>훈련</span>
       </a>
 
-      <a href="challenge.jsp" class="nav-item active">
+    <a href="challenge.jsp" class="nav-item active">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
@@ -631,7 +700,7 @@
         <span>상점</span>
       </a>
 
-      <a href="mypage.jsp" class="nav-item">
+    <a href="mypage.jsp" class="nav-item">
         <div class="icon-box">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <circle cx="12" cy="8" r="4"></circle>
@@ -644,7 +713,7 @@
   </div>
 
   <script>
-    const M_NUM = 1;
+  const M_NUM = <%= loginUser.getmNum() %>;
     const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
     const CHALLENGE_STORAGE_KEY = `BGS_MEMBER_CHALLENGE_${M_NUM}`;
 
@@ -733,9 +802,14 @@
       return Number(localStorage.getItem(POINT_STORAGE_KEY)) || 0;
     }
 
+    function renderMemberPoint() {
+      document.getElementById("memberPoint").innerText = getMemberPoint();
+    }
+
     function addMemberPoint(point) {
       const nextPoint = getMemberPoint() + point;
       localStorage.setItem(POINT_STORAGE_KEY, String(nextPoint));
+      renderMemberPoint();
     }
 
     function initializeMemberPoint() {
@@ -748,7 +822,7 @@
           return sum;
         }
 
-        const challenge = CHALLENGE_LIST.find((item) => item.CHALLENGE_NUM == memberChallenge.CHALLENGE_NUM);
+        const challenge = CHALLENGE_LIST.find((item) => item.CHALLENGE_NUM === memberChallenge.CHALLENGE_NUM);
         return challenge ? sum + challenge.REWARD_POINT : sum;
       }, 0);
 
@@ -760,19 +834,19 @@
     }
 
     function getChallengeProgress(challenge) {
-      if (challenge.C_TYPE == "TODAY_TRAIN_COUNT") {
-        return TRAIN_HIS_LIST.filter((history) => history.T_DATE == getTodayKey()).length;
+      if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
+        return TRAIN_HIS_LIST.filter((history) => history.T_DATE === getTodayKey()).length;
       }
 
-      if (challenge.C_TYPE == "DIVISION_COUNT") {
-        return TRAIN_HIS_LIST.filter((history) => history.DIVISION == challenge.DIVISION).length;
+      if (challenge.C_TYPE === "DIVISION_COUNT") {
+        return TRAIN_HIS_LIST.filter((history) => history.DIVISION === challenge.DIVISION).length;
       }
 
       return TRAIN_HIS_LIST.length;
     }
 
     function getMemberChallenge(challengeNum) {
-      return MEMBER_CHALLENGE_LIST.find((item) => item.M_NUM == M_NUM && item.CHALLENGE_NUM == challengeNum) || {
+      return MEMBER_CHALLENGE_LIST.find((item) => item.M_NUM === M_NUM && item.CHALLENGE_NUM === challengeNum) || {
         M_NUM,
         CHALLENGE_NUM: challengeNum,
         ACHIEVE_YN: "N",
@@ -784,12 +858,12 @@
     function getChallengeState(challenge) {
       const memberChallenge = getMemberChallenge(challenge.CHALLENGE_NUM);
       const currentCount = getChallengeProgress(challenge);
-      const isAchieved = memberChallenge.ACHIEVE_YN == "Y" || currentCount >= challenge.TARGET_COUNT;
+      const isAchieved = memberChallenge.ACHIEVE_YN === "Y" || currentCount >= challenge.TARGET_COUNT;
 
       return {
         currentCount: Math.min(currentCount, challenge.TARGET_COUNT),
         isAchieved,
-        isRewarded: memberChallenge.REWARD_YN == "Y",
+        isRewarded: memberChallenge.REWARD_YN === "Y",
         progressPercent: Math.min(100, Math.round((currentCount / challenge.TARGET_COUNT) * 100))
       };
     }
@@ -832,28 +906,28 @@
       const buttonText = state.isRewarded ? "완료" : "받기";
 
       return `
-        <article class="challenge-card \${state.isAchieved ? "done" : ""}">
-          <div class="challenge-icon">\${getChallengeIcon(state)}</div>
+        <article class="challenge-card ${state.isAchieved ? "done" : ""}">
+          <div class="challenge-icon">${getChallengeIcon(state)}</div>
           <div class="challenge-main">
             <div class="challenge-top">
-              <h3 class="challenge-title">\${challenge.C_NAME}</h3>
-              <span class="reward-badge">\${challenge.REWARD_POINT}P</span>
+              <h3 class="challenge-title">${challenge.C_NAME}</h3>
+              <span class="reward-badge">${challenge.REWARD_POINT}P</span>
             </div>
-            <p class="challenge-desc">\${challenge.C_DESC}</p>
+            <p class="challenge-desc">${challenge.C_DESC}</p>
             <div class="progress-row">
               <div class="progress-track">
-                <div class="progress-fill" style="--progress: \${state.progressPercent}%"></div>
+                <div class="progress-fill" style="--progress: ${state.progressPercent}%"></div>
               </div>
-              <span class="progress-text">\${state.currentCount}/\${challenge.TARGET_COUNT}</span>
+              <span class="progress-text">${state.currentCount}/${challenge.TARGET_COUNT}</span>
             </div>
             <div class="action-row">
-              <span class="status-text">\${getStatusText(state)}</span>
+              <span class="status-text">${getStatusText(state)}</span>
               <button
                 type="button"
                 class="claim-btn"
-                data-challenge-num="\${challenge.CHALLENGE_NUM}"
-                \${!state.isAchieved || state.isRewarded ? "disabled" : ""}
-              >\${buttonText}</button>
+                data-challenge-num="${challenge.CHALLENGE_NUM}"
+                ${!state.isAchieved || state.isRewarded ? "disabled" : ""}
+              >${buttonText}</button>
             </div>
           </div>
         </article>
@@ -888,9 +962,9 @@
 
     function claimReward(challengeNum) {
       const memberChallenge = getMemberChallenge(challengeNum);
-      const selectedChallenge = CHALLENGE_LIST.find((challenge) => challenge.CHALLENGE_NUM == challengeNum);
+      const selectedChallenge = CHALLENGE_LIST.find((challenge) => challenge.CHALLENGE_NUM === challengeNum);
 
-      if (memberChallenge.REWARD_YN == "Y" || !selectedChallenge) {
+      if (memberChallenge.REWARD_YN === "Y" || !selectedChallenge) {
         return;
       }
 
@@ -899,7 +973,7 @@
       memberChallenge.ACHIEVE_DATE = memberChallenge.ACHIEVE_DATE || getTodayKey();
 
       const exists = MEMBER_CHALLENGE_LIST.some((item) => {
-        return item.M_NUM == memberChallenge.M_NUM && item.CHALLENGE_NUM == memberChallenge.CHALLENGE_NUM;
+        return item.M_NUM === memberChallenge.M_NUM && item.CHALLENGE_NUM === memberChallenge.CHALLENGE_NUM;
       });
 
       if (!exists) {
@@ -914,13 +988,16 @@
 
     initializeMemberPoint();
     saveMemberChallengeList();
+    renderMemberPoint();
     renderSummary();
     renderChallengeList();
   </script>
   <script>
     (function applyDarkMode() {
       try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
+    	  const appSetting = JSON.parse(
+    			  localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}"
+    			);
         if (appSetting.DARK_MODE) {
           document.querySelector(".mobile-frame")?.classList.add("dark-mode");
         }

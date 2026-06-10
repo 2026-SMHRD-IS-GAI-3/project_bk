@@ -47,7 +47,10 @@ public class UserDTO {
 
     // 가입일자
     private Date jDate;
-
+    
+    //초기 프로필 설정 여부
+    private String profileSet;
+    
     // 기본 생성자: MyBatis가 객체를 만들 때 사용한다.
     public UserDTO() {
     }
@@ -167,5 +170,13 @@ public class UserDTO {
 
     public void setjDate(Date jDate) {
         this.jDate = jDate;
+    }
+
+    public String getProfileSet() {
+        return profileSet;
+    }
+
+    public void setProfileSet(String profileSet) {
+        this.profileSet = profileSet;
     }
 }

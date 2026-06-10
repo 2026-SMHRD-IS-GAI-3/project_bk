@@ -25,7 +25,7 @@
         )
         VALUES
         (
-            MEMBER_SEQ.NEXTVAL,
+            M_NUM.NEXTVAL,
             #{id},
             #{pw},
             #{name},
@@ -54,11 +54,18 @@
             L_GRADE AS lGrade,
             ADMIN_M AS adminM,
             POINT AS point,
-            J_DATE AS jDate
+            J_DATE AS jDate,
+            PROFILE_SET AS profileSet
         FROM MEMBER
         WHERE ID = #{id}
         AND PW = #{pw}
     </select>
+	<!-- 초기프로필 설정  -->    
+    <update id="updateProfileSet" parameterType="UserDTO">
+    UPDATE MEMBER
+    SET PROFILE_SET = 'Y'
+    WHERE M_NUM = #{mNum}
+</update>
 
     <!-- 아이디 중복 체크 -->
     <select id="checkId" parameterType="String" resultType="int">
@@ -67,8 +74,8 @@
         WHERE ID = #{id}
     </select>
 
-    <!-- 회원번호로 회원 조회 -->
-    <select id="selectOne" parameterType="int" resultType="UserDTO">
+    <!-- 전체 회원 조회 SQL -->
+    <select id="selectAllUser" resultType="UserDTO">
         SELECT
             M_NUM AS mNum,
             ID AS id,
@@ -83,7 +90,76 @@
             POINT AS point,
             J_DATE AS jDate
         FROM MEMBER
-        WHERE M_NUM = #{mNum}
+        ORDER BY M_NUM DESC
     </select>
 
+	<!-- 비밀번호 변경 -->
+	<update id="changePw" parameterType="UserDTO">
+		UPDATE MEMBER 
+		SET PW=#{newPw} 
+		WHERE ID=#{id}
+	</update>
+	
+	<!-- 마이페이지 -->
+	<select id="myPage" resultType="UserDTO">
+		SELECT * 
+		FROM MEMBER 
+		WHERE ID=#{id}
+	</select>
+	
+	<!-- 도전과제 확인 -->
+	<select id="mAchievement">
+		SELECT * FROM ACHIEVEMENT
+	</select>
+	
+	<!-- 도전과제 성공 -->
+	<insert id="successA">
+		INSERT INTO M_ACHIEVEMENT
+        (
+           M_A_NUM,
+           M_NUM,
+           ACHIEVE_NUM,
+           M_A_DATE,
+           POINT
+        )
+        VALUES
+        (
+            M_ACHIEVEMENT_SEQ.NEXTVAL,
+            #{mNum},
+            #{achieveNum},
+            SYSDATE,
+            #{point}
+        )
+	</insert>
+	
+	<!-- 포인트 상점 상품 목록 -->
+	<select id="pointShopList">
+		SELECT DISTINCT GOODS_NAME,GOODS,PRICE 
+		FROM POINT_SHOP_HIS
+	</select>
+	
+	<!-- 상품 구매 -->
+	<insert id="purchaseGoods">
+		INSERT INTO M_ACHIEVEMENT
+        (
+           P_S_NUM,
+           M_NUM,
+           GOODS_NUM,
+           GOODS_NAME,
+           GOODS,
+           PRICE,
+           PURCHASE
+        )
+        VALUES
+        (
+            POINT_SHOP_HIS_SEQ.NEXTVAL,
+            #{mNum},
+            #{goodsNum},
+            #{goodsName},
+            #{goods},
+            #{price},
+            #{purchase}
+        )
+	</insert>
+	
 </mapper>

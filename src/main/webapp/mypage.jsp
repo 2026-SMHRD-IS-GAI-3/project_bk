@@ -1,13 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.kendo.model.UserDTO" %>
-<%
-    UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
-
-    if (loginUser == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+pageEncoding="UTF-8" isELIgnored="true"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -76,7 +68,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-      url("Project_Logo/logo_02.png") center/cover;
+        url("../Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 20px;
@@ -326,6 +318,22 @@
       background-color: #ffffff;
     }
 
+    .setup-link-btn {
+      min-width: 122px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      padding: 0 12px;
+      background-color: #213638;
+      color: #f6fbf8;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     .logout-btn {
       width: 100%;
       height: 50px;
@@ -373,6 +381,11 @@
     .mobile-frame.dark-mode .select-control {
       background-color: rgba(255, 255, 255, 0.14);
       color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .setup-link-btn {
+      background-color: #d8e87f;
+      color: #213638;
     }
 
     .bottom-nav {
@@ -468,6 +481,12 @@
         width: 112px;
       }
 
+      .setup-link-btn {
+        min-width: 112px;
+        padding: 0 10px;
+        font-size: 10px;
+      }
+
       .stat-grid {
         gap: 7px;
       }
@@ -530,9 +549,7 @@
           <div class="profile-avatar" id="profileAvatar"></div>
           <div>
             <span class="profile-title" id="equippedTitle">초심의 검</span>
-            <h1 class="profile-name" id="memberName">
-    				<%= loginUser.getName() %>
-			</h1>
+            <h1 class="profile-name" id="memberName">수련생</h1>
             <p class="profile-meta">오늘도 자세를 세우는 중입니다.</p>
           </div>
         </div>
@@ -547,7 +564,7 @@
           </div>
           <div class="stat-item">
             <span class="stat-value" id="ownedTitleCount">0</span>
-            <span class="stat-label">보유 칭호</span>
+            <span class="stat-label">나의 아이템</span>
           </div>
         </div>
       </section>
@@ -564,32 +581,11 @@
               </svg>
             </span>
             <div class="setting-info">
-              <h3 class="setting-name">훈련종목 재설정</h3>
-              <p class="setting-desc">기본으로 볼 훈련 종목을 선택합니다.</p>
+              <h3 class="setting-name">수련 난이도 재설정</h3>
+              <p class="setting-desc">처음 설정 화면에서 훈련 종목과 난이도를 다시 선택합니다.</p>
             </div>
           </div>
-          <select class="select-control" id="trainingDivisionSelect" aria-label="훈련 종목 선택">
-            <option value="1">대한검도</option>
-            <option value="2">리히테나워</option>
-          </select>
-        </article>
-
-        <article class="setting-card">
-          <div class="setting-left">
-            <span class="setting-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="8" r="4"></circle>
-                <path d="M9.5 11.2L8 20L12 17.6L16 20L14.5 11.2"></path>
-                <path d="M10.4 8H13.6"></path>
-                <path d="M12 6.4V9.6"></path>
-              </svg>
-            </span>
-            <div class="setting-info">
-              <h3 class="setting-name">급수/난이도 재설정</h3>
-              <p class="setting-desc">선택한 훈련 종목에 맞춰 조정합니다.</p>
-            </div>
-          </div>
-          <select class="select-control" id="difficultySelect" aria-label="급수 난이도 선택"></select>
+          <button type="button" class="setup-link-btn" onclick="goTrainingSetup()">재설정</button>
         </article>
       </section>
 
@@ -632,7 +628,7 @@
         </div>
       </section>
 
-      <button type="button" class="logout-btn" onclick="location.href='index.jsp'">로그아웃</button>
+      <button type="button" class="logout-btn" onclick="location.href='home.jsp'">로그아웃</button>
     </main>
 
     <nav class="bottom-nav">
@@ -687,7 +683,7 @@
   </div>
 
   <script>
-  const M_NUM = <%= loginUser.getmNum() %>;
+    const M_NUM = 1;
     const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
     const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
     const PROFILE_SETTING_KEY = `BGS_PROFILE_SETTING_${M_NUM}`;
@@ -830,52 +826,15 @@
       const difficultyItem = difficultyOptions.find((item) => item.value === appSetting.DIFFICULTY) || difficultyOptions[0];
 
       document.getElementById("equippedTitle").innerText = titleItem ? titleItem.ITEM_NAME : "초심의 검";
-     // document.getElementById("memberName").innerText = appSetting.TRAIN_DIVISION === "2" ? "장검 수련생" : "검도 수련생";
+      document.getElementById("memberName").innerText = appSetting.TRAIN_DIVISION === "2" ? "장검 수련생" : "검도 수련생";
       document.querySelector(".profile-meta").innerText = appSetting.TRAIN_DIVISION === "2"
-        ? `리히테나워 | \${difficultyItem.label}`
-        : `대한검도 | \${difficultyItem.label}`;
+        ? `리히테나워 | ${difficultyItem.label}`
+        : `대한검도 | ${difficultyItem.label}`;
       document.getElementById("profileAvatar").innerHTML = getAvatarIcon(profileItem ? profileItem.ITEM_ICON : "default");
     }
 
-    function fillDifficultyOptions(appSetting) {
-      const difficultySelect = document.getElementById("difficultySelect");
-      const options = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-      const hasCurrentValue = options.some((item) => item.value === appSetting.DIFFICULTY);
-
-      if (!hasCurrentValue) {
-        appSetting.DIFFICULTY = options[0].value;
-        saveJson(APP_SETTING_KEY, appSetting);
-      }
-
-      difficultySelect.innerHTML = options.map((item) => `
-        <option value="\${item.value}" \${appSetting.DIFFICULTY === item.value ? "selected" : ""}>\${item.label}</option>
-      `).join("");
-    }
-
-    function renderTrainingSettings() {
-      const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-      const trainingDivisionSelect = document.getElementById("trainingDivisionSelect");
-      const difficultySelect = document.getElementById("difficultySelect");
-
-      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION;
-      fillDifficultyOptions(appSetting);
-
-      trainingDivisionSelect.addEventListener("change", () => {
-        const nextSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-        nextSetting.TRAIN_DIVISION = trainingDivisionSelect.value;
-        const options = DIFFICULTY_OPTIONS[nextSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-        nextSetting.DIFFICULTY = options[0].value;
-        saveJson(APP_SETTING_KEY, nextSetting);
-        fillDifficultyOptions(nextSetting);
-        renderProfile();
-      });
-
-      difficultySelect.addEventListener("change", () => {
-        const nextSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-        nextSetting.DIFFICULTY = difficultySelect.value;
-        saveJson(APP_SETTING_KEY, nextSetting);
-        renderProfile();
-      });
+    function goTrainingSetup() {
+      location.href = "login.jsp?setup=training&redirect=mypage.jsp";
     }
 
     function renderStats() {
@@ -892,21 +851,24 @@
         trainingHistory
           .filter((history) => history.DIVISION && history.TRAIN_NUM && history.POSTURE_NUM)
           .map((history) => {
-            return `\${history.DIVISION}-\${history.TRAIN_NUM}-\${history.POSTURE_NUM}`;
+            return `${history.DIVISION}-${history.TRAIN_NUM}-${history.POSTURE_NUM}`;
           })
       );
       const accuracyValues = trainingHistory
         .filter((history) => history.ACCURACY !== null && history.ACCURACY !== undefined && history.ACCURACY !== "")
         .map((history) => Number(history.ACCURACY))
         .filter((accuracy) => Number.isFinite(accuracy));
-      const averageAccuracy = accuracyValues.length
-        ? `\${Math.round(accuracyValues.reduce((sum, accuracy) => sum + accuracy, 0) / accuracyValues.length)}%`
-        : "-";
+      let averageAccuracy = "-";
 
-      document.getElementById("memberPoint").innerText = `\${getMemberPoint()}P`;
+      if (accuracyValues.length > 0) {
+        const totalAccuracy = accuracyValues.reduce((sum, accuracy) => sum + accuracy, 0);
+        const avgAccuracy = Math.round(totalAccuracy / accuracyValues.length);
+        averageAccuracy = avgAccuracy + "%";
+      }
+      document.getElementById("memberPoint").innerText = `${getMemberPoint()}P`;
       document.getElementById("ownedTitleCount").innerText = getOwnedItemsByType("TITLE").length;
-      document.getElementById("trainingDayCount").innerText = `\${trainingDays.size}일`;
-      document.getElementById("completedStageCount").innerText = `\${completedStages.size}개`;
+      document.getElementById("trainingDayCount").innerText = `${trainingDays.size}일`;
+      document.getElementById("completedStageCount").innerText = `${completedStages.size}개`;
       document.getElementById("averageAccuracy").innerText = averageAccuracy;
     }
 
@@ -917,7 +879,6 @@
     }
 
     applyAppSettings();
-    renderTrainingSettings();
     renderProfile();
     renderStats();
   </script>
