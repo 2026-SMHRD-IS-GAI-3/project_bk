@@ -1,0 +1,925 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.kendo.model.UserDTO" %>
+<%
+    UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
+
+    if (loginUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>방구석 검도 - 마이페이지</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Gowun Batang', serif;
+      background-color: #a7bcbb;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    .mobile-frame {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      min-height: 720px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(145deg, #dce8e5 0%, #bfd1cf 50%, #96aeb0 100%);
+      color: #213638;
+    }
+
+    .mobile-frame.dark-mode {
+      background: linear-gradient(145deg, #182527 0%, #243638 52%, #11191d 100%);
+      color: #eef7f2;
+    }
+
+    .mypage {
+      height: 100%;
+      padding: 28px 22px 116px;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .mypage::-webkit-scrollbar {
+      display: none;
+    }
+
+    .profile-panel {
+      min-height: 174px;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
+      url("Project_Logo/logo_02.png") center/cover;
+      overflow: hidden;
+      position: relative;
+      padding: 20px;
+      color: #f6fbf8;
+      display: flex;
+      align-items: center;
+      margin-bottom: 22px;
+      box-shadow: 0 22px 42px rgba(34, 58, 60, 0.20);
+    }
+
+    .profile-setting-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(246, 251, 248, 0.24);
+      border-radius: 12px;
+      background-color: rgba(246, 251, 248, 0.14);
+      color: #f6fbf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .profile-setting-btn svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .profile-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(10, 18, 24, 0.84), rgba(10, 18, 24, 0.16));
+    }
+
+    .profile-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      background-color: rgb(7, 11, 29);
+      border: 1px solid rgba(246, 251, 248, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f6fbf8;
+      box-shadow: 0 14px 24px rgba(6, 14, 18, 0.24);
+    }
+
+    .profile-avatar svg {
+      width: 38px;
+      height: 38px;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      fill: none;
+    }
+
+    .profile-title {
+      display: inline-flex;
+      min-height: 22px;
+      align-items: center;
+      padding: 0 9px;
+      border-radius: 999px;
+      background-color: rgba(216, 232, 127, 0.16);
+      border: 1px solid rgba(216, 232, 127, 0.26);
+      color: #d8e87f;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .profile-name {
+      font-size: 25px;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .profile-meta {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: rgba(246, 251, 248, 0.76);
+    }
+
+    .storage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .stat-item {
+      min-height: 112px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      background-color: rgba(255, 255, 255, 0.54);
+      box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
+      padding: 16px 14px;
+      text-align: left;
+      font-family: 'Pretendard', sans-serif;
+    }
+
+    .storage-grid .stat-item {
+      min-height: 96px;
+    }
+
+    .stat-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background-color: rgba(68, 103, 107, 0.13);
+      color: #44676b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .stat-icon svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 22px;
+      font-weight: 800;
+      color: #213638;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      color: rgba(33, 54, 56, 0.58);
+      word-break: keep-all;
+    }
+
+    .setting-card {
+      min-height: 76px;
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.56);
+      box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
+      padding: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: 'Pretendard', sans-serif;
+      margin-bottom: 22px;
+    }
+
+    .setting-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .setting-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background-color: rgba(68, 103, 107, 0.13);
+      color: #44676b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .setting-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .setting-info {
+      min-width: 0;
+    }
+
+    .setting-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #213638;
+      margin-bottom: 4px;
+    }
+
+    .setting-desc {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(33, 54, 56, 0.56);
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    .select-control {
+      width: 122px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(33, 54, 56, 0.10);
+      color: #213638;
+      padding: 0 10px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      outline: none;
+      flex-shrink: 0;
+    }
+
+    .select-control option {
+      color: #213638;
+      background-color: #ffffff;
+    }
+
+    .logout-btn {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgb(7, 11, 29);
+      color: #f6fbf8;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(40, 70, 72, 0.12);
+      margin-top: 2px;
+    }
+
+    .section-title {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: #213638;
+      margin: 22px 0 10px;
+    }
+
+    .mobile-frame.dark-mode .stat-item {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .mobile-frame.dark-mode .section-title,
+    .mobile-frame.dark-mode .stat-value,
+    .mobile-frame.dark-mode .setting-name {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .stat-label,
+    .mobile-frame.dark-mode .setting-desc {
+      color: rgba(238, 247, 242, 0.62);
+    }
+
+    .mobile-frame.dark-mode .setting-card {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .mobile-frame.dark-mode .select-control {
+      background-color: rgba(255, 255, 255, 0.14);
+      color: #eef7f2;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      height: 78px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 26px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 18px 36px rgba(40, 70, 72, 0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-item {
+      width: 25%;
+      height: 100%;
+      text-decoration: none;
+      color: rgba(33, 54, 56, 0.52);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .icon-box {
+      height: 34px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .nav-icon {
+      width: 27px;
+      height: 27px;
+      stroke: rgba(33, 54, 56, 0.52);
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .nav-item.active {
+      color: #213638;
+    }
+
+    .nav-item.active .icon-box {
+      width: 46px;
+      height: 46px;
+      border: 2px solid khaki;
+      border-radius: 16px;
+      background-color: rgba(255, 255, 255, 0.78);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1px;
+      box-shadow: 0 8px 18px rgba(177, 197, 77, 0.18);
+    }
+
+    .nav-item.active .nav-icon {
+      stroke: #213638;
+    }
+
+    @media (max-width: 390px) {
+      .mypage {
+        padding: 24px 18px 108px;
+      }
+
+      .profile-content {
+        grid-template-columns: 64px 1fr;
+        gap: 14px;
+      }
+
+      .profile-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 20px;
+      }
+
+      .profile-name {
+        font-size: 23px;
+      }
+
+      .select-control {
+        width: 112px;
+      }
+
+      .stat-grid {
+        gap: 7px;
+      }
+
+      .stat-item {
+        min-height: 102px;
+        padding: 13px 10px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+      }
+
+      .bottom-nav {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        height: 76px;
+        border-radius: 24px;
+      }
+
+      .nav-item {
+        font-size: 9px;
+      }
+
+      .nav-icon {
+        width: 25px;
+        height: 25px;
+      }
+
+      .nav-item.active .icon-box {
+        width: 43px;
+        height: 43px;
+      }
+    }
+
+    @media (min-width: 431px) {
+      .mobile-frame {
+        height: 860px;
+        max-height: 94vh;
+        min-height: 720px;
+        border-radius: 32px;
+        box-shadow: 0 30px 80px rgba(28, 55, 58, 0.24);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mobile-frame" id="mobileFrame">
+    <main class="mypage">
+      <section class="profile-panel" aria-label="회원 프로필">
+        <button type="button" class="profile-setting-btn" onclick="location.href='settings.jsp'" aria-label="환경설정으로 이동">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15A1.7 1.7 0 0 0 20 13.7V10.3A1.7 1.7 0 0 0 19.4 9L17.8 7.7L17.2 5.7A1.7 1.7 0 0 0 15.6 4.5H8.4A1.7 1.7 0 0 0 6.8 5.7L6.2 7.7L4.6 9A1.7 1.7 0 0 0 4 10.3V13.7A1.7 1.7 0 0 0 4.6 15L6.2 16.3L6.8 18.3A1.7 1.7 0 0 0 8.4 19.5H15.6A1.7 1.7 0 0 0 17.2 18.3L17.8 16.3L19.4 15Z"></path>
+          </svg>
+        </button>
+        <div class="profile-content">
+          <div class="profile-avatar" id="profileAvatar"></div>
+          <div>
+            <span class="profile-title" id="equippedTitle">초심의 검</span>
+            <h1 class="profile-name" id="memberName">
+    				<%= loginUser.getName() %>
+			</h1>
+            <p class="profile-meta">오늘도 자세를 세우는 중입니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="회원 요약">
+        <h2 class="section-title">내 보관함</h2>
+        <div class="storage-grid">
+          <div class="stat-item">
+            <span class="stat-value" id="memberPoint">0P</span>
+            <span class="stat-label">보유 포인트</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="ownedTitleCount">0</span>
+            <span class="stat-label">보유 칭호</span>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="수련 설정">
+        <h2 class="section-title">수련 설정</h2>
+        <article class="setting-card">
+          <div class="setting-left">
+            <span class="setting-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 20L20 4"></path>
+                <path d="M14 4L20 10"></path>
+                <path d="M4 14L10 20"></path>
+              </svg>
+            </span>
+            <div class="setting-info">
+              <h3 class="setting-name">훈련종목 재설정</h3>
+              <p class="setting-desc">기본으로 볼 훈련 종목을 선택합니다.</p>
+            </div>
+          </div>
+          <select class="select-control" id="trainingDivisionSelect" aria-label="훈련 종목 선택">
+            <option value="1">대한검도</option>
+            <option value="2">리히테나워</option>
+          </select>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-left">
+            <span class="setting-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M9.5 11.2L8 20L12 17.6L16 20L14.5 11.2"></path>
+                <path d="M10.4 8H13.6"></path>
+                <path d="M12 6.4V9.6"></path>
+              </svg>
+            </span>
+            <div class="setting-info">
+              <h3 class="setting-name">급수/난이도 재설정</h3>
+              <p class="setting-desc">선택한 훈련 종목에 맞춰 조정합니다.</p>
+            </div>
+          </div>
+          <select class="select-control" id="difficultySelect" aria-label="급수 난이도 선택"></select>
+        </article>
+      </section>
+
+      <section aria-label="통계">
+        <h2 class="section-title">통계</h2>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="5" width="14" height="15" rx="2"></rect>
+                <path d="M8 3V7"></path>
+                <path d="M16 3V7"></path>
+                <path d="M5 10H19"></path>
+              </svg>
+            </span>
+            <span class="stat-value" id="trainingDayCount">0일</span>
+            <span class="stat-label">훈련 일수</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="8"></circle>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </span>
+            <span class="stat-value" id="completedStageCount">0개</span>
+            <span class="stat-label">완료 스테이지</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 20L20 4"></path>
+                <path d="M14 4L20 10"></path>
+                <path d="M4 14L10 20"></path>
+              </svg>
+            </span>
+            <span class="stat-value" id="averageAccuracy">-</span>
+            <span class="stat-label">평균 정확도</span>
+          </div>
+        </div>
+      </section>
+
+      <button type="button" class="logout-btn" onclick="location.href='index.jsp'">로그아웃</button>
+    </main>
+
+    <nav class="bottom-nav">
+      <a href="main.jsp" class="nav-item">
+        <div class="icon-box">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M4 20L20 4"></path>
+            <path d="M14 4L20 10"></path>
+            <path d="M4 14L10 20"></path>
+            <path d="M8 16L6 18"></path>
+            <path d="M16 8L18 6"></path>
+          </svg>
+        </div>
+        <span>훈련</span>
+      </a>
+
+      <a href="challenge.jsp" class="nav-item">
+        <div class="icon-box">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
+            <path d="M6 6H4C4 10 6 12 9 12"></path>
+            <path d="M18 6H20C20 10 18 12 15 12"></path>
+            <path d="M12 13V18"></path>
+            <path d="M9 20H15"></path>
+          </svg>
+        </div>
+        <span>도전과제</span>
+      </a>
+
+      <a href="purchase.jsp" class="nav-item">
+        <div class="icon-box">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M6 6H21L19 14H8L6 6Z"></path>
+            <path d="M6 6L5 3H2"></path>
+            <circle cx="9" cy="19" r="1.5"></circle>
+            <circle cx="18" cy="19" r="1.5"></circle>
+          </svg>
+        </div>
+        <span>상점</span>
+      </a>
+
+      <a href="mypage.jsp" class="nav-item active">
+        <div class="icon-box">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M5 21C5 17 8 14 12 14C16 14 19 17 19 21"></path>
+          </svg>
+        </div>
+        <span>마이페이지</span>
+      </a>
+    </nav>
+  </div>
+
+  <script>
+  const M_NUM = <%= loginUser.getmNum() %>;
+    const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
+    const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
+    const PROFILE_SETTING_KEY = `BGS_PROFILE_SETTING_${M_NUM}`;
+    const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
+    const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
+
+    const ITEM_LIST = [
+      { ITEM_NUM: 1, ITEM_TYPE: "TITLE", ITEM_ICON: "rookie", ITEM_NAME: "견습 기사" },
+      { ITEM_NUM: 2, ITEM_TYPE: "TITLE", ITEM_ICON: "sword", ITEM_NAME: "초심의 검" },
+      { ITEM_NUM: 3, ITEM_TYPE: "TITLE", ITEM_ICON: "stance", ITEM_NAME: "고요한 중단" },
+      { ITEM_NUM: 4, ITEM_TYPE: "TITLE", ITEM_ICON: "flame", ITEM_NAME: "한 판 더" },
+      { ITEM_NUM: 5, ITEM_TYPE: "PROFILE", ITEM_ICON: "armor", ITEM_NAME: "청록 호구" },
+      { ITEM_NUM: 6, ITEM_TYPE: "PROFILE", ITEM_ICON: "shadow", ITEM_NAME: "목검 그림자" }
+    ];
+
+    const DEFAULT_PROFILE_SETTING = {
+      TITLE_ITEM_NUM: 2,
+      PROFILE_ITEM_NUM: 0
+    };
+
+    const DEFAULT_APP_SETTING = {
+      DARK_MODE: false,
+      TRAIN_NOTICE: false,
+      TRAIN_DIVISION: "1",
+      DIFFICULTY: "k2"
+    };
+
+    const DIFFICULTY_OPTIONS = {
+      "1": [
+        { value: "k1", label: "1급" },
+        { value: "k2", label: "2급" },
+        { value: "k3", label: "3급" },
+        { value: "k4", label: "4급" },
+        { value: "k5", label: "5급" },
+        { value: "k6", label: "6급" },
+        { value: "k7", label: "7급" },
+        { value: "k8", label: "8급" },
+        { value: "k9", label: "9급" },
+        { value: "k10", label: "10급" }
+      ],
+      "2": [
+        { value: "l_beginner", label: "초급" },
+        { value: "l_middle", label: "중급" },
+        { value: "l_advanced", label: "고급" }
+      ]
+    };
+
+    function getMemberPoint() {
+      return Number(localStorage.getItem(POINT_STORAGE_KEY)) || 0;
+    }
+
+    function getMemberItems() {
+      const savedItems = localStorage.getItem(ITEM_STORAGE_KEY);
+
+      if (!savedItems) {
+        return [];
+      }
+
+      try {
+        return JSON.parse(savedItems);
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function getTrainingHistory() {
+      const savedHistory = localStorage.getItem(TRAIN_HISTORY_KEY);
+
+      if (!savedHistory) {
+        return [];
+      }
+
+      try {
+        return JSON.parse(savedHistory);
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function loadJson(key, fallback) {
+      const savedValue = localStorage.getItem(key);
+
+      if (!savedValue) {
+        return { ...fallback };
+      }
+
+      try {
+        return { ...fallback, ...JSON.parse(savedValue) };
+      } catch (error) {
+        return { ...fallback };
+      }
+    }
+
+    function saveJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function getAvatarIcon(iconName) {
+      if (iconName === "armor") {
+        return `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 5H17L19 9V17C19 19.2 16 21 12 21C8 21 5 19.2 5 17V9L7 5Z"></path>
+            <path d="M8 10H16"></path>
+            <path d="M9 14H15"></path>
+            <path d="M12 5V21"></path>
+          </svg>
+        `;
+      }
+
+      if (iconName === "shadow") {
+        return `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 19L19 5"></path>
+            <path d="M15 5H19V9"></path>
+            <path d="M4 21H13"></path>
+            <path d="M8 17L11 20"></path>
+          </svg>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M5 21C5 17 8 14 12 14C16 14 19 17 19 21"></path>
+        </svg>
+      `;
+    }
+
+    function getOwnedItemsByType(type) {
+      const memberItems = getMemberItems();
+      return ITEM_LIST.filter((item) => item.ITEM_TYPE === type && memberItems.includes(item.ITEM_NUM));
+    }
+
+    function renderProfile() {
+      const profileSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
+      const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
+      const titleItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.TITLE_ITEM_NUM));
+      const profileItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.PROFILE_ITEM_NUM));
+      const difficultyOptions = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
+      const difficultyItem = difficultyOptions.find((item) => item.value === appSetting.DIFFICULTY) || difficultyOptions[0];
+
+      document.getElementById("equippedTitle").innerText = titleItem ? titleItem.ITEM_NAME : "초심의 검";
+     // document.getElementById("memberName").innerText = appSetting.TRAIN_DIVISION === "2" ? "장검 수련생" : "검도 수련생";
+      document.querySelector(".profile-meta").innerText = appSetting.TRAIN_DIVISION === "2"
+        ? `리히테나워 | \${difficultyItem.label}`
+        : `대한검도 | \${difficultyItem.label}`;
+      document.getElementById("profileAvatar").innerHTML = getAvatarIcon(profileItem ? profileItem.ITEM_ICON : "default");
+    }
+
+    function fillDifficultyOptions(appSetting) {
+      const difficultySelect = document.getElementById("difficultySelect");
+      const options = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
+      const hasCurrentValue = options.some((item) => item.value === appSetting.DIFFICULTY);
+
+      if (!hasCurrentValue) {
+        appSetting.DIFFICULTY = options[0].value;
+        saveJson(APP_SETTING_KEY, appSetting);
+      }
+
+      difficultySelect.innerHTML = options.map((item) => `
+        <option value="\${item.value}" \${appSetting.DIFFICULTY === item.value ? "selected" : ""}>\${item.label}</option>
+      `).join("");
+    }
+
+    function renderTrainingSettings() {
+      const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
+      const trainingDivisionSelect = document.getElementById("trainingDivisionSelect");
+      const difficultySelect = document.getElementById("difficultySelect");
+
+      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION;
+      fillDifficultyOptions(appSetting);
+
+      trainingDivisionSelect.addEventListener("change", () => {
+        const nextSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
+        nextSetting.TRAIN_DIVISION = trainingDivisionSelect.value;
+        const options = DIFFICULTY_OPTIONS[nextSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
+        nextSetting.DIFFICULTY = options[0].value;
+        saveJson(APP_SETTING_KEY, nextSetting);
+        fillDifficultyOptions(nextSetting);
+        renderProfile();
+      });
+
+      difficultySelect.addEventListener("change", () => {
+        const nextSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
+        nextSetting.DIFFICULTY = difficultySelect.value;
+        saveJson(APP_SETTING_KEY, nextSetting);
+        renderProfile();
+      });
+    }
+
+    function renderStats() {
+      const trainingHistory = getTrainingHistory();
+      const trainingDays = new Set(
+        trainingHistory
+          .map((history) => {
+            const trainingDate = history.T_DATE ? new Date(history.T_DATE) : null;
+            return trainingDate && !Number.isNaN(trainingDate.getTime()) ? trainingDate.toISOString().slice(0, 10) : "";
+          })
+          .filter(Boolean)
+      );
+      const completedStages = new Set(
+        trainingHistory
+          .filter((history) => history.DIVISION && history.TRAIN_NUM && history.POSTURE_NUM)
+          .map((history) => {
+            return `\${history.DIVISION}-\${history.TRAIN_NUM}-\${history.POSTURE_NUM}`;
+          })
+      );
+      const accuracyValues = trainingHistory
+        .filter((history) => history.ACCURACY !== null && history.ACCURACY !== undefined && history.ACCURACY !== "")
+        .map((history) => Number(history.ACCURACY))
+        .filter((accuracy) => Number.isFinite(accuracy));
+      const averageAccuracy = accuracyValues.length
+        ? `\${Math.round(accuracyValues.reduce((sum, accuracy) => sum + accuracy, 0) / accuracyValues.length)}%`
+        : "-";
+
+      document.getElementById("memberPoint").innerText = `\${getMemberPoint()}P`;
+      document.getElementById("ownedTitleCount").innerText = getOwnedItemsByType("TITLE").length;
+      document.getElementById("trainingDayCount").innerText = `\${trainingDays.size}일`;
+      document.getElementById("completedStageCount").innerText = `\${completedStages.size}개`;
+      document.getElementById("averageAccuracy").innerText = averageAccuracy;
+    }
+
+    function applyAppSettings() {
+      const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
+      const mobileFrame = document.getElementById("mobileFrame");
+      mobileFrame.classList.toggle("dark-mode", Boolean(appSetting.DARK_MODE));
+    }
+
+    applyAppSettings();
+    renderTrainingSettings();
+    renderProfile();
+    renderStats();
+  </script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>비밀번호 재설정</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Gowun Batang', serif;
+      background-color: #a7bcbb;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mobile-frame {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      min-height: 720px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(145deg, #dce8e5 0%, #bfd1cf 50%, #96aeb0 100%);
+      color: #213638;
+    }
+
+    .reset-page {
+      width: 100%;
+      height: 100%;
+      padding: 70px 28px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .reset-box {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.50);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 28px;
+      padding: 34px 24px 28px;
+      box-shadow: 0 24px 48px rgba(40, 70, 72, 0.18);
+      backdrop-filter: blur(8px);
+      color: #213638;
+    }
+
+    .title {
+      font-size: 30px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #213638;
+      letter-spacing: -1px;
+    }
+
+    .desc {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(33, 54, 56, 0.62);
+      text-align: center;
+      line-height: 1.55;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-group label {
+      display: block;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #213638;
+      letter-spacing: 0.2px;
+    }
+
+    .input-group input {
+      width: 100%;
+      height: 52px;
+      border: 1px solid rgba(255, 255, 255, 0.86);
+      border-radius: 16px;
+      padding: 0 16px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.78);
+      color: #213638;
+      transition: 0.2s;
+    }
+
+    .input-group input::placeholder {
+      color: rgba(33, 54, 56, 0.38);
+    }
+
+    .input-group input:focus {
+      border-color: #d8e87f;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(216, 232, 127, 0.24);
+    }
+
+    .reset-btn {
+      width: 100%;
+      height: 56px;
+      border: none;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgb(7, 11, 29));
+      color: #f2feff;
+      font-family: 'Gowun Batang', serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 14px 28px rgba(126, 132, 73, 0.24);
+      transition: 0.2s;
+    }
+
+    .reset-btn:hover {
+     background: linear-gradient(135deg,rgb(60, 80, 94) 100%);
+      transform: translateY(-1px);
+    }
+
+    .notice {
+      display: none;
+      margin-top: 16px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .notice.error {
+      display: block;
+      background-color: rgba(190, 54, 54, 0.10);
+      color: #9c2b2b;
+      border: 1px solid rgba(190, 54, 54, 0.14);
+    }
+
+    .back-login {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .back-login a {
+      color: rgba(33, 54, 56, 0.68);
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .back-login a:hover {
+      color: #213638;
+      text-decoration: underline;
+    }
+
+    .version {
+      margin-top: 30px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: rgba(33, 54, 56, 0.38);
+      text-align: center;
+    }
+
+    @media (max-width: 390px) {
+      .reset-page {
+        padding: 60px 24px 30px;
+      }
+
+      .reset-box {
+        padding: 32px 22px 26px;
+        border-radius: 26px;
+      }
+
+      .title {
+        font-size: 28px;
+      }
+
+      .input-group input {
+        height: 50px;
+      }
+
+      .reset-btn {
+        height: 54px;
+      }
+    }
+
+    @media (min-width: 431px) {
+      .mobile-frame {
+        height: 860px;
+        max-height: 94vh;
+        min-height: 720px;
+        border-radius: 32px;
+        box-shadow: 0 30px 80px rgba(28, 55, 58, 0.24);
+      }
+    }
+    .mobile-frame.dark-mode {
+      background: linear-gradient(145deg, #182527 0%, #243638 52%, #11191d 100%);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .section-title,
+    .mobile-frame.dark-mode .title,
+    .mobile-frame.dark-mode .page-title,
+    .mobile-frame.dark-mode .card-title,
+    .mobile-frame.dark-mode .posture-name,
+    .mobile-frame.dark-mode .challenge-title,
+    .mobile-frame.dark-mode .item-name,
+    .mobile-frame.dark-mode .form-label,
+    .mobile-frame.dark-mode label {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .subtitle,
+    .mobile-frame.dark-mode .desc,
+    .mobile-frame.dark-mode .visual-desc,
+    .mobile-frame.dark-mode .visual-quote,
+    .mobile-frame.dark-mode .challenge-desc,
+    .mobile-frame.dark-mode .item-desc,
+    .mobile-frame.dark-mode .summary-label,
+    .mobile-frame.dark-mode .status-text,
+    .mobile-frame.dark-mode .section-caption,
+    .mobile-frame.dark-mode .version,
+    .mobile-frame.dark-mode .forgot-link,
+    .mobile-frame.dark-mode .signup-text,
+    .mobile-frame.dark-mode .signup-link,
+    .mobile-frame.dark-mode .back-login a {
+      color: rgba(238, 247, 242, 0.64);
+    }
+
+    .mobile-frame.dark-mode .login-card,
+    .mobile-frame.dark-mode .signup-box,
+    .mobile-frame.dark-mode .summary-item,
+    .mobile-frame.dark-mode .challenge-card,
+    .mobile-frame.dark-mode .training-card,
+    .mobile-frame.dark-mode .training-panel,
+    .mobile-frame.dark-mode .bottom-nav,
+    .mobile-frame.dark-mode .form-input,
+    .mobile-frame.dark-mode .input-group input,
+    .mobile-frame.dark-mode .input-group select {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .nav-item {
+      color: rgba(238, 247, 242, 0.58);
+    }
+
+    .mobile-frame.dark-mode .nav-icon {
+      stroke: rgba(238, 247, 242, 0.58);
+    }
+
+    .mobile-frame.dark-mode .nav-item.active {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .nav-item.active .nav-icon {
+      stroke: #eef7f2;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="mobile-frame">
+
+    <div class="reset-page">
+
+      <div class="reset-box">
+        <h1 class="title">비밀번호 재설정</h1>
+
+        <p class="desc">
+          새로 사용할 비밀번호를 입력해주세요.
+        </p>
+
+        <form>
+          <div class="input-group">
+            <label for="PW">새 비밀번호</label>
+            <input type="password" id="PW" name="PW" placeholder="새 비밀번호를 입력하세요" required>
+          </div>
+
+          <div class="input-group">
+            <label for="PW_CONFIRM">새 비밀번호 확인</label>
+            <input type="password" id="PW_CONFIRM" placeholder="비밀번호를 다시 입력하세요" required>
+          </div>
+
+          <button type="button" class="reset-btn" onclick="resetPassword()">
+            비밀번호 재설정
+          </button>
+
+          <div id="notice" class="notice"></div>
+        </form>
+
+        <div class="back-login">
+          <a href="login.jsp">로그인 화면으로 돌아가기</a>
+        </div>
+      </div>
+
+      <div class="version">v1.0.0</div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function resetPassword() {
+      const PW = document.getElementById("PW").value.trim();
+      const PW_CONFIRM = document.getElementById("PW_CONFIRM").value.trim();
+      const notice = document.getElementById("notice");
+
+      if (PW === "" || PW_CONFIRM === "") {
+        notice.className = "notice error";
+        notice.innerText = "새 비밀번호와 비밀번호 확인을 모두 입력해주세요.";
+        return;
+      }
+
+      if (PW.length < 4) {
+        notice.className = "notice error";
+        notice.innerText = "비밀번호는 4자 이상으로 입력해주세요.";
+        return;
+      }
+
+      if (PW !== PW_CONFIRM) {
+        notice.className = "notice error";
+        notice.innerText = "비밀번호가 서로 일치하지 않습니다.";
+        return;
+      }
+
+      alert("비밀번호가 재설정되었습니다. 로그인 화면으로 이동합니다.");
+      location.href = "login.jsp";
+    }
+  </script>
+  <script>
+    (function applyDarkMode() {
+      try {
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
+        if (appSetting.DARK_MODE) {
+          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+        }
+      } catch (error) {}
+    })();
+  </script>
+</body>
+</html>

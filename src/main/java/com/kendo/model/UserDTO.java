@@ -26,6 +26,7 @@ public class UserDTO {
     // 회원 칭호
     private String goods;
 
+    
     // 회원 나이
     private int age;
 

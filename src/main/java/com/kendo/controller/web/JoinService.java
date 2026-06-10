@@ -29,15 +29,15 @@ public class JoinService extends HttpServlet {
         String id = request.getParameter("id");
         String pw = request.getParameter("pw");
         String name = request.getParameter("name");
-        String goods = request.getParameter("goods");
+        String goods = " ";
         String gender = request.getParameter("gender");
 
         // 숫자는 문자열로 넘어오므로 int로 변환한다.
         int age = Integer.parseInt(request.getParameter("age"));
 
         // 회원가입 기본값
-        int kGrade = 1;
-        int lGrade = 1;
+        int kGrade = 0;
+        int lGrade = 0;
         int adminM = 0;
         int point = 0;
 

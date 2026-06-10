@@ -116,4 +116,30 @@ public class UserDAO {
 
         return list;
     }
+    
+    /*
+     * 비밀번호 재설정
+     */
+    public int resetPassword(UserDTO dto) {
+
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+            result = sqlSession.update("UserMapper.resetPassword", dto);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
+    
 }

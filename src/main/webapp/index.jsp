@@ -1,23 +1,211 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>방구석 검도</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>방구석 검도</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Gowun Batang', serif;
+      background-color: #a7bcbb;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mobile-frame {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      min-height: 720px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(145deg, #dce8e5 0%, #bfd1cf 50%, #96aeb0 100%);
+      color: #213638;
+    }
+
+    .home-page {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 64px 26px 30px;
+    }
+
+    .main-content {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transform: translateY(-8px);
+    }
+
+    .logo-frame {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: 0 20px 44px rgba(40, 70, 72, 0.20);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+    }
+
+    .logo {
+    width: 120%;
+    height: 120%;
+    object-fit: cover;
+    }
+
+    .title {
+      margin-top: 30px;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: black;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      color: rgba(33, 54, 56, 0.68);
+    }
+
+    .tag {
+      margin-top: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background-color: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      color: #35595c;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .bottom-area {
+      width: 100%;
+      text-align: center;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .start-btn {
+      width: 100%;
+      height: 58px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgb(7, 11, 29));
+      color: #f2feff;
+      font-family: 'Gowun Batang', serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(163, 212, 245, 0.3);
+      transition: 0.2s;
+    }
+
+    .start-btn:hover {
+      background: linear-gradient(135deg,rgb(60, 80, 94) 100%);
+      transform: translateY(-1px);
+    }
+
+    .version {
+      margin-top: 18px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: rgba(33, 54, 56, 0.46);
+    }
+
+    @media (max-width: 390px) {
+      .home-page {
+        padding: 58px 24px 28px;
+      }
+
+      .logo-frame {
+        width: 200px;
+        height: 200px;
+      }
+
+      .title {
+        font-size: 33px;
+      }
+
+      .subtitle {
+        font-size: 11px;
+      }
+
+      .start-btn {
+        height: 56px;
+      }
+    }
+
+    @media (min-width: 431px) {
+      .mobile-frame {
+        height: 860px;
+        max-height: 94vh;
+        min-height: 720px;
+        border-radius: 32px;
+        box-shadow: 0 30px 80px rgba(28, 55, 58, 0.24);
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <h1>방구석 검도</h1>
-    <p>AI 포즈추정 기반 검술 자세 교정 서비스</p>
+  <div class="mobile-frame">
+    <div class="home-page">
 
-    <a href="join.jsp">회원가입</a><br>
-    <a href="login.jsp">로그인</a><br>
-    <a href="pose.jsp">자세 분석</a>
-    <a href="pose.jsp">test</a>
-    <a href="pose.jsp">test</a>
-    <a href="pose.jsp">test</a>
-    <a href="pose.jsp">test</a>
+      <div class="main-content">
+        <div class="logo-frame">
+        <img src="Project_Logo/logo_02.png" alt="방구석 검도 로고" class="logo">
+        </div>
+
+    	<div class="title">방구석 검도</div>
+		<div class="subtitle">대한검도 · 리히테나워</div>
+
+        <div class="tag">AI POSTURE TRAINING</div>
+      </div>
+
+      <div class="bottom-area">
+     <button class="start-btn" onclick="location.href='login.jsp'">
+  			수련 시작하기
+	</button>
+
+        <div class="version">v1.0.0</div>
+      </div>
+
+    </div>
+  </div>
 
 </body>
 </html>
-	
