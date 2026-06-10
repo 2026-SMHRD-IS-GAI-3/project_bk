@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper">
+
+    <!-- 회원가입 -->
+    <insert id="join" parameterType="UserDTO">
+        INSERT INTO MEMBER
+        (
+            M_NUM,
+            ID,
+            PW,
+            NAME,
+            GOODS,
+            AGE,
+            GENDER,
+            K_GRADE,
+            L_GRADE,
+            ADMIN_M,
+            POINT,
+            J_DATE
+        )
+        VALUES
+        (
+            MEMBER_SEQ.NEXTVAL,
+            #{id},
+            #{pw},
+            #{name},
+            #{goods},
+            #{age},
+            #{gender},
+            #{kGrade},
+            #{lGrade},
+            #{adminM},
+            #{point},
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 로그인 -->
+    <select id="login" parameterType="UserDTO" resultType="UserDTO">
+        SELECT
+            M_NUM AS mNum,
+            ID AS id,
+            PW AS pw,
+            NAME AS name,
+            GOODS AS goods,
+            AGE AS age,
+            GENDER AS gender,
+            K_GRADE AS kGrade,
+            L_GRADE AS lGrade,
+            ADMIN_M AS adminM,
+            POINT AS point,
+            J_DATE AS jDate
+        FROM MEMBER
+        WHERE ID = #{id}
+        AND PW = #{pw}
+    </select>
+
+    <!-- 아이디 중복 체크 -->
+    <select id="checkId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM MEMBER
+        WHERE ID = #{id}
+    </select>
+
+    <!-- 회원번호로 회원 조회 -->
+    <select id="selectOne" parameterType="int" resultType="UserDTO">
+        SELECT
+            M_NUM AS mNum,
+            ID AS id,
+            PW AS pw,
+            NAME AS name,
+            GOODS AS goods,
+            AGE AS age,
+            GENDER AS gender,
+            K_GRADE AS kGrade,
+            L_GRADE AS lGrade,
+            ADMIN_M AS adminM,
+            POINT AS point,
+            J_DATE AS jDate
+        FROM MEMBER
+        WHERE M_NUM = #{mNum}
+    </select>
+
+</mapper>
