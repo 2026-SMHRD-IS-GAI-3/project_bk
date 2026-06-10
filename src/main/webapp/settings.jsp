@@ -483,10 +483,9 @@ if(loginUser == null){
               <div class="setting-info">
                 <h3 class="setting-name">다크모드</h3>
                 <p class="setting-desc">화면을 어두운 톤으로 전환합니다.</p>
-              </div>
+              </div>             
             </div>
-
-</form>
+				<button type="button" class="toggle" data-setting="DARK_MODE" aria-label="다크모드"></button>
           </article>
 
           <article class="setting-card">
@@ -633,19 +632,22 @@ if(loginUser == null){
       const profileItems = getOwnedItemsByType("PROFILE");
 
       titleSelect.innerHTML = [
-        { ITEM_NUM: 0, ITEM_NAME: "기본 칭호" },
-        ...titleItems
-      ].map((item) => `
-        <option value="\${item.ITEM_NUM}" \${Number(profileSetting.TITLE_ITEM_NUM) === item.ITEM_NUM ? "selected" : ""}>\${item.ITEM_NAME}</option>
-      `).join("");
+    	  { ITEM_NUM: 0, ITEM_NAME: "기본 칭호" },
+    	  ...titleItems
+    	].map((item) =>
+    	  '<option value="' + item.ITEM_NUM + '" ' +
+    	  (Number(profileSetting.TITLE_ITEM_NUM) === item.ITEM_NUM ? 'selected' : '') +
+    	  '>' + item.ITEM_NAME + '</option>'
+    	).join("");
 
       profileSelect.innerHTML = [
-        { ITEM_NUM: 0, ITEM_NAME: "기본 프로필" },
-        ...profileItems
-      ].map((item) => `
-        <option value="\${item.ITEM_NUM}" \${Number(profileSetting.PROFILE_ITEM_NUM) === item.ITEM_NUM ? "selected" : ""}>\${item.ITEM_NAME}</option>
-      `).join("");
-
+    	  { ITEM_NUM: 0, ITEM_NAME: "기본 프로필" },
+    	  ...profileItems
+    	].map((item) =>
+    	  '<option value="' + item.ITEM_NUM + '" ' +
+    	  (Number(profileSetting.PROFILE_ITEM_NUM) === item.ITEM_NUM ? 'selected' : '') +
+    	  '>' + item.ITEM_NAME + '</option>'
+    	).join("");
       titleSelect.addEventListener("change", () => {
         const nextSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
         nextSetting.TITLE_ITEM_NUM = Number(titleSelect.value);

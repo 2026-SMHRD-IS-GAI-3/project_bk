@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -509,11 +510,11 @@
       const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
       const appSetting = loadAppSetting();
 
-      difficultySelect.innerHTML = options.map((item) => `
-        <option value="\${item.value}" \${appSetting.DIFFICULTY === item.value ? "selected" : ""}>\${item.label}</option>
-      `).join("");
-    }
-
+      difficultySelect.innerHTML = options.map((item) =>
+      '<option value="' + item.value + '" ' +
+      (appSetting.DIFFICULTY === item.value ? 'selected' : '') +
+      '>' + item.label + '</option>'
+    ).join('');
     function showInitialSetup() {
       const appSetting = loadAppSetting();
       const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
