@@ -316,6 +316,22 @@
       background-color: #ffffff;
     }
 
+    .setup-link-btn {
+      min-width: 122px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      padding: 0 12px;
+      background-color: #213638;
+      color: #f6fbf8;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     .logout-btn {
       width: 100%;
       height: 50px;
@@ -363,6 +379,11 @@
     .mobile-frame.dark-mode .select-control {
       background-color: rgba(255, 255, 255, 0.14);
       color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .setup-link-btn {
+      background-color: #d8e87f;
+      color: #213638;
     }
 
     .bottom-nav {
@@ -458,6 +479,12 @@
         width: 112px;
       }
 
+      .setup-link-btn {
+        min-width: 112px;
+        padding: 0 10px;
+        font-size: 10px;
+      }
+
       .stat-grid {
         gap: 7px;
       }
@@ -535,7 +562,7 @@
           </div>
           <div class="stat-item">
             <span class="stat-value" id="ownedTitleCount">0</span>
-            <span class="stat-label">보유 칭호</span>
+            <span class="stat-label">나의 아이템</span>
           </div>
         </div>
       </section>
@@ -552,32 +579,11 @@
               </svg>
             </span>
             <div class="setting-info">
-              <h3 class="setting-name">훈련종목 재설정</h3>
-              <p class="setting-desc">기본으로 볼 훈련 종목을 선택합니다.</p>
+              <h3 class="setting-name">수련 난이도 재설정</h3>
+              <p class="setting-desc">처음 설정 화면에서 훈련 종목과 난이도를 다시 선택합니다.</p>
             </div>
           </div>
-          <select class="select-control" id="trainingDivisionSelect" aria-label="훈련 종목 선택">
-            <option value="1">대한검도</option>
-            <option value="2">리히테나워</option>
-          </select>
-        </article>
-
-        <article class="setting-card">
-          <div class="setting-left">
-            <span class="setting-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="8" r="4"></circle>
-                <path d="M9.5 11.2L8 20L12 17.6L16 20L14.5 11.2"></path>
-                <path d="M10.4 8H13.6"></path>
-                <path d="M12 6.4V9.6"></path>
-              </svg>
-            </span>
-            <div class="setting-info">
-              <h3 class="setting-name">급수/난이도 재설정</h3>
-              <p class="setting-desc">선택한 훈련 종목에 맞춰 조정합니다.</p>
-            </div>
-          </div>
-          <select class="select-control" id="difficultySelect" aria-label="급수 난이도 선택"></select>
+          <button type="button" class="setup-link-btn" onclick="goTrainingSetup()">재설정</button>
         </article>
       </section>
 
@@ -825,45 +831,8 @@
       document.getElementById("profileAvatar").innerHTML = getAvatarIcon(profileItem ? profileItem.ITEM_ICON : "default");
     }
 
-    function fillDifficultyOptions(appSetting) {
-      const difficultySelect = document.getElementById("difficultySelect");
-      const options = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-      const hasCurrentValue = options.some((item) => item.value === appSetting.DIFFICULTY);
-
-      if (!hasCurrentValue) {
-        appSetting.DIFFICULTY = options[0].value;
-        saveJson(APP_SETTING_KEY, appSetting);
-      }
-
-      difficultySelect.innerHTML = options.map((item) => `
-        <option value="${item.value}" ${appSetting.DIFFICULTY === item.value ? "selected" : ""}>${item.label}</option>
-      `).join("");
-    }
-
-    function renderTrainingSettings() {
-      const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-      const trainingDivisionSelect = document.getElementById("trainingDivisionSelect");
-      const difficultySelect = document.getElementById("difficultySelect");
-
-      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION;
-      fillDifficultyOptions(appSetting);
-
-      trainingDivisionSelect.addEventListener("change", () => {
-        const nextSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-        nextSetting.TRAIN_DIVISION = trainingDivisionSelect.value;
-        const options = DIFFICULTY_OPTIONS[nextSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-        nextSetting.DIFFICULTY = options[0].value;
-        saveJson(APP_SETTING_KEY, nextSetting);
-        fillDifficultyOptions(nextSetting);
-        renderProfile();
-      });
-
-      difficultySelect.addEventListener("change", () => {
-        const nextSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-        nextSetting.DIFFICULTY = difficultySelect.value;
-        saveJson(APP_SETTING_KEY, nextSetting);
-        renderProfile();
-      });
+    function goTrainingSetup() {
+      location.href = "login.html?setup=training&redirect=mypage.html";
     }
 
     function renderStats() {
@@ -905,7 +874,6 @@
     }
 
     applyAppSettings();
-    renderTrainingSettings();
     renderProfile();
     renderStats();
   </script>

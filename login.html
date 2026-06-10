@@ -431,7 +431,7 @@
           </div>
 
           <button type="submit" class="login-btn">
-           설정 저장하고 시작하기
+           설정 저장하기
           </button>
         </form>
 
@@ -454,12 +454,14 @@
 
   <script>
     const APP_SETTING_KEY = "BGS_APP_SETTING_1";
+    const INITIAL_SETUP_VERSION = 1;
     const DEFAULT_APP_SETTING = {
       DARK_MODE: false,
       TRAIN_NOTICE: false,
       TRAIN_DIVISION: "1",
       DIFFICULTY: "k2",
-      INITIAL_SETUP_DONE: false
+      INITIAL_SETUP_DONE: false,
+      INITIAL_SETUP_VERSION: 0
     };
 
     const DIFFICULTY_OPTIONS = {
@@ -504,20 +506,28 @@
       const trainingDivision = document.getElementById("initialTrainingDivision").value;
       const difficultySelect = document.getElementById("initialDifficulty");
       const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
+      const appSetting = loadAppSetting();
 
       difficultySelect.innerHTML = options.map((item) => `
-        <option value="${item.value}">${item.label}</option>
+        <option value="${item.value}" ${appSetting.DIFFICULTY === item.value ? "selected" : ""}>${item.label}</option>
       `).join("");
     }
 
     function showInitialSetup() {
+      const appSetting = loadAppSetting();
+      const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
+      const params = new URLSearchParams(location.search);
+
       document.getElementById("loginForm").classList.add("hidden");
       document.getElementById("forgotLink").classList.add("hidden");
       document.getElementById("signupArea").classList.add("hidden");
       document.getElementById("initialSetupForm").classList.add("active");
       document.querySelector(".login-card").classList.add("setup-mode");
       document.querySelector(".title").innerText = "수련 설정";
-      document.querySelector(".subtitle").innerText = "처음 시작할 훈련 종목과 난이도를 선택하세요";
+      document.querySelector(".subtitle").innerText = params.get("setup") === "training"
+        ? "훈련 종목과 난이도를 선택하세요"
+        : "처음 시작할 훈련 종목과 난이도를 선택하세요";
+      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION || "1";
       renderInitialDifficulty();
     }
 
@@ -550,7 +560,7 @@
 
       const appSetting = loadAppSetting();
 
-      if (!appSetting.INITIAL_SETUP_DONE) {
+      if (!appSetting.INITIAL_SETUP_DONE || appSetting.INITIAL_SETUP_VERSION !== INITIAL_SETUP_VERSION) {
         showInitialSetup();
         return false;
       }
@@ -569,13 +579,23 @@
       appSetting.TRAIN_DIVISION = trainingDivision;
       appSetting.DIFFICULTY = difficulty;
       appSetting.INITIAL_SETUP_DONE = true;
+      appSetting.INITIAL_SETUP_VERSION = INITIAL_SETUP_VERSION;
       saveAppSetting(appSetting);
 
-      location.href = "main.html";
+      const params = new URLSearchParams(location.search);
+      location.href = params.get("redirect") || "main.html";
       return false;
     }
 
     document.getElementById("initialTrainingDivision").addEventListener("change", renderInitialDifficulty);
+
+    (function openSetupFromQuery() {
+      const params = new URLSearchParams(location.search);
+
+      if (params.get("setup") === "training") {
+        showInitialSetup();
+      }
+    })();
   </script>
   <script>
     (function applyDarkMode() {
