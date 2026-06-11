@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" %>
 <%@ page import="com.kendo.model.UserDTO" %>
 
 <%
-UserDTO loginUser =
-    (UserDTO)session.getAttribute("loginUser");
+UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -109,6 +109,48 @@ UserDTO loginUser =
 
     .setup-form.active {
       display: block;
+    }
+
+    .setup-card-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .setup-card {
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.54);
+      box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
+      padding: 15px 14px;
+    }
+
+    .setup-card-title {
+      display: block;
+      margin-bottom: 9px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: #213638;
+    }
+
+    .setup-save-card {
+      width: 100%;
+      min-height: 56px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgb(7, 11, 29);
+      color: #f2feff;
+      font-family: 'Gowun Batang', serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(126, 132, 73, 0.24);
+      transition: 0.2s;
+    }
+
+    .setup-save-card:hover {
+      background-color: rgb(60, 80, 94);
+      transform: translateY(-1px);
     }
 
     .form-group {
@@ -350,6 +392,16 @@ UserDTO loginUser =
       color: #eef7f2;
     }
 
+    .mobile-frame.dark-mode .setup-card {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .mobile-frame.dark-mode .setup-save-card {
+      background-color: #d8e87f;
+      color: #213638;
+    }
+
     .mobile-frame.dark-mode .nav-item {
       color: rgba(238, 247, 242, 0.58);
     }
@@ -382,7 +434,10 @@ UserDTO loginUser =
 
       <div class="login-card">
 
-       <form class="login-form" id="loginForm" action="LoginService" method="post">
+        <form class="login-form"
+      id="loginForm"
+      action="LoginService"
+      method="post">
 
           <div class="form-group">
             <label class="form-label" for="ID">아이디</label>
@@ -423,24 +478,31 @@ UserDTO loginUser =
 
         </form>
 
-<form class="setup-form" id="initialSetupForm" action="ProfileSetService" method="post">          <div class="form-group">
-            <label class="form-label" for="initialTrainingDivision">훈련 종목</label>
-            <select class="form-input" id="initialTrainingDivision" name="initialTrainingDivision">
-              <option value="1">대한검도</option>
-              <option value="2">리히테나워</option>
-            </select>
+      <form class="setup-form"
+      id="initialSetupForm"
+      action="ProfileSetService"
+      method="post">
+          <div class="setup-card-list">
+            <article class="setup-card">
+              <label class="setup-card-title" for="kendoDifficultySelect">대한검도 현재 난이도</label>
+     	 <select class="form-input" id="kendoDifficultySelect" name="kGrade"></select>
+            </article>
+
+            <article class="setup-card">
+              <label class="setup-card-title" for="liechtenauerDifficultySelect">리히테나워 현재 난이도</label>
+         <select class="form-input" id="liechtenauerDifficultySelect" name="lGrade"></select>
+            </article>
+			<input type="hidden"
+       id="initialTrainingDivision"
+       name="initialTrainingDivision"
+       value="both">
+            <button type="submit" class="setup-save-card">
+             설정 저장하기
+            </button>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="initialDifficulty">현재 나의 난이도</label>
-<select class="form-input" id="initialDifficulty" name="kGrade"></select>          </div>
-
-          <button type="submit" class="login-btn">
-           설정 저장하기
-          </button>
         </form>
 
-       <a href="findPassword.jsp" class="forgot-link" id="forgotLink">
+        <a href="findPassword.jsp" class="forgot-link" id="forgotLink">
           비밀번호를 잊으셨나요?
         </a>
 
@@ -448,7 +510,7 @@ UserDTO loginUser =
 
       <div class="signup-area" id="signupArea">
         <span class="signup-text">아직 계정이 없으신가요? </span>
-       <a href="join.jsp"  class="signup-link">회원가입</a>
+        <a href="join.jsp" class="signup-link">회원가입</a>
       </div>
 
       <div class="version">v1.0.0</div>
@@ -458,141 +520,87 @@ UserDTO loginUser =
   </div>
 
   <script>
-    const APP_SETTING_KEY = "BGS_APP_SETTING_1";
-    const INITIAL_SETUP_VERSION = 1;
-    const DEFAULT_APP_SETTING = {
-      DARK_MODE: false,
-      TRAIN_NOTICE: false,
-      TRAIN_DIVISION: "1",
-      DIFFICULTY: "k2",
-      INITIAL_SETUP_DONE: false,
-      INITIAL_SETUP_VERSION: 0
-    };
+  const DIFFICULTY_OPTIONS = {
+		  "1": [
+		    { value: "1", label: "1급" },
+		    { value: "2", label: "2급" },
+		    { value: "3", label: "3급" },
+		    { value: "4", label: "4급" },
+		    { value: "5", label: "5급" },
+		    { value: "6", label: "6급" },
+		    { value: "7", label: "7급" },
+		    { value: "8", label: "8급" },
+		    { value: "9", label: "9급" },
+		    { value: "10", label: "10급" }
+		  ],
+		  "2": [
+		    { value: "1", label: "초급" },
+		    { value: "2", label: "중급" },
+		    { value: "3", label: "고급" }
+		  ]
+		};
 
-    const DIFFICULTY_OPTIONS = {
-      "1": [
-        { value: "k1", label: "1급" },
-        { value: "k2", label: "2급" },
-        { value: "k3", label: "3급" },
-        { value: "k4", label: "4급" },
-        { value: "k5", label: "5급" },
-        { value: "k6", label: "6급" },
-        { value: "k7", label: "7급" },
-        { value: "k8", label: "8급" },
-        { value: "k9", label: "9급" },
-        { value: "k10", label: "10급" }
-      ],
-      "2": [
-        { value: "l_beginner", label: "초급" },
-        { value: "l_middle", label: "중급" },
-        { value: "l_advanced", label: "고급" }
-      ]
-    };
+		function renderDifficultySelect(selectId, division) {
+		  const difficultySelect = document.getElementById(selectId);
+		  const options = DIFFICULTY_OPTIONS[division];
 
-    function loadAppSetting() {
-      const savedValue = localStorage.getItem(APP_SETTING_KEY);
+		  difficultySelect.innerHTML = options.map(function(item) {
+		    return '<option value="' + item.value + '">' + item.label + '</option>';
+		  }).join('');
+		}
 
-      if (!savedValue) {
-        return { ...DEFAULT_APP_SETTING };
-      }
+		function renderInitialSetupOptions() {
+		  renderDifficultySelect("kendoDifficultySelect", "1");
+		  renderDifficultySelect("liechtenauerDifficultySelect", "2");
+		}
 
-      try {
-        return { ...DEFAULT_APP_SETTING, ...JSON.parse(savedValue) };
-      } catch (error) {
-        return { ...DEFAULT_APP_SETTING };
-      }
-    }
+		function showInitialSetup() {
+		  const params = new URLSearchParams(location.search);
 
-    function saveAppSetting(appSetting) {
-      localStorage.setItem(APP_SETTING_KEY, JSON.stringify(appSetting));
-    }
+		  document.getElementById("loginForm").classList.add("hidden");
+		  document.getElementById("forgotLink").classList.add("hidden");
+		  document.getElementById("signupArea").classList.add("hidden");
+		  document.getElementById("initialSetupForm").classList.add("active");
+		  document.querySelector(".login-card").classList.add("setup-mode");
+		  document.querySelector(".title").innerText = "수련 설정";
+		  document.querySelector(".subtitle").innerText =
+		    params.get("setup") === "training"
+		      ? "종목별 현재 난이도를 선택하세요"
+		      : "처음 시작할 종목별 난이도를 선택하세요";
 
-    function renderInitialDifficulty() {
-    	  const trainingDivision = document.getElementById("initialTrainingDivision").value;
-    	  const difficultySelect = document.getElementById("initialDifficulty");
-    	  const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
+		  renderInitialSetupOptions();
 
-    	  difficultySelect.innerHTML = options.map((item, index) =>
-    	    '<option value="' + (index + 1) + '">' + item.label + '</option>'
-    	  ).join('');
-    	}
+		  document.getElementById("kendoDifficultySelect").value =
+		    "<%= loginUser != null ? loginUser.getkGrade() : 1 %>";
 
-    function showInitialSetup() {
-    	  const params = new URLSearchParams(location.search);
-    	  const appSetting = loadAppSetting();
-    	  const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
+		  document.getElementById("liechtenauerDifficultySelect").value =
+		    "<%= loginUser != null ? loginUser.getlGrade() : 1 %>";
+		  }
 
-    	  document.getElementById("loginForm").classList.add("hidden");
-    	  document.getElementById("forgotLink").classList.add("hidden");
-    	  document.getElementById("signupArea").classList.add("hidden");
-    	  document.getElementById("initialSetupForm").classList.add("active");
-    	  document.querySelector(".login-card").classList.add("setup-mode");
-    	  document.querySelector(".title").innerText = "수련 설정";
-    	  document.querySelector(".subtitle").innerText =
-    	    params.get("setup") === "training"
-    	      ? "훈련 종목과 난이도를 선택하세요"
-    	      : "처음 시작할 훈련 종목과 난이도를 선택하세요";
+		function togglePassword() {
+		  const PWInput = document.getElementById("PW");
+		  const eyeIcon = document.getElementById("eye-icon");
 
-    	  const paramsDivision = params.get("division");
-    	  const paramsGrade = params.get("grade");
+		  if (PWInput.type === "password") {
+		    PWInput.type = "text";
+		    eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+		  } else {
+		    PWInput.type = "password";
+		    eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+		  }
+		}
 
-    	  trainingDivisionSelect.value = paramsDivision || appSetting.TRAIN_DIVISION || "1";
-    	  renderInitialDifficulty();
+		(function openSetupFromQuery() {
+		  const params = new URLSearchParams(location.search);
 
-    	  if (paramsGrade) {
-    	    document.getElementById("initialDifficulty").value = paramsGrade;
-    	  }
-   		 }
-  
-
-    function togglePassword() {
-      const PWInput = document.getElementById('PW');
-      const eyeIcon = document.getElementById('eye-icon');
-      
-      if (PWInput.type === 'password') {
-        PWInput.type = 'text';
-
-        eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
-
-      } else {
-        PWInput.type = 'password';
-
-        eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
-      }
-    }
+		  if (params.get("setup") === "training") {
+		    showInitialSetup();
+		  }
+		})();
 
 
 
-    function saveInitialSetup(event) {
-      event.preventDefault();
 
-      const trainingDivision = document.getElementById("initialTrainingDivision").value;
-      const difficulty = document.getElementById("initialDifficulty").value;
-      const appSetting = loadAppSetting();
-
-      appSetting.TRAIN_DIVISION = trainingDivision;
-      appSetting.DIFFICULTY = difficulty;
-      appSetting.INITIAL_SETUP_DONE = true;
-      appSetting.INITIAL_SETUP_VERSION = INITIAL_SETUP_VERSION;
-      saveAppSetting(appSetting);
-
-      const params = new URLSearchParams(location.search);
-      location.href = params.get("redirect") || "main.html";
-      return false;
-    }
-
-    document.getElementById("initialTrainingDivision").addEventListener("change", renderInitialDifficulty);
-
-    (function openSetupFromQuery() {
-    	  const params = new URLSearchParams(location.search);
-
-
-      if (params.get("setup") === "training") {
-        showInitialSetup();
-      }
-    })();
-    
-    
   </script>
   <script>
     (function applyDarkMode() {
@@ -603,12 +611,6 @@ UserDTO loginUser =
         }
       } catch (error) {}
     })();
-    
-
-    
-    
-    
-
   </script>
 </body>
 </html>
