@@ -139,10 +139,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #f6fbf8;
+    }
+
+    .reference-stage {
+      background:
+        radial-gradient(circle at 50% 24%, rgba(211, 231, 111, 0.18), transparent 34%),
+        linear-gradient(135deg, rgba(33, 54, 56, 0.92), rgba(75, 109, 110, 0.82));
+    }
+
+    .camera-stage {
       background:
         linear-gradient(135deg, rgba(33, 54, 56, 0.82), rgba(75, 109, 110, 0.70)),
         url("../Project_Logo/logo_02.png") center/cover;
-      color: #f6fbf8;
     }
 
     .reference-stage::after,
@@ -457,7 +466,7 @@
         <article class="training-panel">
           <div class="panel-header">
             <span>표준 자세</span>
-            <span class="panel-tag" id="FILE_DIV_TEXT">IMAGE / VIDEO</span>
+            <span class="panel-tag" id="FILE_DIV_TEXT">DB CHECK</span>
           </div>
 
           <div class="reference-stage" id="referenceStage">
@@ -471,8 +480,8 @@
                   <path d="M8 13L11 10L13 12L16 8"></path>
                 </svg>
               </div>
-              <p class="reference-title" id="REFERENCE_TITLE">표준 자세 자료</p>
-              <p class="reference-desc" id="REFERENCE_DESC">SM_IMG_VID 테이블의 URL 자료가 연결되면 이 영역에 이미지나 영상이 표시됩니다.</p>
+              <p class="reference-title" id="REFERENCE_TITLE">DB 연결 점검중</p>
+              <p class="reference-desc" id="REFERENCE_DESC">표준 자세 자료는 DB 연결 후 표시됩니다. 현재는 연결 실패 또는 점검중 상태입니다.</p>
             </div>
           </div>
         </article>
@@ -523,15 +532,15 @@
 
   <script>
     const TRAINING_DATA = [
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1, G_NAME: "기본 자세 - 중단세", FILE_DIV: 1, URL: "../Project_Logo/logo_02.png" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 2, G_NAME: "기본 베기 - 정면 베기", FILE_DIV: 1, URL: "../Project_Logo/logo_02.png" },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1, G_NAME: "기본 자세 - 중단세", FILE_DIV: 1, URL: "" },
+      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 2, G_NAME: "기본 베기 - 정면 베기", FILE_DIV: 1, URL: "" },
       { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 3, G_NAME: "발 동작 - 전진/후진", FILE_DIV: 2, URL: "" },
       { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 4, G_NAME: "자세 교정 - 중단세 심화", FILE_DIV: 1, URL: "" },
       { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 5, G_NAME: "연속 베기 - 좌우 베기", FILE_DIV: 2, URL: "" },
       { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 6, G_NAME: "동작 교정 - 베기 분석", FILE_DIV: 2, URL: "" },
       { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 7, G_NAME: "머리치기 - 기본", FILE_DIV: 2, URL: "" },
       { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 8, G_NAME: "머리치기 - 연속", FILE_DIV: 2, URL: "" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 11, G_NAME: "기본 자세 - Vom Tag", FILE_DIV: 1, URL: "../Project_Logo/logo_02.png" },
+      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 11, G_NAME: "기본 자세 - Vom Tag", FILE_DIV: 1, URL: "" },
       { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 12, G_NAME: "기본 자세 - Pflug", FILE_DIV: 1, URL: "" },
       { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 13, G_NAME: "기본 자세 - Ochs", FILE_DIV: 1, URL: "" },
       { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 14, G_NAME: "Oberhau - 기본", FILE_DIV: 2, URL: "" },
@@ -574,22 +583,24 @@
       };
 
       document.getElementById("G_NAME_TEXT").innerText = selectedData.G_NAME || TRAIN_HIS.G_NAME;
-      document.getElementById("FILE_DIV_TEXT").innerText = selectedData.FILE_DIV === 2 ? "VIDEO" : "IMAGE";
-      document.getElementById("REFERENCE_TITLE").innerText = selectedData.G_NAME || TRAIN_HIS.G_NAME;
-
+      document.getElementById("FILE_DIV_TEXT").innerText = selectedData.URL
+        ? (selectedData.FILE_DIV === 2 ? "VIDEO" : "IMAGE")
+        : "DB CHECK";
       const referenceStage = document.getElementById("referenceStage");
       const referenceMedia = document.getElementById("referenceMedia");
 
       if (selectedData.URL) {
         referenceStage.classList.add("has-media");
+        document.getElementById("REFERENCE_TITLE").innerText = selectedData.G_NAME || "표준 자세 자료";
         referenceMedia.innerHTML = selectedData.FILE_DIV === 2
           ? `<video src="${selectedData.URL}" controls playsinline></video>`
           : `<img src="${selectedData.URL}" alt="${selectedData.G_NAME || TRAIN_HIS.G_NAME} 훈련 자료">`;
-        document.getElementById("REFERENCE_DESC").innerText = `URL: ${selectedData.URL}`;
+        document.getElementById("REFERENCE_DESC").innerText = `DB에서 불러온 자료: ${selectedData.URL}`;
       } else {
         referenceStage.classList.remove("has-media");
         referenceMedia.innerHTML = "";
-        document.getElementById("REFERENCE_DESC").innerText = "아직 연결된 훈련 자료가 없습니다. 이미지나 영상 URL을 연결하면 이 영역에 표시됩니다.";
+        document.getElementById("REFERENCE_TITLE").innerText = "DB 연결 점검중";
+        document.getElementById("REFERENCE_DESC").innerText = "표준 자세 자료는 DB 연결 후 표시됩니다. 현재는 연결 실패 또는 점검중 상태입니다.";
       }
     }
 
@@ -675,6 +686,7 @@
           audio: false
         });
         cameraVideo.srcObject = cameraStream;
+        await cameraVideo.play();
         cameraStage.classList.add("camera-on");
       } catch (error) {
         alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
@@ -684,6 +696,14 @@
     function submitPosture() {
       const cameraStage = document.getElementById("cameraStage");
       const cameraVideo = document.getElementById("cameraVideo");
+      const hasActiveCamera = cameraStream
+        && cameraStream.getVideoTracks().some((track) => track.readyState === "live")
+        && cameraVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+
+      if (!hasActiveCamera) {
+        alert("카메라를 켜고 자세를 화면에 맞춘 뒤 제출해주세요.");
+        return;
+      }
 
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
@@ -730,4 +750,3 @@
   </script>
 </body>
 </html>
-
