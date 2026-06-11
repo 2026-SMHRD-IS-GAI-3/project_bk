@@ -403,6 +403,7 @@
     function checkId() {
       const ID = document.getElementById("ID").value.trim();
       const idMessage = document.getElementById("idMessage");
+      idMessage.style.display = "";
 
       if (ID === "") {
         idMessage.className = "message error";
@@ -439,7 +440,8 @@
 
     document.getElementById("ID").addEventListener("input", function() {
       const idMessage = document.getElementById("idMessage");
-      idMessage.style.display = "none";
+      idMessage.style.display = "";
+      idMessage.className = "message";
       idMessage.innerText = "";
     });
   </script>
