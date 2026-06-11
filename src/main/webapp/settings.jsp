@@ -110,7 +110,8 @@
 
     .section-title {
       font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
+      font-size: 17px;
+      line-height: 1.25;
       font-weight: 800;
       color: #213638;
       margin: 22px 0 10px;
@@ -511,7 +512,7 @@
   </div>
 
   <script>
- 	const M_NUM = <%= loginUser.getmNum() %>;
+  	const M_NUM = <%= loginUser.getmNum() %>;
     const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
     const PROFILE_SETTING_KEY = `BGS_PROFILE_SETTING_${M_NUM}`;
     const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
@@ -581,14 +582,12 @@
       const titleItems = getOwnedItemsByType("TITLE");
       const profileItems = getOwnedItemsByType("PROFILE");
 
-      profileSelect.innerHTML = [
-    	  { ITEM_NUM: 0, ITEM_NAME: "기본 프로필" },
-    	  ...profileItems
-    	].map((item) =>
-    	  '<option value="' + item.ITEM_NUM + '" ' +
-    	  (Number(profileSetting.PROFILE_ITEM_NUM) === item.ITEM_NUM ? 'selected' : '') +
-    	  '>' + item.ITEM_NAME + '</option>'
-    	).join("");
+      titleSelect.innerHTML = [
+        { ITEM_NUM: 0, ITEM_NAME: "기본 칭호" },
+        ...titleItems
+      ].map((item) => `
+        <option value="${item.ITEM_NUM}" ${Number(profileSetting.TITLE_ITEM_NUM) === item.ITEM_NUM ? "selected" : ""}>${item.ITEM_NAME}</option>
+      `).join("");
 
       profileSelect.innerHTML = [
         { ITEM_NUM: 0, ITEM_NAME: "기본 프로필" },

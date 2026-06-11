@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+<%@ page import="com.kendo.model.UserDTO" %>
 
+<%
+UserDTO loginUser =
+    (UserDTO)session.getAttribute("loginUser");
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -528,9 +533,17 @@
     	      ? "훈련 종목과 난이도를 선택하세요"
     	      : "처음 시작할 훈련 종목과 난이도를 선택하세요";
 
-    	  trainingDivisionSelect.value = appSetting.TRAIN_DIVISION || "1";
+    	  const paramsDivision = params.get("division");
+    	  const paramsGrade = params.get("grade");
+
+    	  trainingDivisionSelect.value = paramsDivision || appSetting.TRAIN_DIVISION || "1";
     	  renderInitialDifficulty();
-    	}
+
+    	  if (paramsGrade) {
+    	    document.getElementById("initialDifficulty").value = paramsGrade;
+    	  }
+   		 }
+  
 
     function togglePassword() {
       const PWInput = document.getElementById('PW');
@@ -571,12 +584,15 @@
     document.getElementById("initialTrainingDivision").addEventListener("change", renderInitialDifficulty);
 
     (function openSetupFromQuery() {
-      const params = new URLSearchParams(location.search);
+    	  const params = new URLSearchParams(location.search);
+
 
       if (params.get("setup") === "training") {
         showInitialSetup();
       }
     })();
+    
+    
   </script>
   <script>
     (function applyDarkMode() {

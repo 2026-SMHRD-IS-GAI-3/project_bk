@@ -32,15 +32,14 @@ public class ProfileSetService extends HttpServlet {
         String division = request.getParameter("initialTrainingDivision");
         String gradeParam = request.getParameter("kGrade");
 
-        int kGrade = 1;
-        int lGrade = 1;
+        int kGrade = loginUser.getkGrade();
+        int lGrade = loginUser.getlGrade();
 
         if ("1".equals(division)) {
             kGrade = Integer.parseInt(gradeParam);
         } else if ("2".equals(division)) {
             lGrade = Integer.parseInt(gradeParam);
         }
-
         System.out.println("division = " + division);
         System.out.println("gradeParam = " + gradeParam);
         System.out.println("kGrade = " + kGrade);

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -345,7 +345,7 @@
           회원 정보를 입력해주세요.
         </p>
 
-        <form action="JoinService" method="post">
+       <form action="JoinService" method="post">
           <div class="input-group">
             <label for="NAME">이름</label>
             <input type="text" id="NAME" name="name" placeholder="이름을 입력하세요" required>
@@ -353,7 +353,7 @@
 
           <div class="input-group">
             <label for="AGE">나이</label>
-            <input type="number" id="AGE" name="age" placeholder="나이를 입력하세요" required>
+            <input type="number" id="AGE" name="ahe" placeholder="나이를 입력하세요" required>
           </div>
 
           <div class="input-group">
@@ -403,6 +403,7 @@
     function checkId() {
       const ID = document.getElementById("ID").value.trim();
       const idMessage = document.getElementById("idMessage");
+      idMessage.style.display = "";
 
       if (ID === "") {
         idMessage.className = "message error";
@@ -422,7 +423,8 @@
 
     document.getElementById("ID").addEventListener("input", function() {
       const idMessage = document.getElementById("idMessage");
-      idMessage.style.display = "none";
+      idMessage.style.display = "";
+      idMessage.className = "message";
       idMessage.innerText = "";
     });
   </script>

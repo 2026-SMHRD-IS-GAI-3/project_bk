@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
@@ -70,7 +70,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-       url("Project_Logo/logo_02.png") center/cover;
+        url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 20px;
@@ -157,7 +157,8 @@
 
     .section-title {
       font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
+      font-size: 17px;
+      line-height: 1.25;
       font-weight: 800;
       color: #213638;
       margin: 22px 0 10px;
@@ -194,6 +195,16 @@
       justify-content: center;
     }
 
+    .item-card.title-item .item-icon {
+      background-color: #111827;
+      color: #d8e87f;
+    }
+
+    .item-card.profile-item .item-icon {
+      background-color: #1f2933;
+      color: #eef7f2;
+    }
+
     .item-icon svg {
       width: 25px;
       height: 25px;
@@ -213,6 +224,16 @@
       color: rgba(33, 54, 56, 0.62);
       font-size: 9px;
       font-weight: 800;
+    }
+
+    .item-card.title-item .item-kind {
+      background-color: rgba(216, 232, 127, 0.28);
+      color: #60752d;
+    }
+
+    .item-card.profile-item .item-kind {
+      background-color: rgba(31, 41, 51, 0.14);
+      color: #1f2933;
     }
 
     .item-name {
@@ -439,6 +460,26 @@
     .mobile-frame.dark-mode .item-kind {
       background-color: rgba(216, 232, 127, 0.16);
       color: rgba(238, 247, 242, 0.86);
+    }
+
+    .mobile-frame.dark-mode .item-card.title-item .item-icon {
+      background-color: rgba(216, 232, 127, 0.20);
+      color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .item-card.title-item .item-kind {
+      background-color: rgba(216, 232, 127, 0.22);
+      color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .item-card.profile-item .item-icon {
+      background-color: rgba(238, 247, 242, 0.16);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .item-card.profile-item .item-kind {
+      background-color: rgba(238, 247, 242, 0.16);
+      color: #eef7f2;
     }
 
     .mobile-frame.dark-mode .item-desc {
@@ -672,7 +713,7 @@
       const memberItems = getMemberItems();
 
       itemList.innerHTML = ITEM_LIST.map((item) => `
-        <article class="item-card">
+        <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
           <div class="item-icon">${getItemIcon(item.ITEM_ICON)}</div>
           <div>
             <span class="item-kind">${item.ITEM_KIND}</span>
@@ -718,9 +759,7 @@
   <script>
     (function applyDarkMode() {
       try {
-    	  const appSetting = JSON.parse(
-    			  localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}"
-    			);
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
         if (appSetting.DARK_MODE) {
           document.querySelector(".mobile-frame")?.classList.add("dark-mode");
         }

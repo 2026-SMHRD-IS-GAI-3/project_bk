@@ -72,19 +72,29 @@
     }
 
     .profile-panel {
-      min-height: 174px;
+      min-height: 184px;
       border-radius: 8px;
+      border: 1px solid rgba(246, 251, 248, 0.32);
       background:
-        linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-        url("../Project_Logo/logo_02.png") center/cover;
+        linear-gradient(90deg, rgba(12, 22, 26, 0.96) 0%, rgba(24, 43, 45, 0.82) 52%, rgba(24, 43, 45, 0.24) 100%),
+        url("Project_Logo/logo_02.png") right center/cover;
       overflow: hidden;
       position: relative;
-      padding: 20px;
+      padding: 22px 20px;
       color: #f6fbf8;
       display: flex;
       align-items: center;
       margin-bottom: 22px;
-      box-shadow: 0 22px 42px rgba(34, 58, 60, 0.20);
+      box-shadow: 0 24px 44px rgba(34, 58, 60, 0.24);
+      animation: profileSceneIn 560ms ease-out both;
+    }
+
+    .profile-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      pointer-events: none;
     }
 
     .profile-setting-btn {
@@ -94,14 +104,21 @@
       z-index: 2;
       width: 38px;
       height: 38px;
-      border: 1px solid rgba(246, 251, 248, 0.24);
+      border: 1px solid rgba(246, 251, 248, 0.28);
       border-radius: 12px;
-      background-color: rgba(246, 251, 248, 0.14);
+      background-color: rgba(246, 251, 248, 0.12);
       color: #f6fbf8;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: 0.18s;
+    }
+
+    .profile-setting-btn:hover {
+      background-color: rgba(246, 251, 248, 0.20);
+      transform: translateY(-1px);
     }
 
     .profile-setting-btn svg {
@@ -116,7 +133,8 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(10, 18, 24, 0.84), rgba(10, 18, 24, 0.16));
+      background: linear-gradient(180deg, transparent 0%, rgba(7, 11, 29, 0.40) 100%);
+      pointer-events: none;
     }
 
     .profile-content {
@@ -124,22 +142,24 @@
       z-index: 1;
       width: 100%;
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: 78px 1fr;
       gap: 16px;
       align-items: center;
+      padding-right: 38px;
     }
 
     .profile-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 24px;
-      background-color: rgb(7, 11, 29);
-      border: 1px solid rgba(246, 251, 248, 0.28);
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: rgba(7, 11, 29, 0.88);
+      border: 2px solid rgba(216, 232, 127, 0.74);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #f6fbf8;
-      box-shadow: 0 14px 24px rgba(6, 14, 18, 0.24);
+      box-shadow: 0 0 0 8px rgba(246, 251, 248, 0.08), 0 18px 30px rgba(6, 14, 18, 0.34);
+      animation: profileAvatarFloat 4.2s ease-in-out infinite;
     }
 
     .profile-avatar svg {
@@ -157,18 +177,21 @@
       padding: 0 9px;
       border-radius: 999px;
       background-color: rgba(216, 232, 127, 0.16);
-      border: 1px solid rgba(216, 232, 127, 0.26);
+      border: 1px solid rgba(216, 232, 127, 0.30);
       color: #d8e87f;
       font-family: 'Pretendard', sans-serif;
       font-size: 10px;
       font-weight: 800;
       margin-bottom: 8px;
+      backdrop-filter: blur(8px);
     }
 
     .profile-name {
       font-size: 25px;
       line-height: 1.15;
       margin-bottom: 8px;
+      color: #f6fbf8;
+      text-shadow: 0 3px 18px rgba(7, 11, 29, 0.44);
     }
 
     .profile-meta {
@@ -176,7 +199,30 @@
       font-size: 11px;
       font-weight: 700;
       line-height: 1.5;
-      color: rgba(246, 251, 248, 0.76);
+      color: rgba(246, 251, 248, 0.78);
+    }
+
+    @keyframes profileSceneIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes profileAvatarFloat {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-4px);
+      }
     }
 
     .storage-grid {
@@ -188,7 +234,7 @@
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       margin-bottom: 22px;
     }
@@ -200,12 +246,42 @@
       background-color: rgba(255, 255, 255, 0.54);
       box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
       padding: 16px 14px;
-      text-align: left;
+      text-align: center;
       font-family: 'Pretendard', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .storage-grid .stat-item {
-      min-height: 96px;
+      min-height: 108px;
+      gap: 7px;
+      padding: 15px 12px;
+    }
+
+    .storage-action {
+      cursor: pointer;
+      transition: 0.18s;
+    }
+
+    .storage-action:hover {
+      transform: translateY(-2px);
+      background-color: rgba(255, 255, 255, 0.72);
+    }
+
+    .storage-grid .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      margin-bottom: 0;
+      background-color: rgba(33, 54, 56, 0.08);
+      color: #213638;
+      overflow: hidden;
+    }
+
+    .storage-grid .stat-value {
+      font-size: 24px;
     }
 
     .stat-icon {
@@ -217,7 +293,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px;
+      margin: 0 auto 12px;
     }
 
     .stat-icon svg {
@@ -226,6 +302,13 @@
       stroke: currentColor;
       stroke-width: 2;
       fill: none;
+    }
+
+    .stat-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .stat-value {
@@ -243,6 +326,10 @@
       font-weight: 800;
       color: rgba(33, 54, 56, 0.58);
       word-break: keep-all;
+    }
+
+    .storage-grid .stat-label {
+      margin-top: 0;
     }
 
     .setting-card {
@@ -359,15 +446,186 @@
 
     .section-title {
       font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
+      font-size: 17px;
+      line-height: 1.25;
       font-weight: 800;
       color: #213638;
       margin: 22px 0 10px;
     }
 
+    .item-modal-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 210;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-color: rgba(7, 11, 29, 0.42);
+      backdrop-filter: blur(8px);
+    }
+
+    .item-modal-overlay.active {
+      display: flex;
+    }
+
+    .item-modal {
+      width: min(100%, 330px);
+      max-height: 72vh;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background-color: rgba(246, 251, 248, 0.94);
+      box-shadow: 0 24px 54px rgba(7, 11, 29, 0.26);
+      padding: 18px;
+      font-family: 'Pretendard', sans-serif;
+      color: #213638;
+      overflow: hidden;
+    }
+
+    .item-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .item-modal-title {
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .item-modal-close {
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 12px;
+      background-color: rgba(33, 54, 56, 0.10);
+      color: #213638;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .item-modal-close svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      fill: none;
+    }
+
+    .owned-item-list {
+      max-height: 54vh;
+      overflow-y: auto;
+      display: grid;
+      gap: 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .owned-item-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .owned-item {
+      min-height: 62px;
+      border-radius: 12px;
+      border: 1px solid rgba(33, 54, 56, 0.10);
+      background-color: rgba(255, 255, 255, 0.64);
+      padding: 11px 12px;
+    }
+
+    .owned-kind {
+      display: inline-flex;
+      height: 18px;
+      align-items: center;
+      padding: 0 7px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .owned-kind.title {
+      background-color: rgba(216, 232, 127, 0.30);
+      color: #60752d;
+    }
+
+    .owned-kind.profile {
+      background-color: rgba(31, 41, 51, 0.14);
+      color: #1f2933;
+    }
+
+    .owned-name {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .owned-empty {
+      min-height: 92px;
+      border-radius: 12px;
+      border: 1px dashed rgba(33, 54, 56, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+      color: rgba(33, 54, 56, 0.58);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
     .mobile-frame.dark-mode .stat-item {
       background-color: rgba(255, 255, 255, 0.10);
       border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .mobile-frame.dark-mode .storage-action:hover {
+      background-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .mobile-frame.dark-mode .profile-panel {
+      border-color: rgba(246, 251, 248, 0.22);
+      background:
+        linear-gradient(90deg, rgba(7, 11, 29, 0.96) 0%, rgba(24, 43, 45, 0.82) 52%, rgba(24, 43, 45, 0.24) 100%),
+        url("Project_Logo/logo_02.png") right center/cover;
+      color: #eef7f2;
+      box-shadow: 0 24px 44px rgba(0, 0, 0, 0.24);
+    }
+
+    .mobile-frame.dark-mode .profile-setting-btn {
+      border-color: rgba(238, 247, 242, 0.20);
+      background-color: rgba(238, 247, 242, 0.12);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .profile-avatar {
+      background: rgba(7, 11, 29, 0.88);
+      border-color: rgba(216, 232, 127, 0.74);
+      color: #f6fbf8;
+    }
+
+    .mobile-frame.dark-mode .profile-title {
+      background-color: rgba(216, 232, 127, 0.16);
+      border-color: rgba(216, 232, 127, 0.30);
+      color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .profile-name {
+      color: #f6fbf8;
+      text-shadow: 0 3px 18px rgba(7, 11, 29, 0.44);
+    }
+
+    .mobile-frame.dark-mode .profile-meta {
+      color: rgba(246, 251, 248, 0.78);
     }
 
     .mobile-frame.dark-mode .section-title,
@@ -394,6 +652,44 @@
     .mobile-frame.dark-mode .setup-link-btn {
       background-color: #d8e87f;
       color: #213638;
+    }
+
+    .mobile-frame.dark-mode .item-modal {
+      border-color: rgba(238, 247, 242, 0.18);
+      background-color: rgba(24, 37, 39, 0.96);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .item-modal-close {
+      background-color: rgba(238, 247, 242, 0.14);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .owned-item {
+      border-color: rgba(238, 247, 242, 0.14);
+      background-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .mobile-frame.dark-mode .owned-kind.title {
+      background-color: rgba(216, 232, 127, 0.22);
+      color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .owned-kind.profile {
+      background-color: rgba(238, 247, 242, 0.16);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .owned-empty {
+      border-color: rgba(238, 247, 242, 0.18);
+      color: rgba(238, 247, 242, 0.62);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .profile-panel,
+      .profile-avatar {
+        animation: none;
+      }
     }
 
     .bottom-nav {
@@ -473,6 +769,7 @@
       .profile-content {
         grid-template-columns: 64px 1fr;
         gap: 14px;
+        padding-right: 28px;
       }
 
       .profile-avatar {
@@ -558,9 +855,7 @@
           <div>
             <span class="profile-title" id="equippedTitle">초심의 검</span>
             <h1 class="profile-name" id="memberName">수련생</h1>
-            <p class="profile-meta">    오늘도 자세를 세우는 중입니다.<br>
-    				대한검도 급수 : <%= loginUser.getkGrade() %>급<br>
-    				리히테나워 급수 : <%= loginUser.getlGrade() %>급</p>
+            <p class="profile-meta">오늘도 자세를 세우는 중입니다.</p>
           </div>
         </div>
       </section>
@@ -569,13 +864,19 @@
         <h2 class="section-title">내 보관함</h2>
         <div class="storage-grid">
           <div class="stat-item">
+            <span class="stat-icon">
+              <img src="Project_Logo/point_icon.png" alt="보유 포인트 아이콘">
+            </span>
             <span class="stat-value" id="memberPoint">0P</span>
             <span class="stat-label">보유 포인트</span>
           </div>
-          <div class="stat-item">
+          <button type="button" class="stat-item storage-action" onclick="openOwnedItemModal()" aria-label="나의 아이템 목록 보기">
+            <span class="stat-icon">
+              <img src="Project_Logo/item_icon.png" alt="나의 아이템 아이콘">
+            </span>
             <span class="stat-value" id="ownedTitleCount">0</span>
             <span class="stat-label">나의 아이템</span>
-          </div>
+          </button>
         </div>
       </section>
 
@@ -605,18 +906,6 @@
           <div class="stat-item">
             <span class="stat-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="5" y="5" width="14" height="15" rx="2"></rect>
-                <path d="M8 3V7"></path>
-                <path d="M16 3V7"></path>
-                <path d="M5 10H19"></path>
-              </svg>
-            </span>
-            <span class="stat-value" id="trainingDayCount">0일</span>
-            <span class="stat-label">훈련 일수</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="8"></circle>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
@@ -640,6 +929,21 @@
 
       <button type="button" class="logout-btn" onclick="location.href='index.jsp'">로그아웃</button>
     </main>
+
+    <div class="item-modal-overlay" id="ownedItemModal" onclick="closeOwnedItemModal(event)">
+      <section class="item-modal" role="dialog" aria-modal="true" aria-labelledby="ownedItemModalTitle">
+        <div class="item-modal-head">
+          <h2 class="item-modal-title" id="ownedItemModalTitle">나의 아이템</h2>
+          <button type="button" class="item-modal-close" onclick="closeOwnedItemModal()" aria-label="아이템 목록 닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6L18 18"></path>
+              <path d="M18 6L6 18"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="owned-item-list" id="ownedItemList"></div>
+      </section>
+    </div>
 
     <nav class="bottom-nav">
       <a href="main.jsp" class="nav-item">
@@ -693,7 +997,7 @@
   </div>
 
   <script>
-    const M_NUM = 1;
+ 	 const M_NUM = <%= loginUser.getmNum() %>;
     const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
     const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
     const PROFILE_SETTING_KEY = `BGS_PROFILE_SETTING_${M_NUM}`;
@@ -822,9 +1126,51 @@
       `;
     }
 
-    function getOwnedItemsByType(type) {
+    function getOwnedItems() {
       const memberItems = getMemberItems();
-      return ITEM_LIST.filter((item) => item.ITEM_TYPE === type && memberItems.includes(item.ITEM_NUM));
+      return ITEM_LIST.filter((item) => memberItems.includes(item.ITEM_NUM));
+    }
+
+    function getItemKindText(itemType) {
+      return itemType === "PROFILE" ? "프로필" : "칭호";
+    }
+
+    function renderOwnedItemList() {
+      const ownedItemList = document.getElementById("ownedItemList");
+      const ownedItems = getOwnedItems();
+
+      if (!ownedItems.length) {
+        ownedItemList.innerHTML = `
+          <div class="owned-empty">
+            아직 보유한 아이템이 없습니다.<br>
+            상점에서 아이템을 구매해보세요.
+          </div>
+        `;
+        return;
+      }
+
+      ownedItemList.innerHTML = ownedItems.map((item) => {
+        const typeClass = item.ITEM_TYPE === "PROFILE" ? "profile" : "title";
+        return `
+          <article class="owned-item">
+            <span class="owned-kind ${typeClass}">${getItemKindText(item.ITEM_TYPE)}</span>
+            <span class="owned-name">${item.ITEM_NAME}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function openOwnedItemModal() {
+      renderOwnedItemList();
+      document.getElementById("ownedItemModal").classList.add("active");
+    }
+
+    function closeOwnedItemModal(event) {
+      if (event && event.target !== event.currentTarget) {
+        return;
+      }
+
+      document.getElementById("ownedItemModal").classList.remove("active");
     }
 
     function renderProfile() {
@@ -835,28 +1181,27 @@
       const difficultyOptions = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
       const difficultyItem = difficultyOptions.find((item) => item.value === appSetting.DIFFICULTY) || difficultyOptions[0];
 
-      document.getElementById("equippedTitle").innerText = titleItem ? titleItem.ITEM_NAME : "초심의 검";
-      document.getElementById("memberName").innerText = appSetting.TRAIN_DIVISION === "2" ? "장검 수련생" : "검도 수련생";
-      document.querySelector(".profile-meta").innerText = appSetting.TRAIN_DIVISION === "2"
-        ? `리히테나워 | ${difficultyItem.label}`
-        : `대한검도 | ${difficultyItem.label}`;
+      document.getElementById("memberName").innerText = "검도 수련생";
+      document.querySelector(".profile-meta").innerText =
+        "대한검도 | <%= loginUser.getkGrade() %>급 / 리히테나워 | <%
+          if (loginUser.getlGrade() == 1) {
+              out.print("초급");
+          } else if (loginUser.getlGrade() == 2) {
+              out.print("중급");
+          } else if (loginUser.getlGrade() == 3) {
+              out.print("고급");
+          } else {
+              out.print("-");
+          }
+        %>";
       document.getElementById("profileAvatar").innerHTML = getAvatarIcon(profileItem ? profileItem.ITEM_ICON : "default");
     }
 
     function goTrainingSetup() {
-        location.href = "login.jsp?setup=training";
-    }
-
+    	  location.href = "login.jsp?setup=training&division=1&grade=<%= loginUser.getkGrade() %>";
+    	}
     function renderStats() {
       const trainingHistory = getTrainingHistory();
-      const trainingDays = new Set(
-        trainingHistory
-          .map((history) => {
-            const trainingDate = history.T_DATE ? new Date(history.T_DATE) : null;
-            return trainingDate && !Number.isNaN(trainingDate.getTime()) ? trainingDate.toISOString().slice(0, 10) : "";
-          })
-          .filter(Boolean)
-      );
       const completedStages = new Set(
         trainingHistory
           .filter((history) => history.DIVISION && history.TRAIN_NUM && history.POSTURE_NUM)
@@ -868,16 +1213,12 @@
         .filter((history) => history.ACCURACY !== null && history.ACCURACY !== undefined && history.ACCURACY !== "")
         .map((history) => Number(history.ACCURACY))
         .filter((accuracy) => Number.isFinite(accuracy));
-      let averageAccuracy = "-";
+      const averageAccuracy = accuracyValues.length
+        ? `${Math.round(accuracyValues.reduce((sum, accuracy) => sum + accuracy, 0) / accuracyValues.length)}%`
+        : "-";
 
-      if (accuracyValues.length > 0) {
-        const totalAccuracy = accuracyValues.reduce((sum, accuracy) => sum + accuracy, 0);
-        const avgAccuracy = Math.round(totalAccuracy / accuracyValues.length);
-        averageAccuracy = avgAccuracy + "%";
-      }
       document.getElementById("memberPoint").innerText = `${getMemberPoint()}P`;
-      document.getElementById("ownedTitleCount").innerText = getOwnedItemsByType("TITLE").length;
-      document.getElementById("trainingDayCount").innerText = `${trainingDays.size}일`;
+      document.getElementById("ownedTitleCount").innerText = getOwnedItems().length;
       document.getElementById("completedStageCount").innerText = `${completedStages.size}개`;
       document.getElementById("averageAccuracy").innerText = averageAccuracy;
     }

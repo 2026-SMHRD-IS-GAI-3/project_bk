@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
@@ -70,7 +70,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-        url("Project_Logo/logo_02.png") center/cover;
+       url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -249,7 +249,8 @@
 
     .section-title {
       font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
+      font-size: 17px;
+      line-height: 1.25;
       font-weight: 800;
       color: #213638;
     }
@@ -357,17 +358,38 @@
 
     .reward-badge {
       height: 24px;
-      padding: 0 9px;
+      padding: 0 9px 0 7px;
       border-radius: 999px;
       background-color: rgba(33, 54, 56, 0.08);
       color: rgba(33, 54, 56, 0.66);
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 4px;
       font-size: 10px;
       font-weight: 800;
       flex-shrink: 0;
       white-space: nowrap;
+    }
+
+    .reward-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: rgba(33, 54, 56, 0.12);
+      color: currentColor;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .reward-icon svg {
+      width: 10px;
+      height: 10px;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      fill: none;
     }
 
     .challenge-desc {
@@ -664,6 +686,10 @@
       color: rgba(238, 247, 242, 0.86);
     }
 
+    .mobile-frame.dark-mode .reward-icon {
+      background-color: rgba(238, 247, 242, 0.16);
+    }
+
     .mobile-frame.dark-mode .progress-track {
       background-color: rgba(238, 247, 242, 0.16);
     }
@@ -672,9 +698,18 @@
       background-color: #ffffff;
     }
 
+    .mobile-frame.dark-mode .progress-text {
+      color: rgba(238, 247, 242, 0.78);
+    }
+
     .mobile-frame.dark-mode .claim-btn.ready {
       background-color: #d8e87f;
       color: #213638;
+    }
+
+    .mobile-frame.dark-mode .claim-btn:disabled {
+      background-color: rgba(238, 247, 242, 0.18);
+      color: rgba(238, 247, 242, 0.72);
     }
 
     .mobile-frame.dark-mode .nav-item {
@@ -796,7 +831,7 @@
   </div>
 
   <script>
-  	const M_NUM = <%= loginUser.getmNum() %>;
+ 	const M_NUM = <%= loginUser.getmNum() %>;
     const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
     const CHALLENGE_STORAGE_KEY = `BGS_MEMBER_CHALLENGE_${M_NUM}`;
     const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
@@ -918,13 +953,19 @@
     }
 
     function renderTrainingLevel() {
-      const appSetting = getAppSetting();
-      const divisionName = appSetting.TRAIN_DIVISION === "2" ? "리히테나워" : "대한검도";
-      const difficultyOptions = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-      const difficultyItem = difficultyOptions.find((item) => item.value === appSetting.DIFFICULTY) || difficultyOptions[0];
-
-      document.getElementById("trainingLevelText").innerText = `${divisionName} · ${difficultyItem.label}`;
-    }
+    	  document.getElementById("trainingLevelText").innerText =
+    	    "대한검도 · <%= loginUser.getkGrade() %>급 / 리히테나워 · <%
+    	      if (loginUser.getlGrade() == 1) {
+    	          out.print("초급");
+    	      } else if (loginUser.getlGrade() == 2) {
+    	          out.print("중급");
+    	      } else if (loginUser.getlGrade() == 3) {
+    	          out.print("고급");
+    	      } else {
+    	          out.print("-");
+    	      }
+    	    %>";
+    	}
 
     function getMemberPoint() {
       return Number(localStorage.getItem(POINT_STORAGE_KEY)) || 0;
@@ -1049,7 +1090,14 @@
                 <h3 class="challenge-title">${challenge.C_NAME}</h3>
                 ${statusBadge}
               </div>
-              <span class="reward-badge">보상 ${challenge.REWARD_POINT}P</span>
+              <span class="reward-badge">
+                <span class="reward-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 4L14.4 9.2L20 10L16 14L17 20L12 17.1L7 20L8 14L4 10L9.6 9.2L12 4Z"></path>
+                  </svg>
+                </span>
+                보상 ${challenge.REWARD_POINT}P
+              </span>
             </div>
             <p class="challenge-desc">${challenge.C_DESC}</p>
             <div class="progress-row">

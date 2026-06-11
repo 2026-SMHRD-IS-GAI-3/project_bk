@@ -70,7 +70,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.88), rgba(45, 77, 78, 0.82)),
-   		 url("Project_Logo/logo_02.png") center/cover;
+        url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -112,7 +112,8 @@
 
     .section-title {
       font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
+      font-size: 17px;
+      line-height: 1.25;
       font-weight: 800;
       color: #213638;
       margin: 22px 0 10px;
@@ -129,12 +130,16 @@
       border: 1px solid rgba(255, 255, 255, 0.76);
       border-radius: 8px;
       background-color: rgba(255, 255, 255, 0.54);
-      padding: 15px 14px;
+      padding: 13px 13px 12px;
       text-align: left;
       color: #213638;
       cursor: pointer;
       box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
       transition: 0.18s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .training-card.active {
@@ -151,7 +156,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px;
+      margin: 2px auto 0;
       overflow: hidden;
     }
 
@@ -165,9 +170,14 @@
 
     .card-title {
       display: block;
+      width: 100%;
+      min-height: 30px;
+      padding: 8px 2px 0;
       font-family: 'Pretendard', sans-serif;
-      font-size: 15px;
+      font-size: 14px;
+      line-height: 1.25;
       font-weight: 800;
+      text-align: center;
       margin-bottom: 0;
     }
 
@@ -220,8 +230,19 @@
       background-color: #111111;
     }
 
+    .posture-item.done .posture-icon {
+      border-color: rgba(246, 251, 248, 0.92);
+      background-color: rgba(246, 251, 248, 0.92);
+      color: #213638;
+    }
+
+    .posture-item.done .posture-icon svg {
+      stroke: #213638;
+    }
+
     .posture-item.locked {
       cursor: default;
+      opacity: 1;
     }
 
     .posture-item.locked .posture-icon {
@@ -461,6 +482,16 @@
       stroke: #ffffff;
     }
 
+    .mobile-frame.dark-mode .posture-item.done .posture-icon {
+      border-color: rgba(246, 251, 248, 0.92);
+      background-color: rgba(246, 251, 248, 0.92);
+      color: #213638;
+    }
+
+    .mobile-frame.dark-mode .posture-item.done .posture-icon svg {
+      stroke: #213638;
+    }
+
     .mobile-frame.dark-mode .posture-item.locked .posture-icon {
       border-color: rgba(238, 247, 242, 0.24);
       background-color: rgba(255, 255, 255, 0.10);
@@ -468,6 +499,10 @@
 
     .mobile-frame.dark-mode .posture-item.locked .posture-icon svg {
       stroke: rgba(238, 247, 242, 0.60);
+    }
+
+    .mobile-frame.dark-mode .posture-item.locked .posture-name {
+      color: rgba(238, 247, 242, 0.72);
     }
 
   </style>
@@ -547,7 +582,7 @@
   </div>
 
   <script>
- 	const M_NUM = <%= loginUser.getmNum() %>;
+  	const M_NUM = <%= loginUser.getmNum() %>;
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
     function getSavedTrainingSetting() {
@@ -660,17 +695,20 @@
     }
 
     function getTrainingIcon(TRAIN_NUM) {
-      if (TRAIN_NUM === 1) {
-        return `
-          <img src="Project_Logo/icon02.png" alt="자세훈련 아이콘" class="training-icon posture">
-        `;
-      }
+    	  if (TRAIN_NUM === 1) {
+    	    return `
+    	      <img src="Project_Logo/main_icon.png"
+    	           alt="자세훈련 아이콘"
+    	           class="training-icon posture">
+    	    `;
+    	  }
 
-      return `
-        <img src="Project_Logo/icon01.png" alt="행동훈련 아이콘" class="training-icon action">
-      `;
+    	  return `
+    	    <img src="Project_Logo/main_icon2.png"
+    	         alt="행동훈련 아이콘"
+    	         class="training-icon action">
+    	  `;
     }
-
     function renderTrainingList() {
       const trainingGrid = document.getElementById("trainingGrid");
       const selectedList = TRAINING_LIST.filter((training) => training.DIVISION === TRAIN_HIS.DIVISION);
@@ -828,7 +866,7 @@
   <script>
     (function applyDarkMode() {
       try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}");
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
         if (appSetting.DARK_MODE) {
           document.querySelector(".mobile-frame")?.classList.add("dark-mode");
         }
