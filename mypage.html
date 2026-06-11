@@ -224,7 +224,7 @@
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       margin-bottom: 22px;
     }
@@ -896,18 +896,6 @@
           <div class="stat-item">
             <span class="stat-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="5" y="5" width="14" height="15" rx="2"></rect>
-                <path d="M8 3V7"></path>
-                <path d="M16 3V7"></path>
-                <path d="M5 10H19"></path>
-              </svg>
-            </span>
-            <span class="stat-value" id="trainingDayCount">0일</span>
-            <span class="stat-label">훈련 일수</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="8"></circle>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
@@ -1197,14 +1185,6 @@
 
     function renderStats() {
       const trainingHistory = getTrainingHistory();
-      const trainingDays = new Set(
-        trainingHistory
-          .map((history) => {
-            const trainingDate = history.T_DATE ? new Date(history.T_DATE) : null;
-            return trainingDate && !Number.isNaN(trainingDate.getTime()) ? trainingDate.toISOString().slice(0, 10) : "";
-          })
-          .filter(Boolean)
-      );
       const completedStages = new Set(
         trainingHistory
           .filter((history) => history.DIVISION && history.TRAIN_NUM && history.POSTURE_NUM)
@@ -1222,7 +1202,6 @@
 
       document.getElementById("memberPoint").innerText = `${getMemberPoint()}P`;
       document.getElementById("ownedTitleCount").innerText = getOwnedItems().length;
-      document.getElementById("trainingDayCount").innerText = `${trainingDays.size}일`;
       document.getElementById("completedStageCount").innerText = `${completedStages.size}개`;
       document.getElementById("averageAccuracy").innerText = averageAccuracy;
     }
