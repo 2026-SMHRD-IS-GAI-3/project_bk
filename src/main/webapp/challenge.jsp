@@ -856,13 +856,7 @@
       ]
     };
 
-    const TRAIN_HIS_LIST = [
-      { HIS_NUM: 1, M_NUM, T_DATE: "2026-06-09", DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1 },
-      { HIS_NUM: 2, M_NUM, T_DATE: "2026-06-09", DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 2 },
-      { HIS_NUM: 3, M_NUM, T_DATE: "2026-06-08", DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 7 },
-      { HIS_NUM: 4, M_NUM, T_DATE: "2026-06-07", DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 11 },
-      { HIS_NUM: 5, M_NUM, T_DATE: "2026-06-06", DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 3 }
-    ];
+    const TRAIN_HIS_LIST = [];
 
     const CHALLENGE_LIST = [
       {
@@ -910,13 +904,12 @@
     ];
 
     const DEFAULT_MEMBER_CHALLENGE_LIST = [
-      { M_NUM, CHALLENGE_NUM: 1, ACHIEVE_YN: "Y", REWARD_YN: "Y", ACHIEVE_DATE: "2026-06-06" },
-      { M_NUM, CHALLENGE_NUM: 2, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-      { M_NUM, CHALLENGE_NUM: 3, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-      { M_NUM, CHALLENGE_NUM: 4, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-      { M_NUM, CHALLENGE_NUM: 5, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null }
-    ];
-
+    	  { M_NUM, CHALLENGE_NUM: 1, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
+    	  { M_NUM, CHALLENGE_NUM: 2, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
+    	  { M_NUM, CHALLENGE_NUM: 3, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
+    	  { M_NUM, CHALLENGE_NUM: 4, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
+    	  { M_NUM, CHALLENGE_NUM: 5, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null }
+    	];
     let MEMBER_CHALLENGE_LIST = loadMemberChallengeList();
 
     function loadMemberChallengeList() {
