@@ -591,6 +591,7 @@ UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
 		}
 
 		(function openSetupFromQuery() {
+			
 		  const params = new URLSearchParams(location.search);
 
 		  if (params.get("setup") === "training") {
