@@ -104,6 +104,48 @@
       display: block;
     }
 
+    .setup-card-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .setup-card {
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.54);
+      box-shadow: 0 12px 24px rgba(40, 70, 72, 0.10);
+      padding: 15px 14px;
+    }
+
+    .setup-card-title {
+      display: block;
+      margin-bottom: 9px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: #213638;
+    }
+
+    .setup-save-card {
+      width: 100%;
+      min-height: 56px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgb(7, 11, 29);
+      color: #f2feff;
+      font-family: 'Gowun Batang', serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(126, 132, 73, 0.24);
+      transition: 0.2s;
+    }
+
+    .setup-save-card:hover {
+      background-color: rgb(60, 80, 94);
+      transform: translateY(-1px);
+    }
+
     .form-group {
       margin-bottom: 18px;
     }
@@ -343,6 +385,16 @@
       color: #eef7f2;
     }
 
+    .mobile-frame.dark-mode .setup-card {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .mobile-frame.dark-mode .setup-save-card {
+      background-color: #d8e87f;
+      color: #213638;
+    }
+
     .mobile-frame.dark-mode .nav-item {
       color: rgba(238, 247, 242, 0.58);
     }
@@ -417,22 +469,21 @@
         </form>
 
         <form class="setup-form" id="initialSetupForm" onsubmit="return saveInitialSetup(event)">
-          <div class="form-group">
-            <label class="form-label" for="initialTrainingDivision">훈련 종목</label>
-            <select class="form-input" id="initialTrainingDivision" name="initialTrainingDivision">
-              <option value="1">대한검도</option>
-              <option value="2">리히테나워</option>
-            </select>
-          </div>
+          <div class="setup-card-list">
+            <article class="setup-card">
+              <label class="setup-card-title" for="kendoDifficultySelect">대한검도 현재 난이도</label>
+              <select class="form-input" id="kendoDifficultySelect" name="kendoDifficultySelect"></select>
+            </article>
 
-          <div class="form-group">
-            <label class="form-label" for="initialDifficulty">현재 나의 난이도</label>
-            <select class="form-input" id="initialDifficulty" name="initialDifficulty"></select>
-          </div>
+            <article class="setup-card">
+              <label class="setup-card-title" for="liechtenauerDifficultySelect">리히테나워 현재 난이도</label>
+              <select class="form-input" id="liechtenauerDifficultySelect" name="liechtenauerDifficultySelect"></select>
+            </article>
 
-          <button type="submit" class="login-btn">
-           설정 저장하기
-          </button>
+            <button type="submit" class="setup-save-card">
+             설정 저장하기
+            </button>
+          </div>
         </form>
 
         <a href="findPassword.html" class="forgot-link" id="forgotLink">
@@ -460,6 +511,8 @@
       TRAIN_NOTICE: false,
       TRAIN_DIVISION: "1",
       DIFFICULTY: "k2",
+      KENDO_DIFFICULTY: "k2",
+      LIECHTENAUER_DIFFICULTY: "l_middle",
       INITIAL_SETUP_DONE: false,
       INITIAL_SETUP_VERSION: 0
     };
@@ -502,20 +555,30 @@
       localStorage.setItem(APP_SETTING_KEY, JSON.stringify(appSetting));
     }
 
-    function renderInitialDifficulty() {
-      const trainingDivision = document.getElementById("initialTrainingDivision").value;
-      const difficultySelect = document.getElementById("initialDifficulty");
-      const options = DIFFICULTY_OPTIONS[trainingDivision] || DIFFICULTY_OPTIONS["1"];
-      const appSetting = loadAppSetting();
+    function getSavedDifficulty(appSetting, division) {
+      if (division === "2") {
+        return appSetting.LIECHTENAUER_DIFFICULTY || (appSetting.TRAIN_DIVISION === "2" ? appSetting.DIFFICULTY : DEFAULT_APP_SETTING.LIECHTENAUER_DIFFICULTY);
+      }
+
+      return appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : DEFAULT_APP_SETTING.KENDO_DIFFICULTY);
+    }
+
+    function renderDifficultySelect(selectId, division, selectedValue) {
+      const difficultySelect = document.getElementById(selectId);
+      const options = DIFFICULTY_OPTIONS[division] || DIFFICULTY_OPTIONS["1"];
 
       difficultySelect.innerHTML = options.map((item) => `
-        <option value="${item.value}" ${appSetting.DIFFICULTY === item.value ? "selected" : ""}>${item.label}</option>
+        <option value="${item.value}" ${item.value === selectedValue ? "selected" : ""}>${item.label}</option>
       `).join("");
     }
 
-    function showInitialSetup() {
+    function renderInitialSetupOptions() {
       const appSetting = loadAppSetting();
-      const trainingDivisionSelect = document.getElementById("initialTrainingDivision");
+      renderDifficultySelect("kendoDifficultySelect", "1", getSavedDifficulty(appSetting, "1"));
+      renderDifficultySelect("liechtenauerDifficultySelect", "2", getSavedDifficulty(appSetting, "2"));
+    }
+
+    function showInitialSetup() {
       const params = new URLSearchParams(location.search);
 
       document.getElementById("loginForm").classList.add("hidden");
@@ -525,10 +588,9 @@
       document.querySelector(".login-card").classList.add("setup-mode");
       document.querySelector(".title").innerText = "수련 설정";
       document.querySelector(".subtitle").innerText = params.get("setup") === "training"
-        ? "훈련 종목과 난이도를 선택하세요"
-        : "처음 시작할 훈련 종목과 난이도를 선택하세요";
-      trainingDivisionSelect.value = appSetting.TRAIN_DIVISION || "1";
-      renderInitialDifficulty();
+        ? "종목별 현재 난이도를 선택하세요"
+        : "처음 시작할 종목별 난이도를 선택하세요";
+      renderInitialSetupOptions();
     }
 
     function togglePassword() {
@@ -572,12 +634,13 @@
     function saveInitialSetup(event) {
       event.preventDefault();
 
-      const trainingDivision = document.getElementById("initialTrainingDivision").value;
-      const difficulty = document.getElementById("initialDifficulty").value;
+      const kendoDifficulty = document.getElementById("kendoDifficultySelect").value;
+      const liechtenauerDifficulty = document.getElementById("liechtenauerDifficultySelect").value;
       const appSetting = loadAppSetting();
 
-      appSetting.TRAIN_DIVISION = trainingDivision;
-      appSetting.DIFFICULTY = difficulty;
+      appSetting.KENDO_DIFFICULTY = kendoDifficulty;
+      appSetting.LIECHTENAUER_DIFFICULTY = liechtenauerDifficulty;
+      appSetting.DIFFICULTY = appSetting.TRAIN_DIVISION === "2" ? liechtenauerDifficulty : kendoDifficulty;
       appSetting.INITIAL_SETUP_DONE = true;
       appSetting.INITIAL_SETUP_VERSION = INITIAL_SETUP_VERSION;
       saveAppSetting(appSetting);
@@ -586,8 +649,6 @@
       location.href = params.get("redirect") || "main.html";
       return false;
     }
-
-    document.getElementById("initialTrainingDivision").addEventListener("change", renderInitialDifficulty);
 
     (function openSetupFromQuery() {
       const params = new URLSearchParams(location.search);

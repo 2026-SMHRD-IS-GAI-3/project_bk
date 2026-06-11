@@ -883,7 +883,7 @@
             </span>
             <div class="setting-info">
               <h3 class="setting-name">수련 난이도 재설정</h3>
-              <p class="setting-desc">처음 설정 화면에서 훈련 종목과 난이도를 다시 선택합니다.</p>
+              <p class="setting-desc">수련 설정 화면에서 종목과 난이도를 다시 선택합니다.</p>
             </div>
           </div>
           <button type="button" class="setup-link-btn" onclick="goTrainingSetup()">재설정</button>
@@ -1012,7 +1012,9 @@
       DARK_MODE: false,
       TRAIN_NOTICE: false,
       TRAIN_DIVISION: "1",
-      DIFFICULTY: "k2"
+      DIFFICULTY: "k2",
+      KENDO_DIFFICULTY: "k2",
+      LIECHTENAUER_DIFFICULTY: "l_middle"
     };
 
     const DIFFICULTY_OPTIONS = {
@@ -1125,6 +1127,14 @@
       return itemType === "PROFILE" ? "프로필" : "칭호";
     }
 
+    function getSavedDifficulty(appSetting, division) {
+      if (division === "2") {
+        return appSetting.LIECHTENAUER_DIFFICULTY || (appSetting.TRAIN_DIVISION === "2" ? appSetting.DIFFICULTY : DEFAULT_APP_SETTING.LIECHTENAUER_DIFFICULTY);
+      }
+
+      return appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : DEFAULT_APP_SETTING.KENDO_DIFFICULTY);
+    }
+
     function renderOwnedItemList() {
       const ownedItemList = document.getElementById("ownedItemList");
       const ownedItems = getOwnedItems();
@@ -1163,13 +1173,18 @@
       document.getElementById("ownedItemModal").classList.remove("active");
     }
 
+    function goTrainingSetup() {
+      location.href = "login.html?setup=training&redirect=mypage.html";
+    }
+
     function renderProfile() {
       const profileSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
       const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
       const titleItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.TITLE_ITEM_NUM));
       const profileItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.PROFILE_ITEM_NUM));
       const difficultyOptions = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-      const difficultyItem = difficultyOptions.find((item) => item.value === appSetting.DIFFICULTY) || difficultyOptions[0];
+      const savedDifficulty = getSavedDifficulty(appSetting, appSetting.TRAIN_DIVISION);
+      const difficultyItem = difficultyOptions.find((item) => item.value === savedDifficulty) || difficultyOptions[0];
 
       document.getElementById("equippedTitle").innerText = titleItem ? titleItem.ITEM_NAME : "초심의 검";
       document.getElementById("memberName").innerText = appSetting.TRAIN_DIVISION === "2" ? "장검 수련생" : "검도 수련생";
@@ -1177,10 +1192,6 @@
         ? `리히테나워 | ${difficultyItem.label}`
         : `대한검도 | ${difficultyItem.label}`;
       document.getElementById("profileAvatar").innerHTML = getAvatarIcon(profileItem ? profileItem.ITEM_ICON : "default");
-    }
-
-    function goTrainingSetup() {
-      location.href = "login.html?setup=training&redirect=mypage.html";
     }
 
     function renderStats() {
