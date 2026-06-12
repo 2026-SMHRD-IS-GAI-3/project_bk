@@ -67,7 +67,8 @@
       border: 1px solid rgba(246, 251, 248, 0.32);
       background:
         linear-gradient(90deg, rgba(12, 22, 26, 0.96) 0%, rgba(24, 43, 45, 0.82) 52%, rgba(24, 43, 45, 0.24) 100%),
-        url("../Project_Logo/logo_02.png") right center/cover;
+        url("../Project_Logo/logo_02.png") center center/cover;
+      background-color: #182b2d;
       overflow: hidden;
       position: relative;
       padding: 22px 20px;
@@ -83,7 +84,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: transparent;
+      background: linear-gradient(90deg, transparent calc(100% - 28px), rgba(24, 43, 45, 0.46) 100%);
       pointer-events: none;
     }
 
@@ -190,6 +191,7 @@
       font-weight: 700;
       line-height: 1.5;
       color: rgba(246, 251, 248, 0.78);
+      word-break: keep-all;
     }
 
     @keyframes profileSceneIn {
@@ -250,6 +252,16 @@
       padding: 15px 12px;
     }
 
+    .storage-grid .point-storage-card {
+      background-color: rgba(238, 247, 242, 0.58);
+      border-color: rgba(255, 255, 255, 0.82);
+    }
+
+    .storage-grid .item-storage-card {
+      background-color: rgba(221, 236, 232, 0.66);
+      border-color: rgba(255, 255, 255, 0.76);
+    }
+
     .storage-action {
       cursor: pointer;
       transition: 0.18s;
@@ -258,6 +270,30 @@
     .storage-action:hover {
       transform: translateY(-2px);
       background-color: rgba(255, 255, 255, 0.72);
+    }
+
+    .storage-grid .item-storage-card:hover {
+      background-color: rgba(230, 242, 238, 0.76);
+    }
+
+    .stat-grid .complete-stat-card {
+      background-color: rgba(238, 247, 242, 0.54);
+      border-color: rgba(255, 255, 255, 0.78);
+    }
+
+    .stat-grid .accuracy-stat-card {
+      background-color: rgba(221, 236, 232, 0.62);
+      border-color: rgba(255, 255, 255, 0.74);
+    }
+
+    .complete-stat-card .stat-icon {
+      background-color: rgba(68, 103, 107, 0.12);
+      color: #213638;
+    }
+
+    .accuracy-stat-card .stat-icon {
+      background-color: rgba(68, 103, 107, 0.12);
+      color: #44676b;
     }
 
     .storage-grid .stat-icon {
@@ -436,11 +472,19 @@
 
     .section-title {
       font-family: 'Pretendard', sans-serif;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.25;
       font-weight: 800;
       color: #213638;
-      margin: 22px 0 10px;
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0;
+    }
+
+    .profile-panel + section .section-title {
+      margin-top: 0;
     }
 
     .item-modal-overlay {
@@ -578,6 +622,36 @@
       border-color: rgba(255, 255, 255, 0.16);
     }
 
+    .mobile-frame.dark-mode .storage-grid .point-storage-card {
+      background-color: rgba(238, 247, 242, 0.12);
+      border-color: rgba(238, 247, 242, 0.22);
+    }
+
+    .mobile-frame.dark-mode .storage-grid .item-storage-card {
+      background-color: rgba(238, 247, 242, 0.10);
+      border-color: rgba(238, 247, 242, 0.18);
+    }
+
+    .mobile-frame.dark-mode .stat-grid .complete-stat-card {
+      background-color: rgba(238, 247, 242, 0.12);
+      border-color: rgba(238, 247, 242, 0.22);
+    }
+
+    .mobile-frame.dark-mode .stat-grid .accuracy-stat-card {
+      background-color: rgba(238, 247, 242, 0.10);
+      border-color: rgba(238, 247, 242, 0.18);
+    }
+
+    .mobile-frame.dark-mode .complete-stat-card .stat-icon {
+      background-color: rgba(238, 247, 242, 0.16);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .accuracy-stat-card .stat-icon {
+      background-color: rgba(238, 247, 242, 0.14);
+      color: rgba(238, 247, 242, 0.86);
+    }
+
     .mobile-frame.dark-mode .storage-action:hover {
       background-color: rgba(255, 255, 255, 0.16);
     }
@@ -586,7 +660,8 @@
       border-color: rgba(246, 251, 248, 0.22);
       background:
         linear-gradient(90deg, rgba(7, 11, 29, 0.96) 0%, rgba(24, 43, 45, 0.82) 52%, rgba(24, 43, 45, 0.24) 100%),
-        url("../Project_Logo/logo_02.png") right center/cover;
+        url("../Project_Logo/logo_02.png") center center/cover;
+      background-color: #182b2d;
       color: #eef7f2;
       box-shadow: 0 24px 44px rgba(0, 0, 0, 0.24);
     }
@@ -843,30 +918,10 @@
         <div class="profile-content">
           <div class="profile-avatar" id="profileAvatar"></div>
           <div>
-            <span class="profile-title" id="equippedTitle">초심의 검</span>
+            <span class="profile-title" id="equippedTitle"></span>
             <h1 class="profile-name" id="memberName">수련생</h1>
             <p class="profile-meta">오늘도 자세를 세우는 중입니다.</p>
           </div>
-        </div>
-      </section>
-
-      <section aria-label="회원 요약">
-        <h2 class="section-title">내 보관함</h2>
-        <div class="storage-grid">
-          <div class="stat-item">
-            <span class="stat-icon">
-              <img src="../Project_Logo/point_icon.png" alt="보유 포인트 아이콘">
-            </span>
-            <span class="stat-value" id="memberPoint">0P</span>
-            <span class="stat-label">보유 포인트</span>
-          </div>
-          <button type="button" class="stat-item storage-action" onclick="openOwnedItemModal()" aria-label="나의 아이템 목록 보기">
-            <span class="stat-icon">
-              <img src="../Project_Logo/item_icon.png" alt="나의 아이템 아이콘">
-            </span>
-            <span class="stat-value" id="ownedTitleCount">0</span>
-            <span class="stat-label">나의 아이템</span>
-          </button>
         </div>
       </section>
 
@@ -890,10 +945,30 @@
         </article>
       </section>
 
+      <section aria-label="회원 요약">
+        <h2 class="section-title">내 보관함</h2>
+        <div class="storage-grid">
+          <div class="stat-item point-storage-card">
+            <span class="stat-icon">
+              <img src="../Project_Logo/point_icon.png" alt="보유 포인트 아이콘">
+            </span>
+            <span class="stat-value" id="memberPoint">0P</span>
+            <span class="stat-label">보유 포인트</span>
+          </div>
+          <button type="button" class="stat-item storage-action item-storage-card" onclick="openOwnedItemModal()" aria-label="나의 아이템 목록 보기">
+            <span class="stat-icon">
+              <img src="../Project_Logo/item_icon.png" alt="나의 아이템 아이콘">
+            </span>
+            <span class="stat-value" id="ownedTitleCount">0</span>
+            <span class="stat-label">나의 아이템</span>
+          </button>
+        </div>
+      </section>
+
       <section aria-label="통계">
         <h2 class="section-title">통계</h2>
         <div class="stat-grid">
-          <div class="stat-item">
+          <div class="stat-item complete-stat-card">
             <span class="stat-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="8"></circle>
@@ -903,7 +978,7 @@
             <span class="stat-value" id="completedStageCount">0개</span>
             <span class="stat-label">완료 스테이지</span>
           </div>
-          <div class="stat-item">
+          <div class="stat-item accuracy-stat-card">
             <span class="stat-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 20L20 4"></path>
@@ -1004,7 +1079,7 @@
     ];
 
     const DEFAULT_PROFILE_SETTING = {
-      TITLE_ITEM_NUM: 2,
+      TITLE_ITEM_NUM: 0,
       PROFILE_ITEM_NUM: 0
     };
 
@@ -1135,6 +1210,19 @@
       return appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : DEFAULT_APP_SETTING.KENDO_DIFFICULTY);
     }
 
+    function getDifficultyLabel(division, value) {
+      const difficultyOptions = DIFFICULTY_OPTIONS[division] || DIFFICULTY_OPTIONS["1"];
+      const difficultyItem = difficultyOptions.find((item) => item.value === value) || difficultyOptions[0];
+      return difficultyItem.label;
+    }
+
+    function getTrainingLevelText(appSetting) {
+      const kendoDifficulty = getSavedDifficulty(appSetting, "1");
+      const liechtenauerDifficulty = getSavedDifficulty(appSetting, "2");
+
+      return `대한검도 | ${getDifficultyLabel("1", kendoDifficulty)} · 리히테나워 | ${getDifficultyLabel("2", liechtenauerDifficulty)}`;
+    }
+
     function renderOwnedItemList() {
       const ownedItemList = document.getElementById("ownedItemList");
       const ownedItems = getOwnedItems();
@@ -1180,17 +1268,27 @@
     function renderProfile() {
       const profileSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
       const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
-      const titleItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.TITLE_ITEM_NUM));
-      const profileItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.PROFILE_ITEM_NUM));
-      const difficultyOptions = DIFFICULTY_OPTIONS[appSetting.TRAIN_DIVISION] || DIFFICULTY_OPTIONS["1"];
-      const savedDifficulty = getSavedDifficulty(appSetting, appSetting.TRAIN_DIVISION);
-      const difficultyItem = difficultyOptions.find((item) => item.value === savedDifficulty) || difficultyOptions[0];
+      const memberItems = getMemberItems();
+      const titleItem = ITEM_LIST.find((item) => {
+        return item.ITEM_TYPE === "TITLE"
+          && item.ITEM_NUM === Number(profileSetting.TITLE_ITEM_NUM)
+          && memberItems.includes(item.ITEM_NUM);
+      });
 
-      document.getElementById("equippedTitle").innerText = titleItem ? titleItem.ITEM_NAME : "초심의 검";
+      if (Number(profileSetting.TITLE_ITEM_NUM) !== 0 && !titleItem) {
+        saveJson(PROFILE_SETTING_KEY, {
+          ...profileSetting,
+          TITLE_ITEM_NUM: 0
+        });
+      }
+
+      const profileItem = ITEM_LIST.find((item) => item.ITEM_NUM === Number(profileSetting.PROFILE_ITEM_NUM));
+
+      const equippedTitle = document.getElementById("equippedTitle");
+      equippedTitle.innerText = titleItem ? titleItem.ITEM_NAME : "";
+      equippedTitle.style.display = titleItem ? "inline-flex" : "none";
       document.getElementById("memberName").innerText = appSetting.TRAIN_DIVISION === "2" ? "장검 수련생" : "검도 수련생";
-      document.querySelector(".profile-meta").innerText = appSetting.TRAIN_DIVISION === "2"
-        ? `리히테나워 | ${difficultyItem.label}`
-        : `대한검도 | ${difficultyItem.label}`;
+      document.querySelector(".profile-meta").innerText = getTrainingLevelText(appSetting);
       document.getElementById("profileAvatar").innerHTML = getAvatarIcon(profileItem ? profileItem.ITEM_ICON : "default");
     }
 

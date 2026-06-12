@@ -100,6 +100,25 @@
       color: rgba(246, 251, 248, 0.78);
     }
 
+    .visual-level {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      min-height: 24px;
+      margin-top: 10px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background-color: rgba(246, 251, 248, 0.16);
+      border: 1px solid rgba(246, 251, 248, 0.22);
+      font-family: 'Pretendard', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.35;
+      color: rgba(246, 251, 248, 0.88);
+      word-break: keep-all;
+    }
+
     .section-title {
       font-family: 'Pretendard', sans-serif;
       font-size: 17px;
@@ -243,22 +262,6 @@
 
     .posture-item.locked .posture-icon svg {
       stroke: rgba(33, 54, 56, 0.56);
-    }
-
-    .posture-crown {
-      position: absolute;
-      top: 9px;
-      left: -8px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background-color: #111111;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 800;
     }
 
     .posture-name {
@@ -621,6 +624,7 @@
         <div class="visual-copy">
           <h2 class="visual-title">나의 훈련</h2>
           <p class="visual-quote" id="trainingQuote"></p>
+          <p class="visual-level" id="trainingLevelText"></p>
         </div>
       </section>
 
@@ -718,16 +722,37 @@
     const M_NUM = 1;
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
+    const DIFFICULTY_OPTIONS = {
+      "1": [
+        { value: "k1", label: "1급" },
+        { value: "k2", label: "2급" },
+        { value: "k3", label: "3급" },
+        { value: "k4", label: "4급" },
+        { value: "k5", label: "5급" },
+        { value: "k6", label: "6급" },
+        { value: "k7", label: "7급" },
+        { value: "k8", label: "8급" },
+        { value: "k9", label: "9급" },
+        { value: "k10", label: "10급" }
+      ],
+      "2": [
+        { value: "l_beginner", label: "초급" },
+        { value: "l_middle", label: "중급" },
+        { value: "l_advanced", label: "고급" }
+      ]
+    };
+
     function getSavedTrainingSetting() {
       try {
         const appSetting = JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}");
         const division = Number(appSetting.TRAIN_DIVISION) || 1;
-        const difficulty = appSetting.DIFFICULTY || "k1";
+        const kendoDifficulty = appSetting.KENDO_DIFFICULTY || (division === 1 ? appSetting.DIFFICULTY : "k2");
+        const liechtenauerDifficulty = appSetting.LIECHTENAUER_DIFFICULTY || (division === 2 ? appSetting.DIFFICULTY : "l_middle");
 
         return {
           DIVISION: division,
-          K_GRADE: division === 1 ? Number(String(difficulty).replace("k", "")) || 1 : null,
-          L_GRADE: division === 2 ? difficulty : null
+          K_GRADE: Number(String(kendoDifficulty).replace("k", "")) || 2,
+          L_GRADE: liechtenauerDifficulty
         };
       } catch (error) {
         return {
@@ -739,6 +764,43 @@
     }
 
     const USER_TRAINING_SETTING = getSavedTrainingSetting();
+
+    function getAppSetting() {
+      try {
+        return {
+          TRAIN_DIVISION: "1",
+          DIFFICULTY: "k2",
+          KENDO_DIFFICULTY: "k2",
+          LIECHTENAUER_DIFFICULTY: "l_middle",
+          ...JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}")
+        };
+      } catch (error) {
+        return {
+          TRAIN_DIVISION: "1",
+          DIFFICULTY: "k2",
+          KENDO_DIFFICULTY: "k2",
+          LIECHTENAUER_DIFFICULTY: "l_middle"
+        };
+      }
+    }
+
+    function getDifficultyLabel(division, value) {
+      const options = DIFFICULTY_OPTIONS[division] || DIFFICULTY_OPTIONS["1"];
+      const selectedOption = options.find((item) => item.value === value) || options[0];
+      return selectedOption.label;
+    }
+
+    function getTrainingLevelText() {
+      const appSetting = getAppSetting();
+      const kendoDifficulty = appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : "k2");
+      const liechtenauerDifficulty = appSetting.LIECHTENAUER_DIFFICULTY || (appSetting.TRAIN_DIVISION === "2" ? appSetting.DIFFICULTY : "l_middle");
+
+      return `대한검도 · ${getDifficultyLabel("1", kendoDifficulty)} / 리히테나워 · ${getDifficultyLabel("2", liechtenauerDifficulty)}`;
+    }
+
+    function renderTrainingLevel() {
+      document.getElementById("trainingLevelText").innerText = getTrainingLevelText();
+    }
 
     const TRAINING_QUOTES = [
       "오늘의 한 걸음이 내일의 실력을 만든다.",
@@ -964,7 +1026,6 @@
           ${posture.STATUS === "locked" ? "disabled" : ""}
         >
           <span class="posture-icon">
-            ${posture.IS_REWARD ? '<span class="posture-crown">♕</span>' : ""}
             ${getPostureIcon(posture.STATUS)}
           </span>
           <span class="posture-name">${posture.G_NAME}</span>
@@ -1041,6 +1102,7 @@
     }
 
     setTrainingQuote();
+    renderTrainingLevel();
     setupRetrainModal();
     renderTrainingList();
     renderPostureList();

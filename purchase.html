@@ -177,43 +177,95 @@
     .item-icon {
       width: 44px;
       height: 44px;
-      border-radius: 8px;
-      background-color: rgb(7, 11, 29);
-      color: #f6fbf8;
+      border-radius: 50%;
+      border: 1px solid var(--item-icon-border, rgba(255, 255, 255, 0.72));
+      background-color: var(--item-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--item-icon-color, #44676b);
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.74),
+        0 8px 16px rgba(33, 54, 56, 0.08);
     }
 
     .item-card.title-item .item-icon {
-      background-color: #111827;
-      color: #d8e87f;
+      background-color: var(--item-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--item-icon-color, #44676b);
     }
 
     .item-card.profile-item .item-icon {
-      background-color: #1f2933;
-      color: #eef7f2;
+      background-color: var(--item-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--item-icon-color, #44676b);
+    }
+
+    .item-icon.rookie {
+      --item-icon-bg: rgba(216, 232, 127, 0.30);
+      --item-icon-border: rgba(216, 232, 127, 0.56);
+      --item-icon-color: #60752d;
+    }
+
+    .item-icon.sword {
+      --item-icon-bg: rgba(159, 218, 210, 0.26);
+      --item-icon-border: rgba(159, 218, 210, 0.54);
+      --item-icon-color: #397d73;
+    }
+
+    .item-icon.stance {
+      --item-icon-bg: rgba(240, 198, 94, 0.24);
+      --item-icon-border: rgba(240, 198, 94, 0.50);
+      --item-icon-color: #9a7420;
+    }
+
+    .item-icon.flame {
+      --item-icon-bg: rgba(255, 143, 125, 0.22);
+      --item-icon-border: rgba(255, 143, 125, 0.48);
+      --item-icon-color: #b85c4e;
+    }
+
+    .item-icon.armor {
+      --item-icon-bg: rgba(88, 197, 215, 0.22);
+      --item-icon-border: rgba(88, 197, 215, 0.46);
+      --item-icon-color: #3d8d9c;
+    }
+
+    .item-icon.shadow {
+      --item-icon-bg: rgba(143, 122, 245, 0.18);
+      --item-icon-border: rgba(143, 122, 245, 0.40);
+      --item-icon-color: #6a57d0;
     }
 
     .item-icon svg {
       width: 25px;
       height: 25px;
       stroke: currentColor;
-      stroke-width: 2;
+      stroke-width: 1.8;
       fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .item-kind {
       display: inline-flex;
+      width: 42px;
       height: 18px;
       align-items: center;
-      margin-bottom: 5px;
-      padding: 0 7px;
+      justify-content: center;
+      padding: 0;
       border-radius: 999px;
       background-color: rgba(68, 103, 107, 0.12);
       color: rgba(33, 54, 56, 0.62);
       font-size: 9px;
       font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .item-title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
     }
 
     .item-card.title-item .item-kind {
@@ -230,7 +282,8 @@
       font-size: 14px;
       font-weight: 800;
       color: #213638;
-      margin-bottom: 4px;
+      line-height: 1.35;
+      margin: 0;
     }
 
     .item-desc {
@@ -453,8 +506,46 @@
     }
 
     .mobile-frame.dark-mode .item-card.title-item .item-icon {
-      background-color: rgba(216, 232, 127, 0.20);
-      color: #d8e87f;
+      background-color: var(--item-icon-bg, rgba(216, 232, 127, 0.20));
+      color: var(--item-icon-color, #d8e87f);
+      border-color: var(--item-icon-border, rgba(238, 247, 242, 0.18));
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .mobile-frame.dark-mode .item-icon.rookie {
+      --item-icon-bg: rgba(216, 232, 127, 0.18);
+      --item-icon-border: rgba(216, 232, 127, 0.72);
+      --item-icon-color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .item-icon.sword {
+      --item-icon-bg: rgba(159, 218, 210, 0.18);
+      --item-icon-border: rgba(159, 218, 210, 0.70);
+      --item-icon-color: #9fdad2;
+    }
+
+    .mobile-frame.dark-mode .item-icon.stance {
+      --item-icon-bg: rgba(240, 198, 94, 0.17);
+      --item-icon-border: rgba(240, 198, 94, 0.70);
+      --item-icon-color: #f0c65e;
+    }
+
+    .mobile-frame.dark-mode .item-icon.flame {
+      --item-icon-bg: rgba(255, 143, 125, 0.17);
+      --item-icon-border: rgba(255, 143, 125, 0.68);
+      --item-icon-color: #ffab9d;
+    }
+
+    .mobile-frame.dark-mode .item-icon.armor {
+      --item-icon-bg: rgba(88, 197, 215, 0.18);
+      --item-icon-border: rgba(88, 197, 215, 0.72);
+      --item-icon-color: #8edbed;
+    }
+
+    .mobile-frame.dark-mode .item-icon.shadow {
+      --item-icon-bg: rgba(143, 122, 245, 0.18);
+      --item-icon-border: rgba(143, 122, 245, 0.72);
+      --item-icon-color: #bdb2ff;
     }
 
     .mobile-frame.dark-mode .item-card.title-item .item-kind {
@@ -463,8 +554,10 @@
     }
 
     .mobile-frame.dark-mode .item-card.profile-item .item-icon {
-      background-color: rgba(238, 247, 242, 0.16);
-      color: #eef7f2;
+      background-color: var(--item-icon-bg, rgba(238, 247, 242, 0.16));
+      color: var(--item-icon-color, #eef7f2);
+      border-color: var(--item-icon-border, rgba(238, 247, 242, 0.18));
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
     }
 
     .mobile-frame.dark-mode .item-card.profile-item .item-kind {
@@ -635,10 +728,12 @@
       if (iconName === "sword") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 20L20 4"></path>
-            <path d="M14 4L20 10"></path>
-            <path d="M4 14L10 20"></path>
-            <path d="M8 16L6 18"></path>
+            <path d="M6 18L17.5 6.5"></path>
+            <path d="M16.2 5.2L18.8 7.8"></path>
+            <path d="M8.5 15.5L10.5 17.5"></path>
+            <path d="M5 19L7 21"></path>
+            <path d="M4.8 14.8L9.2 19.2"></path>
+            <path d="M14 5L19 10"></path>
           </svg>
         `;
       }
@@ -646,11 +741,14 @@
       if (iconName === "stance") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="6" r="2.3"></circle>
-            <path d="M12 8.5V14"></path>
-            <path d="M8 11H16"></path>
+            <circle cx="12" cy="6" r="2.1"></circle>
+            <path d="M12 8.2V14"></path>
+            <path d="M8.5 11.5L15.5 9.5"></path>
+            <path d="M15.5 9.5L19 8.5"></path>
             <path d="M12 14L8.5 20"></path>
-            <path d="M12 14L15.5 20"></path>
+            <path d="M12 14L16.5 20"></path>
+            <path d="M6 20H10.5"></path>
+            <path d="M14 20H19"></path>
           </svg>
         `;
       }
@@ -658,8 +756,10 @@
       if (iconName === "flame") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 21C8.8 21 6 18.7 6 15.1C6 12.4 7.7 10.7 9.4 9C10.8 7.6 12 6.2 12 4C15.5 6.1 18 9.4 18 13.5C18 18 15.3 21 12 21Z"></path>
-            <path d="M11 20C9.8 18.8 10 17 11.3 15.6C12.2 14.6 12.8 13.7 12.8 12.5C14.4 13.7 15.2 15.2 15.2 17C15.2 19 13.8 20.5 12 21"></path>
+            <path d="M7 5V20"></path>
+            <path d="M7 6H17L14.5 9.5L17 13H7"></path>
+            <path d="M10 16H18"></path>
+            <path d="M16 14L18 16L16 18"></path>
           </svg>
         `;
       }
@@ -667,10 +767,12 @@
       if (iconName === "armor") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 5H17L19 9V17C19 19.2 16 21 12 21C8 21 5 19.2 5 17V9L7 5Z"></path>
-            <path d="M8 10H16"></path>
-            <path d="M9 14H15"></path>
-            <path d="M12 5V21"></path>
+            <path d="M8 4H16L18.5 8.5V15.5C18.5 18.1 15.8 20 12 20C8.2 20 5.5 18.1 5.5 15.5V8.5L8 4Z"></path>
+            <path d="M8 8H16"></path>
+            <path d="M7.5 12H16.5"></path>
+            <path d="M9 16H15"></path>
+            <path d="M10 8V18"></path>
+            <path d="M14 8V18"></path>
           </svg>
         `;
       }
@@ -678,21 +780,21 @@
       if (iconName === "shadow") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 19L19 5"></path>
-            <path d="M15 5H19V9"></path>
-            <path d="M4 21H13"></path>
-            <path d="M8 17L11 20"></path>
+            <path d="M5 17L17 5"></path>
+            <path d="M15.5 4.5L19.5 8.5"></path>
+            <path d="M4 20H20"></path>
+            <path d="M8 17L10 20"></path>
+            <path d="M16 17L14 20"></path>
+            <path d="M7.5 14.5L10 17"></path>
           </svg>
         `;
       }
 
       return `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
-          <path d="M6 6H4C4 10 6 12 9 12"></path>
-          <path d="M18 6H20C20 10 18 12 15 12"></path>
-          <path d="M12 13V18"></path>
-          <path d="M9 20H15"></path>
+          <path d="M12 4L18 6.5V12.5C18 16.8 15.5 19.7 12 21C8.5 19.7 6 16.8 6 12.5V6.5L12 4Z"></path>
+          <path d="M9 12.2L11 14.2L15 9.8"></path>
+          <path d="M18.2 3.8L18.8 5.2L20.2 5.8L18.8 6.4L18.2 7.8L17.6 6.4L16.2 5.8L17.6 5.2L18.2 3.8Z"></path>
         </svg>
       `;
     }
@@ -702,22 +804,28 @@
       const memberPoint = getMemberPoint();
       const memberItems = getMemberItems();
 
-      itemList.innerHTML = ITEM_LIST.map((item) => `
-        <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
-          <div class="item-icon">${getItemIcon(item.ITEM_ICON)}</div>
-          <div>
-            <span class="item-kind">${item.ITEM_KIND}</span>
-            <h2 class="item-name">${item.ITEM_NAME}</h2>
-            <p class="item-desc">${item.ITEM_DESC}</p>
-          </div>
-          <button
-            type="button"
-            class="buy-btn"
-            data-item-num="${item.ITEM_NUM}"
-            ${memberPoint < item.PRICE || memberItems.includes(item.ITEM_NUM) ? "disabled" : ""}
-          >${memberItems.includes(item.ITEM_NUM) ? "보유" : "구매"}<span class="buy-price">${item.PRICE}P</span></button>
-        </article>
-      `).join("");
+      itemList.innerHTML = ITEM_LIST.map((item) => {
+        const isOwned = memberItems.includes(item.ITEM_NUM);
+
+        return `
+          <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
+            <div class="item-icon ${item.ITEM_ICON}">${getItemIcon(item.ITEM_ICON)}</div>
+            <div>
+              <div class="item-title-row">
+                <h2 class="item-name">${item.ITEM_NAME}</h2>
+                <span class="item-kind">${item.ITEM_KIND}</span>
+              </div>
+              <p class="item-desc">${item.ITEM_DESC}</p>
+            </div>
+            <button
+              type="button"
+              class="buy-btn"
+              data-item-num="${item.ITEM_NUM}"
+              ${memberPoint < item.PRICE || isOwned ? "disabled" : ""}
+            >${isOwned ? "보유" : `구매<span class="buy-price">${item.PRICE}P</span>`}</button>
+          </article>
+        `;
+      }).join("");
 
       document.querySelectorAll(".buy-btn:not(:disabled)").forEach((button) => {
         button.addEventListener("click", () => {

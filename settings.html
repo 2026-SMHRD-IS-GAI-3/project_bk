@@ -135,23 +135,53 @@
     }
 
     .setting-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background-color: rgba(68, 103, 107, 0.13);
-      color: #44676b;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--setting-icon-border, rgba(255, 255, 255, 0.72));
+      background-color: var(--setting-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--setting-icon-color, #44676b);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.74),
+        0 8px 16px rgba(33, 54, 56, 0.08);
+    }
+
+    .setting-icon.title {
+      --setting-icon-bg: rgba(216, 232, 127, 0.30);
+      --setting-icon-border: rgba(216, 232, 127, 0.56);
+      --setting-icon-color: #60752d;
+    }
+
+    .setting-icon.profile {
+      --setting-icon-bg: rgba(159, 218, 210, 0.26);
+      --setting-icon-border: rgba(159, 218, 210, 0.54);
+      --setting-icon-color: #397d73;
+    }
+
+    .setting-icon.dark {
+      --setting-icon-bg: rgba(143, 122, 245, 0.18);
+      --setting-icon-border: rgba(143, 122, 245, 0.40);
+      --setting-icon-color: #6a57d0;
+    }
+
+    .setting-icon.notice {
+      --setting-icon-bg: rgba(240, 198, 94, 0.24);
+      --setting-icon-border: rgba(240, 198, 94, 0.50);
+      --setting-icon-color: #9a7420;
     }
 
     .setting-icon svg {
-      width: 24px;
-      height: 24px;
+      width: 25px;
+      height: 25px;
       stroke: currentColor;
-      stroke-width: 2;
+      stroke-width: 1.8;
       fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .setting-info {
@@ -176,21 +206,38 @@
     .select-control {
       width: 122px;
       height: 36px;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.64);
       border-radius: 8px;
-      background-color: rgba(33, 54, 56, 0.10);
+      background-color: rgba(246, 251, 248, 0.78);
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%23213638' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px 14px;
       color: #213638;
-      padding: 0 10px;
+      padding: 0 32px 0 12px;
       font-family: 'Pretendard', sans-serif;
       font-size: 11px;
       font-weight: 800;
       outline: none;
       flex-shrink: 0;
+      appearance: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        0 8px 16px rgba(33, 54, 56, 0.08);
+      cursor: pointer;
+    }
+
+    .select-control:focus {
+      border-color: rgba(68, 103, 107, 0.42);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        0 0 0 3px rgba(68, 103, 107, 0.10);
     }
 
     .select-control option {
       color: #213638;
-      background-color: #ffffff;
+      background-color: #eef7f2;
+      font-weight: 800;
     }
 
     .toggle {
@@ -306,12 +353,54 @@
       border-color: rgba(255, 255, 255, 0.16);
     }
 
+    .mobile-frame.dark-mode .setting-icon {
+      border-color: var(--setting-icon-border, rgba(238, 247, 242, 0.18));
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .mobile-frame.dark-mode .setting-icon.title {
+      --setting-icon-bg: rgba(216, 232, 127, 0.18);
+      --setting-icon-border: rgba(216, 232, 127, 0.72);
+      --setting-icon-color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .setting-icon.profile {
+      --setting-icon-bg: rgba(159, 218, 210, 0.18);
+      --setting-icon-border: rgba(159, 218, 210, 0.70);
+      --setting-icon-color: #9fdad2;
+    }
+
+    .mobile-frame.dark-mode .setting-icon.dark {
+      --setting-icon-bg: rgba(143, 122, 245, 0.18);
+      --setting-icon-border: rgba(143, 122, 245, 0.72);
+      --setting-icon-color: #bdb2ff;
+    }
+
+    .mobile-frame.dark-mode .setting-icon.notice {
+      --setting-icon-bg: rgba(240, 198, 94, 0.17);
+      --setting-icon-border: rgba(240, 198, 94, 0.70);
+      --setting-icon-color: #f0c65e;
+    }
+
     .mobile-frame.dark-mode .setting-desc {
       color: rgba(238, 247, 242, 0.62);
     }
 
     .mobile-frame.dark-mode .select-control {
-      background-color: rgba(255, 255, 255, 0.14);
+      border-color: rgba(238, 247, 242, 0.18);
+      background-color: rgba(238, 247, 242, 0.12);
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%23EEF7F2' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      color: #eef7f2;
+      box-shadow: none;
+    }
+
+    .mobile-frame.dark-mode .select-control:focus {
+      border-color: rgba(216, 232, 127, 0.38);
+      box-shadow: 0 0 0 3px rgba(216, 232, 127, 0.10);
+    }
+
+    .mobile-frame.dark-mode .select-control option {
+      background-color: #243638;
       color: #eef7f2;
     }
 
@@ -376,11 +465,12 @@
         <div class="setting-list">
           <article class="setting-card">
             <div class="setting-left">
-              <span class="setting-icon">
+              <span class="setting-icon title">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
-                  <path d="M12 13V18"></path>
-                  <path d="M9 20H15"></path>
+                  <path d="M7 5H17V15L12 19L7 15V5Z"></path>
+                  <path d="M9 8H15"></path>
+                  <path d="M10 11H14"></path>
+                  <path d="M12 15V19"></path>
                 </svg>
               </span>
               <div class="setting-info">
@@ -393,10 +483,13 @@
 
           <article class="setting-card">
             <div class="setting-left">
-              <span class="setting-icon">
+              <span class="setting-icon profile">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="8" r="4"></circle>
-                  <path d="M5 21C5 17 8 14 12 14C16 14 19 17 19 21"></path>
+                  <path d="M6 6H18V18H6V6Z"></path>
+                  <circle cx="12" cy="11" r="2.2"></circle>
+                  <path d="M8.5 17C9.2 15.2 10.5 14.3 12 14.3C13.5 14.3 14.8 15.2 15.5 17"></path>
+                  <path d="M4.5 9H6"></path>
+                  <path d="M18 9H19.5"></path>
                 </svg>
               </span>
               <div class="setting-info">
@@ -414,13 +507,11 @@
         <div class="setting-list">
           <article class="setting-card">
             <div class="setting-left">
-              <span class="setting-icon">
+              <span class="setting-icon dark">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="12" r="4"></circle>
-                  <path d="M12 2V4"></path>
-                  <path d="M12 20V22"></path>
-                  <path d="M2 12H4"></path>
-                  <path d="M20 12H22"></path>
+                  <path d="M17.5 16.6C15.8 18.6 12.8 19.3 10.3 18C7.2 16.4 6 12.5 7.6 9.4C8.7 7.3 10.8 6 13 6C12.1 7.7 12 9.8 13 11.6C13.9 13.4 15.6 14.5 17.5 14.8V16.6Z"></path>
+                  <path d="M17.5 5.5L18.1 6.8L19.5 7.4L18.1 8L17.5 9.3L16.9 8L15.5 7.4L16.9 6.8L17.5 5.5Z"></path>
+                  <path d="M5.8 5.5H5.9"></path>
                 </svg>
               </span>
               <div class="setting-info">
@@ -433,10 +524,12 @@
 
           <article class="setting-card">
             <div class="setting-left">
-              <span class="setting-icon">
+              <span class="setting-icon notice">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M18 8C18 6.3 16.7 5 15 5H9C7.3 5 6 6.3 6 8V12C6 15 4 16 4 16H20C20 16 18 15 18 12V8Z"></path>
-                  <path d="M10 19C10.4 20.2 11.2 21 12 21C12.8 21 13.6 20.2 14 19"></path>
+                  <path d="M17 9C17 6.8 15.2 5 13 5H11C8.8 5 7 6.8 7 9V12.5L5.5 16H18.5L17 12.5V9Z"></path>
+                  <path d="M10 19C10.5 20 11.2 20.5 12 20.5C12.8 20.5 13.5 20 14 19"></path>
+                  <path d="M5 8.5C5.5 7.3 6.2 6.4 7.2 5.6"></path>
+                  <path d="M19 8.5C18.5 7.3 17.8 6.4 16.8 5.6"></path>
                 </svg>
               </span>
               <div class="setting-info">
@@ -517,7 +610,7 @@
     ];
 
     const DEFAULT_PROFILE_SETTING = {
-      TITLE_ITEM_NUM: 2,
+      TITLE_ITEM_NUM: 0,
       PROFILE_ITEM_NUM: 0
     };
 
@@ -571,12 +664,22 @@
       const profileSelect = document.getElementById("profileSelect");
       const titleItems = getOwnedItemsByType("TITLE");
       const profileItems = getOwnedItemsByType("PROFILE");
+      const selectedTitleNum = titleItems.some((item) => item.ITEM_NUM === Number(profileSetting.TITLE_ITEM_NUM))
+        ? Number(profileSetting.TITLE_ITEM_NUM)
+        : 0;
+
+      if (Number(profileSetting.TITLE_ITEM_NUM) !== selectedTitleNum) {
+        saveJson(PROFILE_SETTING_KEY, {
+          ...profileSetting,
+          TITLE_ITEM_NUM: selectedTitleNum
+        });
+      }
 
       titleSelect.innerHTML = [
-        { ITEM_NUM: 0, ITEM_NAME: "기본 칭호" },
+        { ITEM_NUM: 0, ITEM_NAME: "칭호 없음" },
         ...titleItems
       ].map((item) => `
-        <option value="${item.ITEM_NUM}" ${Number(profileSetting.TITLE_ITEM_NUM) === item.ITEM_NUM ? "selected" : ""}>${item.ITEM_NAME}</option>
+        <option value="${item.ITEM_NUM}" ${selectedTitleNum === item.ITEM_NUM ? "selected" : ""}>${item.ITEM_NAME}</option>
       `).join("");
 
       profileSelect.innerHTML = [
