@@ -1,9 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
-
 <%
-UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
+    /*
+    로그인한 회원 정보가 있으면 세션에서 가져온다.
+
+    일반 로그인 화면에서는 loginUser가 null일 수 있다.
+    하지만 마이페이지에서 "수련 난이도 재설정"으로 들어온 경우에는
+    세션에 저장된 회원 정보를 이용해서 기존 급수를 화면에 표시한다.
+    */
+    UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -418,6 +423,90 @@ UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
       stroke: #eef7f2;
     }
 
+    .mobile-alert-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-color: rgba(15, 25, 27, 0.42);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.18s ease;
+    }
+
+    .mobile-alert-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-alert-box {
+      width: 100%;
+      max-width: 310px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      background-color: rgba(246, 251, 248, 0.96);
+      box-shadow: 0 22px 44px rgba(20, 38, 40, 0.26);
+      padding: 22px 20px 18px;
+      font-family: 'Pretendard', sans-serif;
+      text-align: center;
+      color: #213638;
+      transform: translateY(8px);
+      transition: 0.18s ease;
+    }
+
+    .mobile-alert-overlay.show .mobile-alert-box {
+      transform: translateY(0);
+    }
+
+    .mobile-alert-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      margin: 0 auto 13px;
+      background-color: #d8e87f;
+      color: #213638;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .mobile-alert-message {
+      margin: 0 0 18px;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    .mobile-alert-btn {
+      width: 100%;
+      height: 42px;
+      border: none;
+      border-radius: 8px;
+      background-color: #111111;
+      color: #ffffff;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mobile-frame.dark-mode .mobile-alert-box {
+      border-color: rgba(238, 247, 242, 0.22);
+      background-color: #243638;
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .mobile-alert-btn {
+      background-color: #d8e87f;
+      color: #213638;
+    }
+
   </style>
 </head>
 
@@ -434,7 +523,13 @@ UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
 
       <div class="login-card">
 
-        <form class="login-form"
+        <!--
+로그인 폼
+
+사용자가 입력한 아이디와 비밀번호를 LoginService로 전송한다.
+LoginService에서는 MEMBER 테이블에서 회원 정보를 조회한다.
+-->
+<form class="login-form"
       id="loginForm"
       action="LoginService"
       method="post">
@@ -478,24 +573,46 @@ UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
 
         </form>
 
-      <form class="setup-form"
+        <!--
+수련 난이도 설정 폼
+
+대한검도 급수와 리히테나워 난이도를 ProfileSetService로 전송한다.
+전송된 값은 MEMBER 테이블의 K_GRADE, L_GRADE 컬럼에 저장된다.
+-->
+<form class="setup-form"
       id="initialSetupForm"
       action="ProfileSetService"
       method="post">
           <div class="setup-card-list">
             <article class="setup-card">
               <label class="setup-card-title" for="kendoDifficultySelect">대한검도 현재 난이도</label>
-     	 <select class="form-input" id="kendoDifficultySelect" name="kGrade"></select>
+              <!--
+대한검도 급수 선택
+
+선택한 값은 kGrade라는 이름으로 Servlet에 전달된다.
+-->
+<select class="form-input" id="kendoDifficultySelect" name="kGrade"></select>
             </article>
 
             <article class="setup-card">
               <label class="setup-card-title" for="liechtenauerDifficultySelect">리히테나워 현재 난이도</label>
-         <select class="form-input" id="liechtenauerDifficultySelect" name="lGrade"></select>
+              <!--
+리히테나워 난이도 선택
+
+선택한 값은 lGrade라는 이름으로 Servlet에 전달된다.
+-->
+<select class="form-input" id="liechtenauerDifficultySelect" name="lGrade"></select>
             </article>
-			<input type="hidden"
-       id="initialTrainingDivision"
-       name="initialTrainingDivision"
-       value="both">
+
+            <!--
+            두 종목을 한 번에 저장한다는 표시값이다.
+            현재 ProfileSetService는 kGrade와 lGrade를 각각 받아서 처리한다.
+            -->
+            <input type="hidden"
+                   id="initialTrainingDivision"
+                   name="initialTrainingDivision"
+                   value="both">
+
             <button type="submit" class="setup-save-card">
              설정 저장하기
             </button>
@@ -517,91 +634,210 @@ UserDTO loginUser = (UserDTO)session.getAttribute("loginUser");
 
     </div>
 
+    <div class="mobile-alert-overlay" id="mobileAlert" aria-hidden="true">
+      <section class="mobile-alert-box" role="dialog" aria-modal="true" aria-labelledby="mobileAlertMessage">
+        <div class="mobile-alert-icon" aria-hidden="true">!</div>
+        <p class="mobile-alert-message" id="mobileAlertMessage"></p>
+        <button type="button" class="mobile-alert-btn" id="mobileAlertOk">확인</button>
+      </section>
+    </div>
+
   </div>
 
   <script>
-  const DIFFICULTY_OPTIONS = {
-		  "1": [
-		    { value: "1", label: "1급" },
-		    { value: "2", label: "2급" },
-		    { value: "3", label: "3급" },
-		    { value: "4", label: "4급" },
-		    { value: "5", label: "5급" },
-		    { value: "6", label: "6급" },
-		    { value: "7", label: "7급" },
-		    { value: "8", label: "8급" },
-		    { value: "9", label: "9급" },
-		    { value: "10", label: "10급" }
-		  ],
-		  "2": [
-		    { value: "1", label: "초급" },
-		    { value: "2", label: "중급" },
-		    { value: "3", label: "고급" }
-		  ]
-		};
+    /*
+    모바일 알림창 콜백 함수 저장 변수
 
-		function renderDifficultySelect(selectId, division) {
-		  const difficultySelect = document.getElementById(selectId);
-		  const options = DIFFICULTY_OPTIONS[division];
+    alert() 대신 직접 만든 알림창을 사용하기 위해 만든 변수이다.
+    */
+    let mobileAlertCallback = null;
 
-		  difficultySelect.innerHTML = options.map(function(item) {
-		    return '<option value="' + item.value + '">' + item.label + '</option>';
-		  }).join('');
-		}
+    /*
+    모바일 알림창을 보여주는 함수
 
-		function renderInitialSetupOptions() {
-		  renderDifficultySelect("kendoDifficultySelect", "1");
-		  renderDifficultySelect("liechtenauerDifficultySelect", "2");
-		}
+    message에는 사용자에게 보여줄 문구가 들어간다.
+    onClose는 알림창을 닫은 뒤 실행할 함수이다.
+    */
+    function showMobileAlert(message, onClose) {
+      const mobileAlert = document.getElementById("mobileAlert");
+      const mobileAlertMessage = document.getElementById("mobileAlertMessage");
+      const mobileAlertOk = document.getElementById("mobileAlertOk");
 
-		function showInitialSetup() {
-		  const params = new URLSearchParams(location.search);
+      mobileAlertCallback = typeof onClose === "function" ? onClose : null;
+      mobileAlertMessage.innerText = message;
+      mobileAlert.classList.add("show");
+      mobileAlert.setAttribute("aria-hidden", "false");
+      mobileAlertOk.focus();
+    }
 
-		  document.getElementById("loginForm").classList.add("hidden");
-		  document.getElementById("forgotLink").classList.add("hidden");
-		  document.getElementById("signupArea").classList.add("hidden");
-		  document.getElementById("initialSetupForm").classList.add("active");
-		  document.querySelector(".login-card").classList.add("setup-mode");
-		  document.querySelector(".title").innerText = "수련 설정";
-		  document.querySelector(".subtitle").innerText =
-		    params.get("setup") === "training"
-		      ? "종목별 현재 난이도를 선택하세요"
-		      : "처음 시작할 종목별 난이도를 선택하세요";
+    /*
+    모바일 알림창을 닫는 함수
+    닫은 뒤 실행할 함수가 있으면 같이 실행한다.
+    */
+    function closeMobileAlert() {
+      const mobileAlert = document.getElementById("mobileAlert");
+      const callback = mobileAlertCallback;
 
-		  renderInitialSetupOptions();
+      mobileAlertCallback = null;
+      mobileAlert.classList.remove("show");
+      mobileAlert.setAttribute("aria-hidden", "true");
 
-		  document.getElementById("kendoDifficultySelect").value =
-		    "<%= loginUser != null ? loginUser.getkGrade() : 1 %>";
+      if (callback) {
+        callback();
+      }
+    }
 
-		  document.getElementById("liechtenauerDifficultySelect").value =
-		    "<%= loginUser != null ? loginUser.getlGrade() : 1 %>";
-		  }
+    /*
+    알림창 확인 버튼을 누르면 알림창을 닫는다.
+    */
+    document.getElementById("mobileAlertOk").addEventListener("click", closeMobileAlert);
 
-		function togglePassword() {
-		  const PWInput = document.getElementById("PW");
-		  const eyeIcon = document.getElementById("eye-icon");
+    /*
+    알림창 바깥쪽을 클릭해도 알림창이 닫히도록 한다.
+    */
+    document.getElementById("mobileAlert").addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) {
+        closeMobileAlert();
+      }
+    });
 
-		  if (PWInput.type === "password") {
-		    PWInput.type = "text";
-		    eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
-		  } else {
-		    PWInput.type = "password";
-		    eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
-		  }
-		}
+    /*
+    키보드 ESC를 눌러도 알림창이 닫히도록 한다.
+    */
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.getElementById("mobileAlert").classList.contains("show")) {
+        closeMobileAlert();
+      }
+    });
 
-		(function openSetupFromQuery() {
-			
-		  const params = new URLSearchParams(location.search);
+    /*
+    난이도 목록 데이터
 
-		  if (params.get("setup") === "training") {
-		    showInitialSetup();
-		  }
-		})();
+    대한검도는 1급부터 10급까지 숫자로 저장한다.
+    리히테나워는 초급, 중급, 고급을 1, 2, 3으로 저장한다.
 
+    ProfileSetService에서 Integer.parseInt()로 숫자를 처리하기 때문에
+    value 값을 반드시 숫자로 설정한다.
+    */
+    const DIFFICULTY_OPTIONS = {
+      "1": [
+        { value: "1", label: "1급" },
+        { value: "2", label: "2급" },
+        { value: "3", label: "3급" },
+        { value: "4", label: "4급" },
+        { value: "5", label: "5급" },
+        { value: "6", label: "6급" },
+        { value: "7", label: "7급" },
+        { value: "8", label: "8급" },
+        { value: "9", label: "9급" },
+        { value: "10", label: "10급" }
+      ],
+      "2": [
+        { value: "1", label: "초급" },
+        { value: "2", label: "중급" },
+        { value: "3", label: "고급" }
+      ]
+    };
 
+    /*
+    난이도 select 박스에 option을 넣어주는 함수
 
+    selectId는 option을 넣을 select 태그의 id이다.
+    division은 1이면 대한검도, 2이면 리히테나워를 의미한다.
+    */
+    function renderDifficultySelect(selectId, division) {
+      const difficultySelect = document.getElementById(selectId);
+      const options = DIFFICULTY_OPTIONS[division];
 
+      difficultySelect.innerHTML = options.map(function(item) {
+        return '<option value="' + item.value + '">' + item.label + '</option>';
+      }).join("");
+    }
+
+    /*
+    수련 설정 화면에 필요한 두 개의 select 박스를 만든다.
+
+    대한검도 select에는 1급~10급,
+    리히테나워 select에는 초급~고급을 넣는다.
+    */
+    function renderInitialSetupOptions() {
+      renderDifficultySelect("kendoDifficultySelect", "1");
+      renderDifficultySelect("liechtenauerDifficultySelect", "2");
+    }
+
+    /*
+    수련 설정 화면을 보여주는 함수
+
+    로그인 폼은 숨기고,
+    수련 난이도 설정 폼만 화면에 보이도록 바꾼다.
+    */
+    function showInitialSetup() {
+      const params = new URLSearchParams(location.search);
+
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("forgotLink").classList.add("hidden");
+      document.getElementById("signupArea").classList.add("hidden");
+      document.getElementById("initialSetupForm").classList.add("active");
+      document.querySelector(".login-card").classList.add("setup-mode");
+      document.querySelector(".title").innerText = "수련 설정";
+      document.querySelector(".subtitle").innerText =
+        params.get("setup") === "training"
+          ? "종목별 현재 난이도를 선택하세요"
+          : "처음 시작할 종목별 난이도를 선택하세요";
+
+      renderInitialSetupOptions();
+
+      /*
+      기존에 DB에 저장된 회원의 급수를 기본 선택값으로 보여준다.
+
+      이렇게 하지 않으면 재설정 화면에 들어갈 때마다
+      항상 1급, 초급으로 보이는 문제가 생긴다.
+      */
+      document.getElementById("kendoDifficultySelect").value =
+        "<%= loginUser != null ? loginUser.getkGrade() : 1 %>";
+
+      document.getElementById("liechtenauerDifficultySelect").value =
+        "<%= loginUser != null ? loginUser.getlGrade() : 1 %>";
+    }
+
+    /*
+    비밀번호 보이기/숨기기 함수
+
+    사용자가 눈 아이콘을 누르면
+    password 타입을 text로 바꾸어 비밀번호를 볼 수 있게 한다.
+    다시 누르면 password 타입으로 돌려서 숨긴다.
+    */
+    function togglePassword() {
+      const PWInput = document.getElementById("PW");
+      const eyeIcon = document.getElementById("eye-icon");
+
+      if (PWInput.type === "password") {
+        PWInput.type = "text";
+
+        eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+
+      } else {
+        PWInput.type = "password";
+
+        eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+      }
+    }
+
+    /*
+    주소에 setup=training이 붙어 있으면 수련 설정 화면을 바로 연다.
+
+    예)
+    login.jsp?setup=training
+
+    마이페이지에서 수련 난이도 재설정을 눌렀을 때 이 방식으로 들어온다.
+    */
+    (function openSetupFromQuery() {
+      const params = new URLSearchParams(location.search);
+
+      if (params.get("setup") === "training") {
+        showInitialSetup();
+      }
+    })();
   </script>
   <script>
     (function applyDarkMode() {

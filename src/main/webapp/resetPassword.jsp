@@ -1,6 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-﻿<!DOCTYPE html>
+pageEncoding="UTF-8" isELIgnored="true"%>
+
+<%@ page import="com.kendo.model.UserDTO" %>
+
+<%
+/*
+로그인한 회원 정보를 가져온다.
+
+비밀번호 변경은 로그인한 회원만 가능하도록 처리한다.
+*/
+UserDTO loginUser =
+(UserDTO)session.getAttribute("loginUser");
+
+if(loginUser == null){
+    response.sendRedirect("login.jsp");
+    return;
+}
+%>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -285,6 +302,90 @@
       stroke: #eef7f2;
     }
 
+    .mobile-alert-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-color: rgba(15, 25, 27, 0.42);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.18s ease;
+    }
+
+    .mobile-alert-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-alert-box {
+      width: 100%;
+      max-width: 310px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      background-color: rgba(246, 251, 248, 0.96);
+      box-shadow: 0 22px 44px rgba(20, 38, 40, 0.26);
+      padding: 22px 20px 18px;
+      font-family: 'Pretendard', sans-serif;
+      text-align: center;
+      color: #213638;
+      transform: translateY(8px);
+      transition: 0.18s ease;
+    }
+
+    .mobile-alert-overlay.show .mobile-alert-box {
+      transform: translateY(0);
+    }
+
+    .mobile-alert-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      margin: 0 auto 13px;
+      background-color: #d8e87f;
+      color: #213638;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .mobile-alert-message {
+      margin: 0 0 18px;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    .mobile-alert-btn {
+      width: 100%;
+      height: 42px;
+      border: none;
+      border-radius: 8px;
+      background-color: #111111;
+      color: #ffffff;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mobile-frame.dark-mode .mobile-alert-box {
+      border-color: rgba(238, 247, 242, 0.22);
+      background-color: #243638;
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .mobile-alert-btn {
+      background-color: #d8e87f;
+      color: #213638;
+    }
+
   </style>
 </head>
 
@@ -301,24 +402,50 @@
           새로 사용할 비밀번호를 입력해주세요.
         </p>
 
-        <form>
-          <div class="input-group">
-            <label for="PW">새 비밀번호</label>
-            <input type="password" id="PW" name="PW" placeholder="새 비밀번호를 입력하세요" required>
-          </div>
+		<!--
+		비밀번호 변경 요청을 ChangePwService로 전송한다.
+		현재 로그인한 회원의 비밀번호를 변경한다.
+		-->
+      
+<!--
+비밀번호 변경 요청을 ChangePwService로 전송한다.
+현재 로그인한 회원의 비밀번호를 변경한다.
+-->
+<form action="ChangePwService" method="post">
 
-          <div class="input-group">
-            <label for="PW_CONFIRM">새 비밀번호 확인</label>
-            <input type="password" id="PW_CONFIRM" placeholder="비밀번호를 다시 입력하세요" required>
-          </div>
+  <div class="input-group">
+    <label for="PW">새 비밀번호</label>
+    <input type="password"
+           id="PW"
+           name="PW"
+           placeholder="새 비밀번호를 입력하세요"
+           required>
+  </div>
 
-          <button type="button" class="reset-btn" onclick="resetPassword()">
-            비밀번호 재설정
-          </button>
+  <div class="input-group">
+    <label for="PW_CONFIRM">새 비밀번호 확인</label>
+    <input type="password"
+           id="PW_CONFIRM"
+           placeholder="비밀번호를 다시 입력하세요"
+           required>
+  </div>
 
-          <div id="notice" class="notice"></div>
-        </form>
+  <!--
+  어떤 회원의 비밀번호를 변경할지 확인하기 위해
+  로그인한 회원의 ID를 함께 전송한다.
+  -->
+  <input type="hidden"
+         name="id"
+         value="<%= loginUser.getId() %>">
 
+  <button type="submit"
+          class="reset-btn"
+          onclick="return resetPassword()">
+    비밀번호 재설정
+  </button>
+
+  <div id="notice" class="notice"></div>
+</form>
         <div class="back-login">
           <a href="login.jsp">로그인 화면으로 돌아가기</a>
         </div>
@@ -328,45 +455,127 @@
 
     </div>
 
+    <div class="mobile-alert-overlay" id="mobileAlert" aria-hidden="true">
+      <section class="mobile-alert-box" role="dialog" aria-modal="true" aria-labelledby="mobileAlertMessage">
+        <div class="mobile-alert-icon" aria-hidden="true">!</div>
+        <p class="mobile-alert-message" id="mobileAlertMessage"></p>
+        <button type="button" class="mobile-alert-btn" id="mobileAlertOk">확인</button>
+      </section>
+    </div>
+
   </div>
 
   <script>
+    let mobileAlertCallback = null;
+
+    function showMobileAlert(message, onClose) {
+      const mobileAlert = document.getElementById("mobileAlert");
+      const mobileAlertMessage = document.getElementById("mobileAlertMessage");
+      const mobileAlertOk = document.getElementById("mobileAlertOk");
+
+      mobileAlertCallback = typeof onClose === "function" ? onClose : null;
+      mobileAlertMessage.innerText = message;
+      mobileAlert.classList.add("show");
+      mobileAlert.setAttribute("aria-hidden", "false");
+      mobileAlertOk.focus();
+    }
+
+    function closeMobileAlert() {
+      const mobileAlert = document.getElementById("mobileAlert");
+      const callback = mobileAlertCallback;
+
+      mobileAlertCallback = null;
+      mobileAlert.classList.remove("show");
+      mobileAlert.setAttribute("aria-hidden", "true");
+
+      if (callback) {
+        callback();
+      }
+    }
+
+    document.getElementById("mobileAlertOk").addEventListener("click", closeMobileAlert);
+    document.getElementById("mobileAlert").addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) {
+        closeMobileAlert();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.getElementById("mobileAlert").classList.contains("show")) {
+        closeMobileAlert();
+      }
+    });
+    /*
+    비밀번호 변경 전 입력값 검증
+
+    1. 공백 확인
+    2. 길이 확인
+    3. 비밀번호 일치 확인
+
+    검증 성공 시 form submit 진행
+    */
     function resetPassword() {
-      const PW = document.getElementById("PW").value.trim();
-      const PW_CONFIRM = document.getElementById("PW_CONFIRM").value.trim();
-      const notice = document.getElementById("notice");
 
-      if (PW === "" || PW_CONFIRM === "") {
-        notice.className = "notice error";
-        notice.innerText = "새 비밀번호와 비밀번호 확인을 모두 입력해주세요.";
-        return;
-      }
+        const PW =
+        document.getElementById("PW").value.trim();
 
-      if (PW.length < 4) {
-        notice.className = "notice error";
-        notice.innerText = "비밀번호는 4자 이상으로 입력해주세요.";
-        return;
-      }
+        const PW_CONFIRM =
+        document.getElementById("PW_CONFIRM").value.trim();
 
-      if (PW !== PW_CONFIRM) {
-        notice.className = "notice error";
-        notice.innerText = "비밀번호가 서로 일치하지 않습니다.";
-        return;
-      }
+        const notice =
+        document.getElementById("notice");
 
-      alert("비밀번호가 재설정되었습니다. 로그인 화면으로 이동합니다.");
-      location.href = "login.jsp";
+        if(PW === "" || PW_CONFIRM === ""){
+
+            notice.className = "notice error";
+
+            notice.innerText =
+            "새 비밀번호를 입력해주세요.";
+
+            return false;
+        }
+
+        if(PW.length < 4){
+
+            notice.className = "notice error";
+
+            notice.innerText =
+            "비밀번호는 4자 이상 입력해주세요.";
+
+            return false;
+        }
+
+        if(PW !== PW_CONFIRM){
+
+            notice.className = "notice error";
+
+            notice.innerText =
+            "비밀번호가 일치하지 않습니다.";
+
+            return false;
+        }
+
+        return true;
     }
   </script>
-  <script>
-    (function applyDarkMode() {
-      try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
-        if (appSetting.DARK_MODE) {
-          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
-        }
-      } catch (error) {}
-    })();
-  </script>
+<script>
+  /*
+  다크모드 적용 함수
+
+  회원 번호별로 저장된 설정을 읽어서
+  DARK_MODE가 true이면 화면을 어둡게 변경한다.
+  */
+  (function applyDarkMode() {
+    try {
+      const appSetting = JSON.parse(
+        localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>") || "{}"
+      );
+
+      if (appSetting.DARK_MODE) {
+        document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+      }
+    } catch (error) {}
+  })();
+</script>
 </body>
 </html>

@@ -1,6 +1,11 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%
+    /*
+    로그인한 회원 정보를 세션에서 가져온다.
+    로그인하지 않은 사용자가 상점 페이지에 직접 접근하면
+    로그인 페이지로 이동시킨다.
+    */
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
@@ -70,7 +75,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-        url("Project_Logo/logo_02.png") center/cover;
+       url("Project_Logo/logo_02.png")center/cover;
       overflow: hidden;
       position: relative;
       padding: 20px;
@@ -187,43 +192,95 @@
     .item-icon {
       width: 44px;
       height: 44px;
-      border-radius: 8px;
-      background-color: rgb(7, 11, 29);
-      color: #f6fbf8;
+      border-radius: 50%;
+      border: 1px solid var(--item-icon-border, rgba(255, 255, 255, 0.72));
+      background-color: var(--item-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--item-icon-color, #44676b);
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.74),
+        0 8px 16px rgba(33, 54, 56, 0.08);
     }
 
     .item-card.title-item .item-icon {
-      background-color: #111827;
-      color: #d8e87f;
+      background-color: var(--item-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--item-icon-color, #44676b);
     }
 
     .item-card.profile-item .item-icon {
-      background-color: #1f2933;
-      color: #eef7f2;
+      background-color: var(--item-icon-bg, rgba(246, 251, 248, 0.78));
+      color: var(--item-icon-color, #44676b);
+    }
+
+    .item-icon.rookie {
+      --item-icon-bg: rgba(216, 232, 127, 0.30);
+      --item-icon-border: rgba(216, 232, 127, 0.56);
+      --item-icon-color: #60752d;
+    }
+
+    .item-icon.sword {
+      --item-icon-bg: rgba(159, 218, 210, 0.26);
+      --item-icon-border: rgba(159, 218, 210, 0.54);
+      --item-icon-color: #397d73;
+    }
+
+    .item-icon.stance {
+      --item-icon-bg: rgba(240, 198, 94, 0.24);
+      --item-icon-border: rgba(240, 198, 94, 0.50);
+      --item-icon-color: #9a7420;
+    }
+
+    .item-icon.flame {
+      --item-icon-bg: rgba(255, 143, 125, 0.22);
+      --item-icon-border: rgba(255, 143, 125, 0.48);
+      --item-icon-color: #b85c4e;
+    }
+
+    .item-icon.armor {
+      --item-icon-bg: rgba(88, 197, 215, 0.22);
+      --item-icon-border: rgba(88, 197, 215, 0.46);
+      --item-icon-color: #3d8d9c;
+    }
+
+    .item-icon.shadow {
+      --item-icon-bg: rgba(143, 122, 245, 0.18);
+      --item-icon-border: rgba(143, 122, 245, 0.40);
+      --item-icon-color: #6a57d0;
     }
 
     .item-icon svg {
       width: 25px;
       height: 25px;
       stroke: currentColor;
-      stroke-width: 2;
+      stroke-width: 1.8;
       fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .item-kind {
       display: inline-flex;
+      width: 42px;
       height: 18px;
       align-items: center;
-      margin-bottom: 5px;
-      padding: 0 7px;
+      justify-content: center;
+      padding: 0;
       border-radius: 999px;
       background-color: rgba(68, 103, 107, 0.12);
       color: rgba(33, 54, 56, 0.62);
       font-size: 9px;
       font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .item-title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
     }
 
     .item-card.title-item .item-kind {
@@ -240,7 +297,8 @@
       font-size: 14px;
       font-weight: 800;
       color: #213638;
-      margin-bottom: 4px;
+      line-height: 1.35;
+      margin: 0;
     }
 
     .item-desc {
@@ -463,8 +521,46 @@
     }
 
     .mobile-frame.dark-mode .item-card.title-item .item-icon {
-      background-color: rgba(216, 232, 127, 0.20);
-      color: #d8e87f;
+      background-color: var(--item-icon-bg, rgba(216, 232, 127, 0.20));
+      color: var(--item-icon-color, #d8e87f);
+      border-color: var(--item-icon-border, rgba(238, 247, 242, 0.18));
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .mobile-frame.dark-mode .item-icon.rookie {
+      --item-icon-bg: rgba(216, 232, 127, 0.18);
+      --item-icon-border: rgba(216, 232, 127, 0.72);
+      --item-icon-color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .item-icon.sword {
+      --item-icon-bg: rgba(159, 218, 210, 0.18);
+      --item-icon-border: rgba(159, 218, 210, 0.70);
+      --item-icon-color: #9fdad2;
+    }
+
+    .mobile-frame.dark-mode .item-icon.stance {
+      --item-icon-bg: rgba(240, 198, 94, 0.17);
+      --item-icon-border: rgba(240, 198, 94, 0.70);
+      --item-icon-color: #f0c65e;
+    }
+
+    .mobile-frame.dark-mode .item-icon.flame {
+      --item-icon-bg: rgba(255, 143, 125, 0.17);
+      --item-icon-border: rgba(255, 143, 125, 0.68);
+      --item-icon-color: #ffab9d;
+    }
+
+    .mobile-frame.dark-mode .item-icon.armor {
+      --item-icon-bg: rgba(88, 197, 215, 0.18);
+      --item-icon-border: rgba(88, 197, 215, 0.72);
+      --item-icon-color: #8edbed;
+    }
+
+    .mobile-frame.dark-mode .item-icon.shadow {
+      --item-icon-bg: rgba(143, 122, 245, 0.18);
+      --item-icon-border: rgba(143, 122, 245, 0.72);
+      --item-icon-color: #bdb2ff;
     }
 
     .mobile-frame.dark-mode .item-card.title-item .item-kind {
@@ -473,8 +569,10 @@
     }
 
     .mobile-frame.dark-mode .item-card.profile-item .item-icon {
-      background-color: rgba(238, 247, 242, 0.16);
-      color: #eef7f2;
+      background-color: var(--item-icon-bg, rgba(238, 247, 242, 0.16));
+      color: var(--item-icon-color, #eef7f2);
+      border-color: var(--item-icon-border, rgba(238, 247, 242, 0.18));
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
     }
 
     .mobile-frame.dark-mode .item-card.profile-item .item-kind {
@@ -596,10 +694,38 @@
   </div>
 
   <script>
-  	const M_NUM = <%= loginUser.getmNum() %>;
-    const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
-    const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
+  /*
+  현재 로그인한 회원 번호를 JSP 세션에서 가져온다.
+  회원마다 포인트와 구매 아이템이 달라야 하므로
+  M_NUM을 기준으로 localStorage 데이터를 구분한다.
+  */
+  const M_NUM = <%= loginUser.getmNum() %>;
+  /*
+  회원별 포인트 저장 key
+  예: 회원번호가 3이면 BGS_MEMBER_POINT_3 으로 저장된다.
 
+  현재는 DB 연동 전이라 localStorage를 사용한다.
+  추후 MEMBER.POINT 컬럼과 연결하면 이 부분을 DB 조회 방식으로 변경한다.
+  */
+    const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
+    /*
+    회원별 구매 아이템 저장 key
+    예: 회원번호가 3이면 BGS_MEMBER_ITEMS_3 으로 저장된다.
+
+    추후 POINT_SHOP_HIS 또는 구매 이력 테이블과 연결할 예정이다.
+    */
+    const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
+    /*
+    상점 상품 목록이다.
+
+    현재는 DB 연동 전이라 JavaScript 배열로 임시 관리한다.
+    나중에는 GOODS 또는 POINT_SHOP_HIS 테이블에서
+    상품명, 가격, 설명을 가져오도록 변경할 예정이다.
+
+    ITEM_TYPE
+    TITLE = 칭호
+    PROFILE = 프로필 장식
+    */
     const ITEM_LIST = [
       { ITEM_NUM: 1, ITEM_TYPE: "TITLE", ITEM_ICON: "rookie", ITEM_KIND: "칭호", ITEM_NAME: "견습 기사", ITEM_DESC: "첫 수련 기록에 어울리는 담백한 이름표입니다.", PRICE: 100 },
       { ITEM_NUM: 2, ITEM_TYPE: "TITLE", ITEM_ICON: "sword", ITEM_KIND: "칭호", ITEM_NAME: "초심의 검", ITEM_DESC: "처음의 마음을 잊지 않는 수련자에게.", PRICE: 150 },
@@ -609,16 +735,28 @@
       { ITEM_NUM: 6, ITEM_TYPE: "PROFILE", ITEM_ICON: "shadow", ITEM_KIND: "프로필", ITEM_NAME: "목검 그림자", ITEM_DESC: "검의 실루엣만 남긴 단정한 프로필 장식.", PRICE: 450 }
     ];
 
+    /*
+    현재 회원의 포인트를 가져온다.
+    저장된 포인트가 없으면 0P로 처리한다.
+    */
     function getMemberPoint() {
       return Number(localStorage.getItem(POINT_STORAGE_KEY)) || 0;
     }
 
+    /*
+    회원 포인트를 새 값으로 저장한다.
+    구매 후 포인트를 차감하고 화면을 다시 그리기 위해 사용한다.
+    */
     function setMemberPoint(point) {
       localStorage.setItem(POINT_STORAGE_KEY, String(point));
       renderMemberPoint();
       renderItemList();
     }
 
+    /*
+    현재 회원이 구매한 아이템 목록을 가져온다.
+    저장된 값이 없으면 빈 배열을 반환한다.
+    */
     function getMemberItems() {
       const savedItems = localStorage.getItem(ITEM_STORAGE_KEY);
 
@@ -633,22 +771,36 @@
       }
     }
 
+    /*
+    구매한 아이템 목록을 저장한다.
+    배열은 localStorage에 바로 저장할 수 없어서
+    JSON 문자열로 변환해서 저장한다.
+    */
     function saveMemberItems(items) {
       localStorage.setItem(ITEM_STORAGE_KEY, JSON.stringify(items));
     }
 
+    /*
+    화면 상단의 가용 포인트를 표시한다.
+    */
     function renderMemberPoint() {
       document.getElementById("memberPoint").innerText = getMemberPoint();
     }
 
+    /*
+    아이템 아이콘을 SVG로 반환한다.
+    이미지 파일을 따로 만들지 않고 코드로 아이콘을 보여주기 위해 사용한다.
+    */
     function getItemIcon(iconName) {
       if (iconName === "sword") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 20L20 4"></path>
-            <path d="M14 4L20 10"></path>
-            <path d="M4 14L10 20"></path>
-            <path d="M8 16L6 18"></path>
+            <path d="M6 18L17.5 6.5"></path>
+            <path d="M16.2 5.2L18.8 7.8"></path>
+            <path d="M8.5 15.5L10.5 17.5"></path>
+            <path d="M5 19L7 21"></path>
+            <path d="M4.8 14.8L9.2 19.2"></path>
+            <path d="M14 5L19 10"></path>
           </svg>
         `;
       }
@@ -656,11 +808,14 @@
       if (iconName === "stance") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="6" r="2.3"></circle>
-            <path d="M12 8.5V14"></path>
-            <path d="M8 11H16"></path>
+            <circle cx="12" cy="6" r="2.1"></circle>
+            <path d="M12 8.2V14"></path>
+            <path d="M8.5 11.5L15.5 9.5"></path>
+            <path d="M15.5 9.5L19 8.5"></path>
             <path d="M12 14L8.5 20"></path>
-            <path d="M12 14L15.5 20"></path>
+            <path d="M12 14L16.5 20"></path>
+            <path d="M6 20H10.5"></path>
+            <path d="M14 20H19"></path>
           </svg>
         `;
       }
@@ -668,8 +823,10 @@
       if (iconName === "flame") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 21C8.8 21 6 18.7 6 15.1C6 12.4 7.7 10.7 9.4 9C10.8 7.6 12 6.2 12 4C15.5 6.1 18 9.4 18 13.5C18 18 15.3 21 12 21Z"></path>
-            <path d="M11 20C9.8 18.8 10 17 11.3 15.6C12.2 14.6 12.8 13.7 12.8 12.5C14.4 13.7 15.2 15.2 15.2 17C15.2 19 13.8 20.5 12 21"></path>
+            <path d="M7 5V20"></path>
+            <path d="M7 6H17L14.5 9.5L17 13H7"></path>
+            <path d="M10 16H18"></path>
+            <path d="M16 14L18 16L16 18"></path>
           </svg>
         `;
       }
@@ -677,10 +834,12 @@
       if (iconName === "armor") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 5H17L19 9V17C19 19.2 16 21 12 21C8 21 5 19.2 5 17V9L7 5Z"></path>
-            <path d="M8 10H16"></path>
-            <path d="M9 14H15"></path>
-            <path d="M12 5V21"></path>
+            <path d="M8 4H16L18.5 8.5V15.5C18.5 18.1 15.8 20 12 20C8.2 20 5.5 18.1 5.5 15.5V8.5L8 4Z"></path>
+            <path d="M8 8H16"></path>
+            <path d="M7.5 12H16.5"></path>
+            <path d="M9 16H15"></path>
+            <path d="M10 8V18"></path>
+            <path d="M14 8V18"></path>
           </svg>
         `;
       }
@@ -688,46 +847,58 @@
       if (iconName === "shadow") {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 19L19 5"></path>
-            <path d="M15 5H19V9"></path>
-            <path d="M4 21H13"></path>
-            <path d="M8 17L11 20"></path>
+            <path d="M5 17L17 5"></path>
+            <path d="M15.5 4.5L19.5 8.5"></path>
+            <path d="M4 20H20"></path>
+            <path d="M8 17L10 20"></path>
+            <path d="M16 17L14 20"></path>
+            <path d="M7.5 14.5L10 17"></path>
           </svg>
         `;
       }
 
       return `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
-          <path d="M6 6H4C4 10 6 12 9 12"></path>
-          <path d="M18 6H20C20 10 18 12 15 12"></path>
-          <path d="M12 13V18"></path>
-          <path d="M9 20H15"></path>
+          <path d="M12 4L18 6.5V12.5C18 16.8 15.5 19.7 12 21C8.5 19.7 6 16.8 6 12.5V6.5L12 4Z"></path>
+          <path d="M9 12.2L11 14.2L15 9.8"></path>
+          <path d="M18.2 3.8L18.8 5.2L20.2 5.8L18.8 6.4L18.2 7.8L17.6 6.4L16.2 5.8L17.6 5.2L18.2 3.8Z"></path>
         </svg>
       `;
     }
 
+    /*
+    상품 목록을 화면에 출력한다.
+
+    포인트가 부족하거나 이미 구매한 아이템이면
+    구매 버튼을 비활성화한다.
+    */
     function renderItemList() {
       const itemList = document.getElementById("itemList");
       const memberPoint = getMemberPoint();
       const memberItems = getMemberItems();
 
-      itemList.innerHTML = ITEM_LIST.map((item) => `
-        <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
-          <div class="item-icon">${getItemIcon(item.ITEM_ICON)}</div>
-          <div>
-            <span class="item-kind">${item.ITEM_KIND}</span>
-            <h2 class="item-name">${item.ITEM_NAME}</h2>
-            <p class="item-desc">${item.ITEM_DESC}</p>
-          </div>
-          <button
-            type="button"
-            class="buy-btn"
-            data-item-num="${item.ITEM_NUM}"
-            ${memberPoint < item.PRICE || memberItems.includes(item.ITEM_NUM) ? "disabled" : ""}
-          >${memberItems.includes(item.ITEM_NUM) ? "보유" : "구매"}<span class="buy-price">${item.PRICE}P</span></button>
-        </article>
-      `).join("");
+      itemList.innerHTML = ITEM_LIST.map((item) => {
+        const isOwned = memberItems.includes(item.ITEM_NUM);
+
+        return `
+          <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
+            <div class="item-icon ${item.ITEM_ICON}">${getItemIcon(item.ITEM_ICON)}</div>
+            <div>
+              <div class="item-title-row">
+                <h2 class="item-name">${item.ITEM_NAME}</h2>
+                <span class="item-kind">${item.ITEM_KIND}</span>
+              </div>
+              <p class="item-desc">${item.ITEM_DESC}</p>
+            </div>
+            <button
+              type="button"
+              class="buy-btn"
+              data-item-num="${item.ITEM_NUM}"
+              ${memberPoint < item.PRICE || isOwned ? "disabled" : ""}
+            >${isOwned ? "보유" : `구매<span class="buy-price">${item.PRICE}P</span>`}</button>
+          </article>
+        `;
+      }).join("");
 
       document.querySelectorAll(".buy-btn:not(:disabled)").forEach((button) => {
         button.addEventListener("click", () => {
@@ -736,6 +907,15 @@
       });
     }
 
+    /*
+    구매 버튼을 눌렀을 때 실행된다.
+
+    1. 선택한 상품 찾기
+    2. 포인트 부족 여부 확인
+    3. 중복 구매 여부 확인
+    4. 아이템 저장
+    5. 포인트 차감
+    */
     function buyItem(itemNum) {
       const selectedItem = ITEM_LIST.find((item) => item.ITEM_NUM === itemNum);
 
@@ -757,14 +937,15 @@
     renderItemList();
   </script>
   <script>
-    (function applyDarkMode() {
-      try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
-        if (appSetting.DARK_MODE) {
-          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
-        }
-      } catch (error) {}
-    })();
+  (function applyDarkMode() {
+	  try {
+	    const appSetting = JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}");
+
+	    if (appSetting.DARK_MODE) {
+	      document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+	    }
+	  } catch (error) {}
+	})();
   </script>
 </body>
 </html>

@@ -1,6 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%
+    /*
+    로그인한 회원 정보를 세션에서 가져온다.
+    로그인하지 않은 사용자가 main.jsp에 직접 들어오면
+    로그인 페이지로 돌려보낸다.
+    */
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
@@ -70,7 +75,7 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.88), rgba(45, 77, 78, 0.82)),
-        url("Project_Logo/logo_02.png") center/cover;
+      url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -108,6 +113,25 @@
       font-weight: 700;
       line-height: 1.45;
       color: rgba(246, 251, 248, 0.78);
+    }
+
+    .visual-level {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      min-height: 24px;
+      margin-top: 10px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background-color: rgba(246, 251, 248, 0.16);
+      border: 1px solid rgba(246, 251, 248, 0.22);
+      font-family: 'Pretendard', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.35;
+      color: rgba(246, 251, 248, 0.88);
+      word-break: keep-all;
     }
 
     .section-title {
@@ -255,22 +279,6 @@
       stroke: rgba(33, 54, 56, 0.56);
     }
 
-    .posture-crown {
-      position: absolute;
-      top: 9px;
-      left: -8px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background-color: #111111;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
     .posture-name {
       display: block;
       font-size: 11px;
@@ -348,6 +356,94 @@
       stroke: #213638;
     }
 
+    .retrain-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-color: rgba(17, 25, 29, 0.42);
+      backdrop-filter: blur(3px);
+    }
+
+    .retrain-modal.show {
+      display: flex;
+    }
+
+    .retrain-modal-box {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 22px;
+      padding: 26px 22px 20px;
+      background-color: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 22px 50px rgba(20, 36, 38, 0.28);
+      text-align: center;
+      font-family: 'Pretendard', sans-serif;
+      color: #213638;
+    }
+
+    .retrain-modal-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
+      border-radius: 16px;
+      background-color: rgba(216, 232, 127, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .retrain-modal-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: #213638;
+      stroke-width: 2.2;
+      fill: none;
+    }
+
+    .retrain-modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+
+    .retrain-modal-desc {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: rgba(33, 54, 56, 0.68);
+      margin-bottom: 20px;
+    }
+
+    .retrain-modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .retrain-modal-btn {
+      height: 44px;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .retrain-modal-btn.no {
+      background-color: rgba(33, 54, 56, 0.10);
+      color: #213638;
+    }
+
+    .retrain-modal-btn.yes {
+      background-color: #213638;
+      color: #ffffff;
+    }
+
     @media (max-width: 390px) {
       .training-page {
         padding: 24px 18px 108px;
@@ -407,6 +503,7 @@
         box-shadow: 0 30px 80px rgba(28, 55, 58, 0.24);
       }
     }
+
     .mobile-frame.dark-mode {
       background: linear-gradient(145deg, #182527 0%, #243638 52%, #11191d 100%);
       color: #eef7f2;
@@ -505,6 +602,32 @@
       color: rgba(238, 247, 242, 0.72);
     }
 
+    .mobile-frame.dark-mode .retrain-modal-box {
+      background-color: #243638;
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .retrain-modal-desc {
+      color: rgba(238, 247, 242, 0.68);
+    }
+
+    .mobile-frame.dark-mode .retrain-modal-btn.no {
+      background-color: rgba(255, 255, 255, 0.14);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .retrain-modal-btn.yes {
+      background-color: #eef7f2;
+      color: #213638;
+    }
+
+    .mobile-frame.dark-mode .retrain-modal-icon {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .mobile-frame.dark-mode .retrain-modal-icon svg {
+      stroke: #eef7f2;
+    }
   </style>
 </head>
 
@@ -516,6 +639,7 @@
         <div class="visual-copy">
           <h2 class="visual-title">나의 훈련</h2>
           <p class="visual-quote" id="trainingQuote"></p>
+          <p class="visual-level" id="trainingLevelText"></p>
         </div>
       </section>
 
@@ -579,22 +703,80 @@
         <span>마이페이지</span>
       </a>
     </nav>
+
+    <div class="retrain-modal" id="retrainModal" aria-hidden="true">
+      <div class="retrain-modal-box" role="dialog" aria-modal="true">
+        <div class="retrain-modal-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M8 12L11 15L16 9"></path>
+          </svg>
+        </div>
+
+        <p class="retrain-modal-title">
+          이미 학습한 기록이 있습니다.
+        </p>
+
+        <p class="retrain-modal-desc">
+          다시 학습하시겠습니까?
+        </p>
+
+        <div class="retrain-modal-actions">
+          <button type="button" class="retrain-modal-btn no" id="retrainNoBtn">
+            아니오
+          </button>
+          <button type="button" class="retrain-modal-btn yes" id="retrainYesBtn">
+            네
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
+  /*
+  현재 로그인한 회원 번호를 JSP에서 가져온다.
+  회원마다 훈련 기록이 다르기 때문에 M_NUM으로 구분한다.
+  */
   	const M_NUM = <%= loginUser.getmNum() %>;
+
+  	/*
+  	회원별 훈련 기록 저장 key.
+  	예: 회원번호가 3이면 BGS_TRAIN_HISTORY_3 으로 저장된다.
+  	*/
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
+
+    const DIFFICULTY_OPTIONS = {
+      "1": [
+        { value: "k1", label: "1급" },
+        { value: "k2", label: "2급" },
+        { value: "k3", label: "3급" },
+        { value: "k4", label: "4급" },
+        { value: "k5", label: "5급" },
+        { value: "k6", label: "6급" },
+        { value: "k7", label: "7급" },
+        { value: "k8", label: "8급" },
+        { value: "k9", label: "9급" },
+        { value: "k10", label: "10급" }
+      ],
+      "2": [
+        { value: "l_beginner", label: "초급" },
+        { value: "l_middle", label: "중급" },
+        { value: "l_advanced", label: "고급" }
+      ]
+    };
 
     function getSavedTrainingSetting() {
       try {
         const appSetting = JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}");
         const division = Number(appSetting.TRAIN_DIVISION) || 1;
-        const difficulty = appSetting.DIFFICULTY || "k1";
+        const kendoDifficulty = appSetting.KENDO_DIFFICULTY || (division === 1 ? appSetting.DIFFICULTY : "k2");
+        const liechtenauerDifficulty = appSetting.LIECHTENAUER_DIFFICULTY || (division === 2 ? appSetting.DIFFICULTY : "l_middle");
 
         return {
           DIVISION: division,
-          K_GRADE: division === 1 ? Number(String(difficulty).replace("k", "")) || 1 : null,
-          L_GRADE: division === 2 ? difficulty : null
+          K_GRADE: Number(String(kendoDifficulty).replace("k", "")) || 2,
+          L_GRADE: liechtenauerDifficulty
         };
       } catch (error) {
         return {
@@ -607,6 +789,51 @@
 
     const USER_TRAINING_SETTING = getSavedTrainingSetting();
 
+    function getAppSetting() {
+      try {
+        return {
+          TRAIN_DIVISION: "1",
+          DIFFICULTY: "k2",
+          KENDO_DIFFICULTY: "k2",
+          LIECHTENAUER_DIFFICULTY: "l_middle",
+          ...JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}")
+        };
+      } catch (error) {
+        return {
+          TRAIN_DIVISION: "1",
+          DIFFICULTY: "k2",
+          KENDO_DIFFICULTY: "k2",
+          LIECHTENAUER_DIFFICULTY: "l_middle"
+        };
+      }
+    }
+
+    function getDifficultyLabel(division, value) {
+      const options = DIFFICULTY_OPTIONS[division] || DIFFICULTY_OPTIONS["1"];
+      const selectedOption = options.find((item) => item.value === value) || options[0];
+      return selectedOption.label;
+    }
+    /*
+    DB에 저장된 회원의 실제 난이도를 화면에 표시한다.
+
+    대한검도는 MEMBER 테이블의 K_GRADE,
+    리히테나워는 MEMBER 테이블의 L_GRADE 값을 사용한다.
+    */
+    function renderTrainingLevel() {
+    	  document.getElementById("trainingLevelText").innerText =
+    	    "대한검도 · <%= loginUser.getkGrade() %>급 / 리히테나워 · <%
+    	      if (loginUser.getlGrade() == 1) {
+    	          out.print("초급");
+    	      } else if (loginUser.getlGrade() == 2) {
+    	          out.print("중급");
+    	      } else if (loginUser.getlGrade() == 3) {
+    	          out.print("고급");
+    	      } else {
+    	          out.print("-");
+    	      }
+    	    %>";
+    	}
+    
     const TRAINING_QUOTES = [
       "오늘의 한 걸음이 내일의 실력을 만든다.",
       "자세는 흔들려도 마음은 흔들리지 않는다.",
@@ -688,27 +915,30 @@
       POSTURE_NUM: DEFAULT_TRAINING.POSTURE_NUM
     };
 
+    let selectedRestartPostureNum = null;
+
     function setTrainingQuote() {
       const trainingQuote = document.getElementById("trainingQuote");
       const randomIndex = Math.floor(Math.random() * TRAINING_QUOTES.length);
       trainingQuote.innerText = `"${TRAINING_QUOTES[randomIndex]}"`;
     }
-
+    /*
+    훈련 종류에 맞는 아이콘 이미지를 반환한다.
+    TRAIN_NUM이 1이면 자세훈련 아이콘,
+    2이면 행동훈련 아이콘을 보여준다.
+    */
     function getTrainingIcon(TRAIN_NUM) {
     	  if (TRAIN_NUM === 1) {
     	    return `
-    	      <img src="Project_Logo/main_icon.png"
-    	           alt="자세훈련 아이콘"
-    	           class="training-icon posture">
+    	      <img src="Project_Logo/main_icon.png" alt="자세훈련 아이콘" class="training-icon posture">
     	    `;
     	  }
 
     	  return `
-    	    <img src="Project_Logo/main_icon2.png"
-    	         alt="행동훈련 아이콘"
-    	         class="training-icon action">
+    	    <img src="Project_Logo/main_icon2.png" alt="행동훈련 아이콘" class="training-icon action">
     	  `;
-    }
+    	}
+
     function renderTrainingList() {
       const trainingGrid = document.getElementById("trainingGrid");
       const selectedList = TRAINING_LIST.filter((training) => training.DIVISION === TRAIN_HIS.DIVISION);
@@ -734,6 +964,7 @@
 
           TRAIN_HIS.TRAIN_NUM = Number(card.dataset.trainNum);
           TRAIN_HIS.POSTURE_NUM = firstPosture ? firstPosture.POSTURE_NUM : Number(card.dataset.postureNum);
+
           renderPostureList();
           renderTrainingList();
         });
@@ -813,21 +1044,24 @@
     function renderPostureList() {
       const postureGrid = document.getElementById("postureGrid");
       const postureSectionTitle = document.getElementById("postureSectionTitle");
+
       const selectedTraining = TRAINING_LIST.find((training) => {
         return training.DIVISION === TRAIN_HIS.DIVISION && training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM;
       }) || DEFAULT_TRAINING;
+
       const selectedPostures = getPosturesByTraining(TRAIN_HIS.TRAIN_NUM);
 
       postureSectionTitle.innerText = `${selectedTraining.TRAIN_NAME} 목록`;
+
       postureGrid.innerHTML = selectedPostures.map((posture) => `
         <button
           type="button"
           class="posture-item ${posture.STATUS}"
           data-posture-num="${posture.POSTURE_NUM}"
+          data-status="${posture.STATUS}"
           ${posture.STATUS === "locked" ? "disabled" : ""}
         >
           <span class="posture-icon">
-            ${posture.IS_REWARD ? '<span class="posture-crown">♕</span>' : ""}
             ${getPostureIcon(posture.STATUS)}
           </span>
           <span class="posture-name">${posture.G_NAME}</span>
@@ -836,14 +1070,58 @@
 
       document.querySelectorAll(".posture-item:not(.locked)").forEach((item) => {
         item.addEventListener("click", () => {
-          TRAIN_HIS.POSTURE_NUM = Number(item.dataset.postureNum);
+          const postureStatus = item.dataset.status;
+          const postureNum = Number(item.dataset.postureNum);
+
+          TRAIN_HIS.POSTURE_NUM = postureNum;
+
+          if (postureStatus === "done") {
+            openRetrainModal(postureNum);
+            return;
+          }
+
           startPostureTraining();
         });
       });
     }
 
+    function openRetrainModal(postureNum) {
+      selectedRestartPostureNum = Number(postureNum);
+
+      const retrainModal = document.getElementById("retrainModal");
+      retrainModal.classList.add("show");
+      retrainModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRetrainModal() {
+      const retrainModal = document.getElementById("retrainModal");
+      retrainModal.classList.remove("show");
+      retrainModal.setAttribute("aria-hidden", "true");
+    }
+
+    function setupRetrainModal() {
+      const retrainNoBtn = document.getElementById("retrainNoBtn");
+      const retrainYesBtn = document.getElementById("retrainYesBtn");
+
+      retrainNoBtn.addEventListener("click", () => {
+        closeRetrainModal();
+        location.href = "main.jsp";
+      });
+
+      retrainYesBtn.addEventListener("click", () => {
+        closeRetrainModal();
+
+        if (selectedRestartPostureNum) {
+          TRAIN_HIS.POSTURE_NUM = selectedRestartPostureNum;
+        }
+
+        startPostureTraining();
+      });
+    }
+
     function startPostureTraining() {
       TRAIN_HIS.T_DATE = new Date().toISOString();
+
       const selectedPosture = POSTURE_LIST.find((posture) => {
         return posture.DIVISION === TRAIN_HIS.DIVISION && posture.POSTURE_NUM === TRAIN_HIS.POSTURE_NUM;
       });
@@ -860,9 +1138,12 @@
     }
 
     setTrainingQuote();
+    renderTrainingLevel();
+    setupRetrainModal();
     renderTrainingList();
     renderPostureList();
   </script>
+
   <script>
     (function applyDarkMode() {
       try {
