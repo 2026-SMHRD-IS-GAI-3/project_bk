@@ -134,6 +134,65 @@
       gap: 10px;
     }
 
+    .division-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .division-card {
+      min-height: 58px;
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.50);
+      color: #213638;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(40, 70, 72, 0.08);
+      transition: 0.18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .division-card.active {
+      border-color: #d8e87f;
+      background-color: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 0 0 4px rgba(216, 232, 127, 0.22);
+    }
+
+    .division-card.division-kendo.active {
+      border-color: #7ea7d8;
+      background-color: rgba(224, 237, 252, 0.90);
+      box-shadow: 0 0 0 4px rgba(126, 167, 216, 0.22);
+    }
+
+    .division-card.division-liechtenauer.active {
+      border-color: #75d6d0;
+      background-color: rgba(217, 248, 245, 0.88);
+      box-shadow: 0 0 0 4px rgba(117, 214, 208, 0.24);
+    }
+
+    .division-name {
+      display: block;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 15px;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+
+    .division-desc {
+      display: block;
+      margin-top: 3px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 10px;
+      line-height: 1.3;
+      font-weight: 700;
+      color: rgba(33, 54, 56, 0.62);
+    }
+
     .training-card {
       min-height: 136px;
       border: 1px solid rgba(255, 255, 255, 0.76);
@@ -155,6 +214,16 @@
       border-color: #d8e87f;
       background-color: rgba(255, 255, 255, 0.82);
       box-shadow: 0 0 0 4px rgba(216, 232, 127, 0.22);
+    }
+
+    .training-card.division-kendo.active {
+      border-color: #7ea7d8;
+      box-shadow: 0 0 0 4px rgba(126, 167, 216, 0.22);
+    }
+
+    .training-card.division-liechtenauer.active {
+      border-color: #75d6d0;
+      box-shadow: 0 0 0 4px rgba(117, 214, 208, 0.24);
     }
 
     .card-icon {
@@ -181,13 +250,35 @@
       display: block;
       width: 100%;
       min-height: 30px;
-      padding: 8px 2px 0;
+      padding: 5px 2px 0;
       font-family: 'Pretendard', sans-serif;
       font-size: 14px;
       line-height: 1.25;
       font-weight: 800;
       text-align: center;
       margin-bottom: 0;
+    }
+
+    .posture-title-division {
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 0 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 800;
+      color: #213638;
+      vertical-align: 2px;
+      margin-right: 4px;
+    }
+
+    .posture-title-division.division-kendo {
+      background-color: #d7e8fb;
+    }
+
+    .posture-title-division.division-liechtenauer {
+      background-color: #aee7e3;
     }
 
     .posture-grid {
@@ -527,6 +618,7 @@
     .mobile-frame.dark-mode .signup-box,
     .mobile-frame.dark-mode .summary-item,
     .mobile-frame.dark-mode .challenge-card,
+    .mobile-frame.dark-mode .division-card,
     .mobile-frame.dark-mode .training-card,
     .mobile-frame.dark-mode .training-panel,
     .mobile-frame.dark-mode .bottom-nav,
@@ -536,6 +628,36 @@
       background-color: rgba(255, 255, 255, 0.10);
       border-color: rgba(255, 255, 255, 0.18);
       color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .division-card.division-kendo.active,
+    .mobile-frame.dark-mode .training-card.division-kendo.active {
+      border-color: #8fb9ec;
+      box-shadow: 0 0 0 4px rgba(143, 185, 236, 0.20);
+    }
+
+    .mobile-frame.dark-mode .division-card.division-liechtenauer.active,
+    .mobile-frame.dark-mode .training-card.division-liechtenauer.active {
+      border-color: #79ded9;
+      box-shadow: 0 0 0 4px rgba(121, 222, 217, 0.20);
+    }
+
+    .mobile-frame.dark-mode .division-card.division-kendo.active {
+      background-color: rgba(143, 185, 236, 0.16);
+    }
+
+    .mobile-frame.dark-mode .division-card.division-liechtenauer.active {
+      background-color: rgba(121, 222, 217, 0.16);
+    }
+
+    .mobile-frame.dark-mode .posture-title-division.division-kendo {
+      background-color: #8fb9ec;
+      color: #213638;
+    }
+
+    .mobile-frame.dark-mode .posture-title-division.division-liechtenauer {
+      background-color: #79ded9;
+      color: #213638;
     }
 
     .mobile-frame.dark-mode .nav-item {
@@ -587,6 +709,10 @@
       color: rgba(238, 247, 242, 0.72);
     }
 
+    .mobile-frame.dark-mode .division-desc {
+      color: rgba(238, 247, 242, 0.62);
+    }
+
     .mobile-frame.dark-mode .retrain-modal-box {
       background-color: #243638;
       color: #eef7f2;
@@ -629,6 +755,8 @@
       </section>
 
       <section aria-label="훈련 종류 선택">
+        <h2 class="section-title">종목 선택</h2>
+        <div class="division-grid" id="divisionGrid"></div>
         <h2 class="section-title">훈련 선택</h2>
         <div class="training-grid" id="trainingGrid"></div>
       </section>
@@ -903,6 +1031,75 @@
       `;
     }
 
+    function getDivisionName(division) {
+      return Number(division) === 2 ? "리히테나워" : "대한검도";
+    }
+
+    function getDivisionDesc(division) {
+      return Number(division) === 2 ? "롱소드 기반 수련" : "검도 기본 수련";
+    }
+
+    function getDivisionClass(division) {
+      return Number(division) === 2 ? "division-liechtenauer" : "division-kendo";
+    }
+
+    function getCurrentTraining() {
+      return TRAINING_LIST.find((training) => {
+        return training.DIVISION === TRAIN_HIS.DIVISION && training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM;
+      }) || TRAINING_LIST.find((training) => training.DIVISION === TRAIN_HIS.DIVISION) || DEFAULT_TRAINING;
+    }
+
+    function setFirstAvailablePosture() {
+      const currentTraining = getCurrentTraining();
+      const postures = getPosturesByTraining(currentTraining.TRAIN_NUM);
+      const firstPosture = postures.find((posture) => posture.STATUS !== "locked") || postures[0];
+
+      TRAIN_HIS.TRAIN_NUM = currentTraining.TRAIN_NUM;
+      TRAIN_HIS.POSTURE_NUM = firstPosture ? firstPosture.POSTURE_NUM : currentTraining.POSTURE_NUM;
+    }
+
+    function renderDivisionList() {
+      const divisionGrid = document.getElementById("divisionGrid");
+      const divisions = [
+        { DIVISION: 1 },
+        { DIVISION: 2 }
+      ];
+
+      divisionGrid.innerHTML = divisions.map((division) => `
+        <button
+          type="button"
+          class="division-card ${getDivisionClass(division.DIVISION)} ${division.DIVISION === TRAIN_HIS.DIVISION ? "active" : ""}"
+          data-division="${division.DIVISION}"
+        >
+          <span>
+            <span class="division-name">${getDivisionName(division.DIVISION)}</span>
+            <span class="division-desc">${getDivisionDesc(division.DIVISION)}</span>
+          </span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".division-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const selectedDivision = Number(card.dataset.division);
+
+          if (selectedDivision === TRAIN_HIS.DIVISION) {
+            return;
+          }
+
+          const currentTrainNum = TRAIN_HIS.TRAIN_NUM;
+          TRAIN_HIS.DIVISION = selectedDivision;
+          TRAIN_HIS.TRAIN_NUM = TRAINING_LIST.some((training) => {
+            return training.DIVISION === selectedDivision && training.TRAIN_NUM === currentTrainNum;
+          }) ? currentTrainNum : 1;
+          setFirstAvailablePosture();
+
+          renderDivisionList();
+          renderTrainingList();
+          renderPostureList();
+        });
+      });
+    }
+
     function renderTrainingList() {
       const trainingGrid = document.getElementById("trainingGrid");
       const selectedList = TRAINING_LIST.filter((training) => training.DIVISION === TRAIN_HIS.DIVISION);
@@ -910,7 +1107,7 @@
       trainingGrid.innerHTML = selectedList.map((training) => `
         <button
           type="button"
-          class="training-card ${training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM ? "active" : ""}"
+          class="training-card ${getDivisionClass(training.DIVISION)} ${training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM ? "active" : ""}"
           data-train-num="${training.TRAIN_NUM}"
           data-posture-num="${training.POSTURE_NUM}"
         >
@@ -923,10 +1120,11 @@
 
       document.querySelectorAll(".training-card").forEach((card) => {
         card.addEventListener("click", () => {
-          const postures = getPosturesByTraining(Number(card.dataset.trainNum));
+          TRAIN_HIS.TRAIN_NUM = Number(card.dataset.trainNum);
+
+          const postures = getPosturesByTraining(TRAIN_HIS.TRAIN_NUM);
           const firstPosture = postures.find((posture) => posture.STATUS !== "locked") || postures[0];
 
-          TRAIN_HIS.TRAIN_NUM = Number(card.dataset.trainNum);
           TRAIN_HIS.POSTURE_NUM = firstPosture ? firstPosture.POSTURE_NUM : Number(card.dataset.postureNum);
 
           renderPostureList();
@@ -949,19 +1147,43 @@
       }
     }
 
-    function isPostureCompleted(postureNum) {
+    function isPostureCompleted(posture) {
+      const postureData = typeof posture === "object"
+        ? posture
+        : {
+            DIVISION: TRAIN_HIS.DIVISION,
+            TRAIN_NUM: TRAIN_HIS.TRAIN_NUM,
+            POSTURE_NUM: posture
+          };
+
       return getTrainingHistory().some((history) => {
-        return Number(history.M_NUM) === M_NUM && Number(history.POSTURE_NUM) === Number(postureNum);
+        const sameMember = Number(history.M_NUM) === M_NUM;
+        const sameDivision = !history.DIVISION || Number(history.DIVISION) === Number(postureData.DIVISION);
+        const sameTraining = !history.TRAIN_NUM || Number(history.TRAIN_NUM) === Number(postureData.TRAIN_NUM);
+        const samePosture = Number(history.POSTURE_NUM) === Number(postureData.POSTURE_NUM);
+
+        return sameMember && sameDivision && sameTraining && samePosture;
       });
     }
 
     function getPostureStatus(posture) {
-      if (isPostureCompleted(posture.POSTURE_NUM)) {
+      if (isPostureCompleted(posture)) {
         return "done";
       }
 
-      if (posture.REQUIRED_POSTURE_NUM && !isPostureCompleted(posture.REQUIRED_POSTURE_NUM)) {
-        return "locked";
+      if (posture.REQUIRED_POSTURE_NUM) {
+        const requiredPosture = POSTURE_LIST.find((required) => {
+          return required.DIVISION === posture.DIVISION
+            && required.TRAIN_NUM === posture.TRAIN_NUM
+            && required.POSTURE_NUM === posture.REQUIRED_POSTURE_NUM;
+        }) || {
+          ...posture,
+          POSTURE_NUM: posture.REQUIRED_POSTURE_NUM
+        };
+
+        if (!isPostureCompleted(requiredPosture)) {
+          return "locked";
+        }
       }
 
       return "current";
@@ -1009,13 +1231,16 @@
       const postureGrid = document.getElementById("postureGrid");
       const postureSectionTitle = document.getElementById("postureSectionTitle");
 
-      const selectedTraining = TRAINING_LIST.find((training) => {
-        return training.DIVISION === TRAIN_HIS.DIVISION && training.TRAIN_NUM === TRAIN_HIS.TRAIN_NUM;
-      }) || DEFAULT_TRAINING;
+      const selectedTraining = getCurrentTraining();
 
       const selectedPostures = getPosturesByTraining(TRAIN_HIS.TRAIN_NUM);
 
-      postureSectionTitle.innerText = `${selectedTraining.TRAIN_NAME} 목록`;
+      postureSectionTitle.innerHTML = `
+        ${selectedTraining.TRAIN_NAME} 목록
+        <span class="posture-title-division ${getDivisionClass(selectedTraining.DIVISION)}">
+          ${getDivisionName(selectedTraining.DIVISION)}
+        </span>
+      `;
 
       postureGrid.innerHTML = selectedPostures.map((posture) => `
         <button
@@ -1104,6 +1329,7 @@
     setTrainingQuote();
     renderTrainingLevel();
     setupRetrainModal();
+    renderDivisionList();
     renderTrainingList();
     renderPostureList();
   </script>
