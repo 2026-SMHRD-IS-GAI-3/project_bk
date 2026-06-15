@@ -529,8 +529,9 @@
                 <button type="button" class="camera-btn primary" id="nextPostureBtn" onclick="goNextPosture()">다음 자세</button>
               </div>
             </div>
-
+a
             <div class="camera-actions">
+            
               <button type="button" class="camera-btn primary" onclick="startCamera()">카메라 시작</button>
               <button type="button" class="camera-btn" onclick="submitPosture()">자세 제출</button>
             </div>
@@ -567,7 +568,28 @@
 
     let cameraStream = null;
     let CURRENT_TRAIN_HIS = null;
+    async function startCamera() {
+    	  const cameraStage = document.getElementById("cameraStage");
+    	  const cameraVideo = document.getElementById("cameraVideo");
 
+    	  cameraStage.classList.remove("submitted");
+
+    	  try {
+    	    cameraStream = await navigator.mediaDevices.getUserMedia({
+    	      video: {
+    	        facingMode: "user"
+    	      },
+    	      audio: false
+    	    });
+
+    	    cameraVideo.srcObject = cameraStream;
+    	    await cameraVideo.play();
+
+    	    cameraStage.classList.add("camera-on");
+    	  } catch (error) {
+    	    alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
+    	  }
+    	}
     function getTrainingParams() {
       const params = new URLSearchParams(location.search);
 
@@ -683,50 +705,51 @@
       localStorage.setItem(TRAIN_HISTORY_KEY, JSON.stringify([...history, nextRecord]));
     }
 
-    async function startCamera() {
-      const cameraStage = document.getElementById("cameraStage");
-      const cameraVideo = document.getElementById("cameraVideo");
-      cameraStage.classList.remove("submitted");
+    async function submitPosture() {
+    	  const cameraStage = document.getElementById("cameraStage");
+    	  const cameraVideo = document.getElementById("cameraVideo");
 
-      try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "user"
-          },
-          audio: false
-        });
-        cameraVideo.srcObject = cameraStream;
-        await cameraVideo.play();
-        cameraStage.classList.add("camera-on");
-      } catch (error) {
-        alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
-      }
-    }
+    	  const hasActiveCamera =
+    	    cameraStream &&
+    	    cameraStream.getVideoTracks().some((track) => track.readyState === "live") &&
+    	    cameraVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
 
-    function submitPosture() {
-      const cameraStage = document.getElementById("cameraStage");
-      const cameraVideo = document.getElementById("cameraVideo");
-      const hasActiveCamera = cameraStream
-        && cameraStream.getVideoTracks().some((track) => track.readyState === "live")
-        && cameraVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+    	  if (!hasActiveCamera) {
+    	    alert("카메라를 켜고 자세를 화면에 맞춘 뒤 제출해주세요.");
+    	    return;
+    	  }
 
-      if (!hasActiveCamera) {
-        alert("카메라를 켜고 자세를 화면에 맞춘 뒤 제출해주세요.");
-        return;
-      }
+    	  const aiResult = await analyzePose();
 
-      if (cameraStream) {
-        cameraStream.getTracks().forEach((track) => track.stop());
-        cameraStream = null;
-      }
+    	  if (!aiResult) {
+    	    return;
+    	  }
 
-      cameraVideo.srcObject = null;
-      cameraStage.classList.remove("camera-on");
-      cameraStage.classList.add("submitted");
-      saveTrainingHistory();
-      updateSubmitResult();
-    }
+    	  if (aiResult.error) {
+    	    alert("AI 분석 실패: " + aiResult.error);
+    	    return;
+    	  }
 
+    	  if (cameraStream) {
+    	    cameraStream.getTracks().forEach((track) => track.stop());
+    	    cameraStream = null;
+    	  }
+
+    	  cameraVideo.srcObject = null;
+    	  cameraStage.classList.remove("camera-on");
+    	  cameraStage.classList.add("submitted");
+
+    	  document.getElementById("submitResultDesc").innerText =
+    	    "자세 : " + aiResult.pose +
+    	    "\n점수 : " + Math.round(aiResult.final_score) +
+    	    "\n결과 : " + aiResult.status;
+
+    	  CURRENT_TRAIN_HIS.ACCURACY = Math.round(aiResult.final_score);
+
+    	  saveTrainingHistory();
+    	}
+
+ 
     function goNextPosture() {
       const nextData = getNextTrainingData();
 
@@ -747,11 +770,93 @@
     }
 
     renderTrainingSession();
+    
+    async function captureImage() {
+
+        const video =
+        document.getElementById("cameraVideo");
+
+        const canvas =
+        document.createElement("canvas");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx =
+        canvas.getContext("2d");
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        return new Promise(resolve => {
+
+            canvas.toBlob(blob => {
+                resolve(blob);
+            }, "image/jpeg");
+
+        });
+    }
+    
+    async function analyzePose() {
+
+        try {
+
+            const imageBlob =
+            await captureImage();
+
+            const formData =
+            new FormData();
+
+            formData.append(
+                "image",
+                imageBlob,
+                "capture.jpg"
+            );
+
+            const mode =
+            	  CURRENT_TRAIN_HIS.DIVISION === 2
+            	    ? "hema"
+            	    : "kendo";
+
+            	formData.append("mode", mode);
+
+            const response =
+            await fetch(
+                "http://127.0.0.1:5000/predict",
+                {
+                    method:"POST",
+                    body:formData
+                }
+            );
+
+            const result =
+            await response.json();
+
+            console.log(result);
+
+            return result;
+
+        } catch(error){
+
+            console.error(error);
+
+            alert(
+                "AI 서버 연결 실패"
+            );
+
+            return null;
+        }
+    }
   </script>
   <script>
     (function applyDarkMode() {
       try {
-        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_<%= loginUser.getmNum() %>")|| "{}");
         if (appSetting.DARK_MODE) {
           document.querySelector(".mobile-frame")?.classList.add("dark-mode");
         }
