@@ -1,11 +1,31 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
+<%@ page import="com.kendo.model.UserDAO" %>
+<%@ page import="com.kendo.model.TrainingDTO" %>
+
 <%
+
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
         response.sendRedirect("login.jsp");
         return;
+    }
+    
+    int postureNum = 1;
+
+    if (request.getParameter("POSTURE_NUM") != null) {
+        postureNum = Integer.parseInt(request.getParameter("POSTURE_NUM"));
+    }
+
+    UserDAO dao = new UserDAO();
+    TrainingDTO trainingData = dao.selectTrainingData(postureNum);
+    System.out.println("postureNum = " + postureNum);
+    System.out.println("trainingData = " + trainingData);
+
+    if (trainingData != null) {
+        System.out.println("gName = " + trainingData.getgName());
+        System.out.println("url = " + trainingData.getUrl());
     }
 %>
 <!DOCTYPE html>
@@ -529,7 +549,7 @@
                 <button type="button" class="camera-btn primary" id="nextPostureBtn" onclick="goNextPosture()">다음 자세</button>
               </div>
             </div>
-a
+
             <div class="camera-actions">
             
               <button type="button" class="camera-btn primary" onclick="startCamera()">카메라 시작</button>
@@ -542,32 +562,26 @@ a
   </div>
 
   <script>
-    const TRAINING_DATA = [
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 1, G_NAME: "기본 자세 - 중단세", FILE_DIV: 1, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 2, G_NAME: "기본 베기 - 정면 베기", FILE_DIV: 1, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 3, G_NAME: "발 동작 - 전진/후진", FILE_DIV: 2, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 4, G_NAME: "자세 교정 - 중단세 심화", FILE_DIV: 1, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 5, G_NAME: "연속 베기 - 좌우 베기", FILE_DIV: 2, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 1, POSTURE_NUM: 6, G_NAME: "동작 교정 - 베기 분석", FILE_DIV: 2, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 7, G_NAME: "머리치기 - 기본", FILE_DIV: 2, URL: "" },
-      { DIVISION: 1, TRAIN_NUM: 2, POSTURE_NUM: 8, G_NAME: "머리치기 - 연속", FILE_DIV: 2, URL: "" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 11, G_NAME: "기본 자세 - Vom Tag", FILE_DIV: 1, URL: "" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 12, G_NAME: "기본 자세 - Pflug", FILE_DIV: 1, URL: "" },
-      { DIVISION: 2, TRAIN_NUM: 1, POSTURE_NUM: 13, G_NAME: "기본 자세 - Ochs", FILE_DIV: 1, URL: "" },
-      { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 14, G_NAME: "Oberhau - 기본", FILE_DIV: 2, URL: "" },
-      { DIVISION: 2, TRAIN_NUM: 2, POSTURE_NUM: 15, G_NAME: "Oberhau - 연결", FILE_DIV: 2, URL: "" }
-    ]; 
+  const CONTEXT_PATH = "<%= request.getContextPath() %>";
 
-    const DIVISION_NAME = {
-      1: "대한검도",
-      2: "리히테나워"
-    };
-
+  const TRAINING_DATA = [
+    {
+      DIVISION: <%= trainingData != null ? trainingData.getDivision() : 1 %>,
+      TRAIN_NUM: Number(new URLSearchParams(location.search).get("TRAIN_NUM")) || 1,
+      POSTURE_NUM: <%= trainingData != null ? trainingData.getPostureNum() : 1 %>,
+      G_NAME: "<%= trainingData != null ? trainingData.getgName() : "훈련" %>",
+      FILE_DIV: <%= trainingData != null ? trainingData.getFileDiv() : 1 %>,
+      URL: "<%= trainingData != null ? trainingData.getUrl() : "" %>"
+    }
+  ];
     const M_NUM = <%= loginUser.getmNum() %>;
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
     let cameraStream = null;
     let CURRENT_TRAIN_HIS = null;
+    let autoAnalyzeTimer = null;
+    let isAutoAnalyzing = false;
+    const AUTO_MATCH_SCORE = 90;
     async function startCamera() {
     	  const cameraStage = document.getElementById("cameraStage");
     	  const cameraVideo = document.getElementById("cameraVideo");
@@ -586,10 +600,79 @@ a
     	    await cameraVideo.play();
 
     	    cameraStage.classList.add("camera-on");
+
+    	    /* 카메라가 켜지면 자동 자세 분석 시작 */
+    	    startAutoAnalyze();
     	  } catch (error) {
     	    alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
     	  }
     	}
+    function normalizePoseName(name) {
+    	  return String(name || "")
+    	    .toLowerCase()
+    	    .replaceAll(" ", "")
+    	    .replace("중단세", "jungdan")
+    	    .replace("상단세", "sangdan");
+    	}
+
+    	function isPoseMatched(aiResult) {
+    	  const expectedPose = normalizePoseName(CURRENT_TRAIN_HIS?.G_NAME);
+    	  const predictedPose = normalizePoseName(aiResult?.pose);
+
+    	  return expectedPose &&
+    	         predictedPose &&
+    	         (
+    	           expectedPose.includes(predictedPose) ||
+    	           predictedPose.includes(expectedPose)
+    	         );
+    	}
+
+    	function startAutoAnalyze() {
+    	  stopAutoAnalyze();
+
+    	  autoAnalyzeTimer = setInterval(async function () {
+    	    if (isAutoAnalyzing) {
+    	      return;
+    	    }
+
+    	    if (!cameraStream || !CURRENT_TRAIN_HIS) {
+    	      return;
+    	    }
+
+    	    isAutoAnalyzing = true;
+
+    	    try {
+    	      const aiResult = await analyzePose(false);
+
+    	      if (!aiResult || aiResult.error) {
+    	        return;
+    	      }
+
+    	      const score = Math.round(Number(aiResult.final_score) || 0);
+    	      const matched = isPoseMatched(aiResult);
+
+    	      console.log("자동 분석 결과:", aiResult.pose, score, matched);
+
+    	      if (score >= AUTO_MATCH_SCORE && matched) {
+    	        finishTrainingWithAiResult(aiResult);
+    	      }
+
+    	    } finally {
+    	      isAutoAnalyzing = false;
+    	    }
+
+    	  }, 1500);
+    	}
+
+    	function stopAutoAnalyze() {
+    	  if (autoAnalyzeTimer) {
+    	    clearInterval(autoAnalyzeTimer);
+    	    autoAnalyzeTimer = null;
+    	  }
+
+    	  isAutoAnalyzing = false;
+    	}
+    	
     function getTrainingParams() {
       const params = new URLSearchParams(location.search);
 
@@ -602,44 +685,86 @@ a
         ACCURACY: params.get("ACCURACY")
       };
     }
-
     function renderTrainingSession() {
-      const TRAIN_HIS = getTrainingParams();
-      CURRENT_TRAIN_HIS = TRAIN_HIS;
-      const selectedData = TRAINING_DATA.find((data) => {
-        return data.DIVISION === TRAIN_HIS.DIVISION && data.POSTURE_NUM === TRAIN_HIS.POSTURE_NUM;
-      }) || {
-        ...TRAIN_HIS,
-        FILE_DIV: 1,
-        URL: ""
-      };
+    	  const TRAIN_HIS = getTrainingParams();
 
-      document.getElementById("G_NAME_TEXT").innerText = selectedData.G_NAME || TRAIN_HIS.G_NAME;
-      document.getElementById("FILE_DIV_TEXT").innerText = selectedData.URL
-        ? (selectedData.FILE_DIV === 2 ? "VIDEO" : "IMAGE")
-        : "DB CHECK";
-      const referenceStage = document.getElementById("referenceStage");
-      const referenceMedia = document.getElementById("referenceMedia");
+    	  const selectedData = TRAINING_DATA[0] || {
+    	    ...TRAIN_HIS,
+    	    FILE_DIV: 1,
+    	    URL: ""
+    	  };
 
-      if (selectedData.URL) {
-        referenceStage.classList.add("has-media");
-        document.getElementById("REFERENCE_TITLE").innerText = selectedData.G_NAME || "표준 자세 자료";
-        referenceMedia.innerHTML = selectedData.FILE_DIV === 2
-          ? `<video src="${selectedData.URL}" controls playsinline></video>`
-          : `<img src="${selectedData.URL}" alt="${selectedData.G_NAME || TRAIN_HIS.G_NAME} 훈련 자료">`;
-        document.getElementById("REFERENCE_DESC").innerText = `DB에서 불러온 자료: ${selectedData.URL}`;
-      } else {
-        referenceStage.classList.remove("has-media");
-        referenceMedia.innerHTML = "";
-        document.getElementById("REFERENCE_TITLE").innerText = "DB 연결 점검중";
-        document.getElementById("REFERENCE_DESC").innerText = "표준 자세 자료는 DB 연결 후 표시됩니다. 현재는 연결 실패 또는 점검중 상태입니다.";
-      }
-    }
+    	  /*
+    	    DB에서 가져온 selectedData 기준으로 CURRENT_TRAIN_HIS를 다시 만든다.
+    	    URL에 DIVISION이 없어도 DB의 DIVISION 값이 적용되게 하기 위함.
+    	  */
+    	  CURRENT_TRAIN_HIS = {
+    	    ...TRAIN_HIS,
+    	    DIVISION: selectedData.DIVISION,
+    	    TRAIN_NUM: selectedData.TRAIN_NUM || TRAIN_HIS.TRAIN_NUM,
+    	    POSTURE_NUM: selectedData.POSTURE_NUM,
+    	    G_NAME: selectedData.G_NAME
+    	  };
 
-    function getNextTrainingData() {
+    	  document.getElementById("G_NAME_TEXT").innerText =
+    	    selectedData.G_NAME || TRAIN_HIS.G_NAME;
+
+    	  document.getElementById("FILE_DIV_TEXT").innerText = selectedData.URL
+    	    ? (selectedData.FILE_DIV === 2 ? "VIDEO" : "IMAGE")
+    	    : "DB CHECK";
+
+    	  const referenceStage = document.getElementById("referenceStage");
+    	  const referenceMedia = document.getElementById("referenceMedia");
+
+    	  if (selectedData.URL) {
+    	    referenceStage.classList.add("has-media");
+
+	   	    let imageUrl = selectedData.URL;
+
+    	    /*
+    	      DB에 저장된 URL이 어떤 형태든 이미지가 나오게 처리한다.
+
+    	      1. http로 시작하면 외부 주소라서 그대로 사용
+    	      2. /uploads/img/jungdan.jpg 형태면 context path만 붙임
+    	      3. uploads/img/jungdan.jpg 형태면 앞에 /project_bk/ 붙임
+    	      4. jungdan.jpg처럼 파일명만 있으면 uploads/img/를 자동으로 붙임
+    	    */
+    	    if (imageUrl.startsWith("http")) {
+    	      imageUrl = imageUrl;
+
+    	    } else if (imageUrl.startsWith("/")) {
+    	      imageUrl = CONTEXT_PATH + imageUrl;
+
+    	    } else if (imageUrl.includes("/")) {
+    	      imageUrl = CONTEXT_PATH + "/" + imageUrl;
+
+    	    } else {
+    	      imageUrl = CONTEXT_PATH + "/uploads/img/" + imageUrl;
+    	    }
+
+    	    document.getElementById("REFERENCE_TITLE").innerText =
+    	      selectedData.G_NAME || "표준 자세 자료";
+
+    	    referenceMedia.innerHTML = selectedData.FILE_DIV === 2
+    	      ? `<video src="${imageUrl}" controls playsinline></video>`
+    	      : `<img src="${imageUrl}" alt="${selectedData.G_NAME || TRAIN_HIS.G_NAME} 훈련 자료">`;
+
+    	    document.getElementById("REFERENCE_DESC").innerText =
+    	      `DB에서 불러온 자료: ${imageUrl}`;
+
+    	  } else {
+    	    referenceStage.classList.remove("has-media");
+    	    referenceMedia.innerHTML = "";
+    	    document.getElementById("REFERENCE_TITLE").innerText = "DB 연결 점검중";
+    	    document.getElementById("REFERENCE_DESC").innerText =
+    	      "표준 자세 자료는 DB 연결 후 표시됩니다. 현재는 연결 실패 또는 점검중 상태입니다.";
+    	  }
+    	}
+        function getNextTrainingData() {
       if (!CURRENT_TRAIN_HIS) {
         return null;
       }
+     
 
       const sameTrainingList = TRAINING_DATA
         .filter((data) => {
@@ -704,10 +829,62 @@ a
 
       localStorage.setItem(TRAIN_HISTORY_KEY, JSON.stringify([...history, nextRecord]));
     }
+    async function saveTrainingHistoryDb() {
+    	  try {
+    	    const formData = new URLSearchParams();
 
-    async function submitPosture() {
+    	    formData.append("division", CURRENT_TRAIN_HIS.DIVISION);
+    	    formData.append("trainNum", CURRENT_TRAIN_HIS.TRAIN_NUM);
+    	    formData.append("postureNum", CURRENT_TRAIN_HIS.POSTURE_NUM);
+
+    	    const response = await fetch("TrainHisService", {
+    	      method: "POST",
+    	      headers: {
+    	        "Content-Type": "application/x-www-form-urlencoded"
+    	      },
+    	      body: formData.toString()
+    	    });
+
+    	    const text = await response.text();
+    	    console.log("TRAIN_HIS DB 저장 결과:", text);
+
+    	  } catch (error) {
+    	    console.error("TRAIN_HIS DB 저장 실패:", error);
+    	  }
+    	}
+    function finishTrainingWithAiResult(aiResult) {
+    	  stopAutoAnalyze();
+
     	  const cameraStage = document.getElementById("cameraStage");
     	  const cameraVideo = document.getElementById("cameraVideo");
+
+    	  if (cameraStream) {
+    	    cameraStream.getTracks().forEach((track) => track.stop());
+    	    cameraStream = null;
+    	  }
+
+    	  cameraVideo.srcObject = null;
+    	  cameraStage.classList.remove("camera-on");
+    	  cameraStage.classList.add("submitted");
+
+    	  const score = Math.round(Number(aiResult.final_score) || 0);
+
+    	  document.getElementById("submitResultDesc").innerText =
+    	    "목표 자세 : " + CURRENT_TRAIN_HIS.G_NAME +
+    	    "\nAI 판단 : " + aiResult.pose +
+    	    "\n점수 : " + score +
+    	    "\n결과 : " + aiResult.status;
+
+    	  CURRENT_TRAIN_HIS.ACCURACY = score;
+
+    	  saveTrainingHistory();      // 기존 localStorage 저장
+    	  saveTrainingHistoryDb();    // 새로 추가: DB TRAIN_HIS 저장
+    	}
+   
+    async function submitPosture() {
+        stopAutoAnalyze();
+
+        const cameraVideo = document.getElementById("cameraVideo");
 
     	  const hasActiveCamera =
     	    cameraStream &&
@@ -719,7 +896,7 @@ a
     	    return;
     	  }
 
-    	  const aiResult = await analyzePose();
+    	  const aiResult = await analyzePose(true);
 
     	  if (!aiResult) {
     	    return;
@@ -730,25 +907,8 @@ a
     	    return;
     	  }
 
-    	  if (cameraStream) {
-    	    cameraStream.getTracks().forEach((track) => track.stop());
-    	    cameraStream = null;
-    	  }
-
-    	  cameraVideo.srcObject = null;
-    	  cameraStage.classList.remove("camera-on");
-    	  cameraStage.classList.add("submitted");
-
-    	  document.getElementById("submitResultDesc").innerText =
-    	    "자세 : " + aiResult.pose +
-    	    "\n점수 : " + Math.round(aiResult.final_score) +
-    	    "\n결과 : " + aiResult.status;
-
-    	  CURRENT_TRAIN_HIS.ACCURACY = Math.round(aiResult.final_score);
-
-    	  saveTrainingHistory();
+    	  finishTrainingWithAiResult(aiResult);
     	}
-
  
     function goNextPosture() {
       const nextData = getNextTrainingData();
@@ -802,7 +962,7 @@ a
         });
     }
     
-    async function analyzePose() {
+    async function analyzePose(showAlert = true) {
 
         try {
 
@@ -827,17 +987,26 @@ a
 
             const response =
             await fetch(
-                "http://127.0.0.1:5000/predict",
+            		"http://192.168.219.47:5000/predict",
                 {
                     method:"POST",
                     body:formData
                 }
             );
 
-            const result =
-            await response.json();
+            const text = await response.text();
+            console.log("AI 서버 응답:", text);
 
-            console.log(result);
+            let result;
+
+            try {
+              result = JSON.parse(text);
+            } catch (e) {
+            	if (showAlert) {
+            		  alert("AI 서버가 JSON이 아닌 응답을 보냈습니다.\n" + text);
+            		}
+            		return null;
+            }
 
             return result;
 
@@ -845,9 +1014,9 @@ a
 
             console.error(error);
 
-            alert(
-                "AI 서버 연결 실패"
-            );
+            if (showAlert) {
+                alert("AI 서버 연결 실패");
+            }
 
             return null;
         }

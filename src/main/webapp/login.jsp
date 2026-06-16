@@ -849,5 +849,18 @@ LoginService에서는 MEMBER 테이블에서 회원 정보를 조회한다.
       } catch (error) {}
     })();
   </script>
+<script>
+  const loginParams = new URLSearchParams(location.search);
+
+  if (loginParams.get("login") === "fail") {
+    alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+    history.replaceState(null, "", "login.jsp");
+  }
+
+  if (loginParams.get("login") === "required") {
+    alert("로그인이 필요합니다.");
+    history.replaceState(null, "", "login.jsp");
+  }
+</script>
 </body>
 </html>

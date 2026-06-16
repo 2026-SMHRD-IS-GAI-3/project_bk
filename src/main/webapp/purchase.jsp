@@ -1,18 +1,48 @@
-﻿﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
+<%@ page import="com.kendo.model.UserDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+
+<%!
+    private String js(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        return String.valueOf(value)
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\r", "")
+            .replace("\n", " ");
+    }
+
+    private Object mv(Map<String, Object> map, String key) {
+        Object value = map.get(key);
+
+        if (value == null) {
+            value = map.get(key.toUpperCase());
+        }
+
+        return value;
+    }
+%>
+
 <%
-    /*
-    로그인한 회원 정보를 세션에서 가져온다.
-    로그인하지 않은 사용자가 상점 페이지에 직접 접근하면
-    로그인 페이지로 이동시킨다.
-    */
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+
+    UserDAO dao = new UserDAO();
+    List<Map<String, Object>> goodsList = dao.pointShopList();
+    if (goodsList == null) {
+        goodsList = new java.util.ArrayList<Map<String, Object>>();
+    }
 %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -727,13 +757,29 @@
     PROFILE = 프로필 장식
     */
     const ITEM_LIST = [
-      { ITEM_NUM: 1, ITEM_TYPE: "TITLE", ITEM_ICON: "rookie", ITEM_KIND: "칭호", ITEM_NAME: "견습 기사", ITEM_DESC: "첫 수련 기록에 어울리는 담백한 이름표입니다.", PRICE: 100 },
-      { ITEM_NUM: 2, ITEM_TYPE: "TITLE", ITEM_ICON: "sword", ITEM_KIND: "칭호", ITEM_NAME: "초심의 검", ITEM_DESC: "처음의 마음을 잊지 않는 수련자에게.", PRICE: 150 },
-      { ITEM_NUM: 3, ITEM_TYPE: "TITLE", ITEM_ICON: "stance", ITEM_KIND: "칭호", ITEM_NAME: "고요한 중단", ITEM_DESC: "흔들림 없는 기본 자세를 좋아한다면.", PRICE: 250 },
-      { ITEM_NUM: 4, ITEM_TYPE: "TITLE", ITEM_ICON: "flame", ITEM_KIND: "칭호", ITEM_NAME: "한 판 더", ITEM_DESC: "오늘도 조금 더 버틴 사람에게 남는 말.", PRICE: 300 },
-      { ITEM_NUM: 5, ITEM_TYPE: "PROFILE", ITEM_ICON: "armor", ITEM_KIND: "프로필", ITEM_NAME: "청록 호구", ITEM_DESC: "차분한 청록빛 장비 무드의 프로필 장식.", PRICE: 400 },
-      { ITEM_NUM: 6, ITEM_TYPE: "PROFILE", ITEM_ICON: "shadow", ITEM_KIND: "프로필", ITEM_NAME: "목검 그림자", ITEM_DESC: "검의 실루엣만 남긴 단정한 프로필 장식.", PRICE: 450 }
-    ];
+    	<%
+    	    for (int i = 0; i < goodsList.size(); i++) {
+    	        Map<String, Object> item = goodsList.get(i);
+
+    	        Object goodsNum = mv(item, "goodsNum");
+    	        Object goods = mv(item, "goods");
+    	        Object goodsText = mv(item, "goodsText");
+    	        Object price = mv(item, "price");
+    	%>
+    	  {
+    	    ITEM_NUM: Number("<%= js(goodsNum) %>"),
+    	    GOODS_NUM: Number("<%= js(goodsNum) %>"),
+    	    ITEM_TYPE: "TITLE",
+    	    ITEM_KIND: "상품",
+    	    ITEM_ICON: "sword",
+    	    ITEM_NAME: "<%= js(goods) %>",
+    	    ITEM_DESC: "<%= js(goodsText) %>",
+    	    PRICE: Number("<%= js(price) %>")
+    	  }<%= i < goodsList.size() - 1 ? "," : "" %>
+    	<%
+    	    }
+    	%>
+    	];
 
     /*
     현재 회원의 포인트를 가져온다.
@@ -780,6 +826,38 @@
       localStorage.setItem(ITEM_STORAGE_KEY, JSON.stringify(items));
     }
 
+    async function savePurchaseHistoryDb(selectedItem) {
+    	  try {
+    	    const formData = new URLSearchParams();
+
+    	    formData.append("goodsNum", selectedItem.GOODS_NUM || selectedItem.ITEM_NUM);
+
+    	    const response = await fetch("PurchaseService", {
+    	      method: "POST",
+    	      headers: {
+    	        "Content-Type": "application/x-www-form-urlencoded"
+    	      },
+    	      body: formData.toString()
+    	    });
+
+    	    const text = await response.text();
+    	    console.log("포인트샵 구매 DB 저장 결과:", text);
+
+    	    if (text.trim() === "LOGIN_FAIL") {
+    	      alert("로그인이 필요합니다.");
+    	      location.href = "login.jsp";
+    	      return false;
+    	    }
+
+    	    return text.trim() === "OK";
+
+    	  } catch (error) {
+    	    console.error("포인트샵 구매 DB 저장 실패:", error);
+    	    return false;
+    	  }
+    	}
+
+    	  
     /*
     화면 상단의 가용 포인트를 표시한다.
     */
@@ -916,22 +994,33 @@
     4. 아이템 저장
     5. 포인트 차감
     */
-    function buyItem(itemNum) {
-      const selectedItem = ITEM_LIST.find((item) => item.ITEM_NUM === itemNum);
+    async function buyItem(itemNum) {
+    	  const selectedItem = ITEM_LIST.find((item) => item.ITEM_NUM === itemNum);
 
-      if (!selectedItem || getMemberPoint() < selectedItem.PRICE) {
-        return;
-      }
+    	  if (!selectedItem || getMemberPoint() < selectedItem.PRICE) {
+    	    alert("포인트가 부족합니다.");
+    	    return;
+    	  }
 
-      const memberItems = getMemberItems();
+    	  const memberItems = getMemberItems();
 
-      if (memberItems.includes(selectedItem.ITEM_NUM)) {
-        return;
-      }
+    	  if (memberItems.includes(selectedItem.ITEM_NUM)) {
+    	    alert("이미 보유한 상품입니다.");
+    	    return;
+    	  }
 
-      saveMemberItems([...memberItems, selectedItem.ITEM_NUM]);
-      setMemberPoint(getMemberPoint() - selectedItem.PRICE);
-    }
+    	  const dbSaved = await savePurchaseHistoryDb(selectedItem);
+
+    	  if (!dbSaved) {
+    	    alert("구매 내역 DB 저장에 실패했습니다.");
+    	    return;
+    	  }
+
+    	  saveMemberItems([...memberItems, selectedItem.ITEM_NUM]);
+    	  setMemberPoint(getMemberPoint() - selectedItem.PRICE);
+
+    	  alert("구매가 완료되었습니다.");
+    	}
 
     renderMemberPoint();
     renderItemList();

@@ -830,11 +830,26 @@
     </nav>
   </div>
 
+  
   <script>
- 	const M_NUM = <%= loginUser.getmNum() %>;
-    const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
-    const CHALLENGE_STORAGE_KEY = `BGS_MEMBER_CHALLENGE_${M_NUM}`;
-    const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
+  const M_NUM = <%= loginUser.getmNum() %>;
+  const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
+  const CHALLENGE_STORAGE_KEY = `BGS_MEMBER_CHALLENGE_${M_NUM}`;
+  const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
+  const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
+  function getTrainingHistory() {
+	  const savedHistory = localStorage.getItem(TRAIN_HISTORY_KEY);
+
+	  if (!savedHistory) {
+	    return [];
+	  }
+
+	  try {
+	    return JSON.parse(savedHistory);
+	  } catch (error) {
+	    return [];
+	  }
+	}
 
     const DIFFICULTY_OPTIONS = {
       "1": [
@@ -856,60 +871,104 @@
       ]
     };
 
-    const TRAIN_HIS_LIST = [];
+    const TRAIN_HIS_LIST = getTrainingHistory();
 
     const CHALLENGE_LIST = [
-      {
-        CHALLENGE_NUM: 1,
-        C_NAME: "첫 자세 제출",
-        C_DESC: "훈련 화면에서 자세를 1회 제출하면 완료됩니다.",
-        C_TYPE: "SUBMIT_COUNT",
-        TARGET_COUNT: 1,
-        REWARD_POINT: 100
-      },
-      {
-        CHALLENGE_NUM: 2,
-        C_NAME: "오늘의 검도 루틴",
-        C_DESC: "하루 동안 자세 훈련을 3개 이상 완료합니다.",
-        C_TYPE: "TODAY_TRAIN_COUNT",
-        TARGET_COUNT: 3,
-        REWARD_POINT: 150
-      },
-      {
-        CHALLENGE_NUM: 3,
-        C_NAME: "대한검도 입문",
-        C_DESC: "대한검도 훈련 기록을 5회 남깁니다.",
-        C_TYPE: "DIVISION_COUNT",
-        DIVISION: 1,
-        TARGET_COUNT: 5,
-        REWARD_POINT: 300
-      },
-      {
-        CHALLENGE_NUM: 4,
-        C_NAME: "리히테나워 도전자",
-        C_DESC: "리히테나워 훈련을 2회 이상 완료합니다.",
-        C_TYPE: "DIVISION_COUNT",
-        DIVISION: 2,
-        TARGET_COUNT: 2,
-        REWARD_POINT: 300
-      },
-      {
-        CHALLENGE_NUM: 5,
-        C_NAME: "꾸준한 수련생",
-        C_DESC: "누적 훈련 기록을 10회 달성합니다.",
-        C_TYPE: "SUBMIT_COUNT",
-        TARGET_COUNT: 10,
-        REWARD_POINT: 500
-      }
-    ];
-
-    const DEFAULT_MEMBER_CHALLENGE_LIST = [
-    	  { M_NUM, CHALLENGE_NUM: 1, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-    	  { M_NUM, CHALLENGE_NUM: 2, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-    	  { M_NUM, CHALLENGE_NUM: 3, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-    	  { M_NUM, CHALLENGE_NUM: 4, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null },
-    	  { M_NUM, CHALLENGE_NUM: 5, ACHIEVE_YN: "N", REWARD_YN: "N", ACHIEVE_DATE: null }
+    	  {
+    	    CHALLENGE_NUM: 7,
+    	    C_NAME: "첫 훈련",
+    	    C_DESC: "훈련 기록을 1회 남기면 완료됩니다.",
+    	    C_TYPE: "SUBMIT_COUNT",
+    	    TARGET_COUNT: 1,
+    	    REWARD_POINT: 100
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 8,
+    	    C_NAME: "꾸준한 시작",
+    	    C_DESC: "훈련 기록을 5회 남기면 완료됩니다.",
+    	    C_TYPE: "SUBMIT_COUNT",
+    	    TARGET_COUNT: 5,
+    	    REWARD_POINT: 150
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 9,
+    	    C_NAME: "수련의 길",
+    	    C_DESC: "훈련 기록을 10회 남기면 완료됩니다.",
+    	    C_TYPE: "SUBMIT_COUNT",
+    	    TARGET_COUNT: 10,
+    	    REWARD_POINT: 200
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 10,
+    	    C_NAME: "끊임없는 수련",
+    	    C_DESC: "훈련 기록을 15회 남기면 완료됩니다.",
+    	    C_TYPE: "SUBMIT_COUNT",
+    	    TARGET_COUNT: 15,
+    	    REWARD_POINT: 250
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 11,
+    	    C_NAME: "백전연마",
+    	    C_DESC: "훈련 기록을 30회 남기면 완료됩니다.",
+    	    C_TYPE: "SUBMIT_COUNT",
+    	    TARGET_COUNT: 30,
+    	    REWARD_POINT: 300
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 12,
+    	    C_NAME: "자세 입문",
+    	    C_DESC: "대한검도 자세 훈련을 1회 완료합니다.",
+    	    C_TYPE: "DIVISION_COUNT",
+    	    DIVISION: 1,
+    	    TARGET_COUNT: 1,
+    	    REWARD_POINT: 100
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 13,
+    	    C_NAME: "검격 입문",
+    	    C_DESC: "리히테나워 검격 훈련을 1회 완료합니다.",
+    	    C_TYPE: "DIVISION_COUNT",
+    	    DIVISION: 2,
+    	    TARGET_COUNT: 1,
+    	    REWARD_POINT: 100
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 14,
+    	    C_NAME: "정석적 자세",
+    	    C_DESC: "대한검도 자세 훈련을 3회 완료합니다.",
+    	    C_TYPE: "DIVISION_COUNT",
+    	    DIVISION: 1,
+    	    TARGET_COUNT: 3,
+    	    REWARD_POINT: 500
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 15,
+    	    C_NAME: "정확한 검로",
+    	    C_DESC: "리히테나워 검격 훈련을 3회 완료합니다.",
+    	    C_TYPE: "DIVISION_COUNT",
+    	    DIVISION: 2,
+    	    TARGET_COUNT: 3,
+    	    REWARD_POINT: 500
+    	  },
+    	  {
+    	    CHALLENGE_NUM: 16,
+    	    C_NAME: "검술의 달인",
+    	    C_DESC: "모든 주요 도전과제를 완료합니다.",
+    	    C_TYPE: "ALL_CLEAR",
+    	    TARGET_COUNT: 1,
+    	    REWARD_POINT: 1000
+    	  }
     	];
+
+    const DEFAULT_MEMBER_CHALLENGE_LIST = CHALLENGE_LIST.map((challenge) => {
+    	  return {
+    	    M_NUM,
+    	    CHALLENGE_NUM: challenge.CHALLENGE_NUM,
+    	    ACHIEVE_YN: "N",
+    	    REWARD_YN: "N",
+    	    ACHIEVE_DATE: null
+    	  };
+    	});
     let MEMBER_CHALLENGE_LIST = loadMemberChallengeList();
 
     function loadMemberChallengeList() {
@@ -992,20 +1051,42 @@
     }
 
     function getTodayKey() {
-      return new Date().toISOString().slice(0, 10);
-    }
+    	  const today = new Date();
+
+    	  const year = today.getFullYear();
+    	  const month = String(today.getMonth() + 1).padStart(2, "0");
+    	  const date = String(today.getDate()).padStart(2, "0");
+
+    	  return `${year}-${month}-${date}`;
+    	}
 
     function getChallengeProgress(challenge) {
-      if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
-        return TRAIN_HIS_LIST.filter((history) => history.T_DATE === getTodayKey()).length;
-      }
+    	  if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
+    	    return TRAIN_HIS_LIST.filter((history) => {
+    	      return String(history.T_DATE || "").slice(0, 10) === getTodayKey();
+    	    }).length;
+    	  }
 
-      if (challenge.C_TYPE === "DIVISION_COUNT") {
-        return TRAIN_HIS_LIST.filter((history) => history.DIVISION === challenge.DIVISION).length;
-      }
+    	  if (challenge.C_TYPE === "DIVISION_COUNT") {
+    	    return TRAIN_HIS_LIST.filter((history) => {
+    	      return Number(history.DIVISION) === Number(challenge.DIVISION);
+    	    }).length;
+    	  }
 
-      return TRAIN_HIS_LIST.length;
-    }
+    	  if (challenge.C_TYPE === "ALL_CLEAR") {
+    	    const otherChallenges = CHALLENGE_LIST.filter((item) => {
+    	      return item.CHALLENGE_NUM !== challenge.CHALLENGE_NUM;
+    	    });
+
+    	    const allClear = otherChallenges.every((item) => {
+    	      return getChallengeProgress(item) >= item.TARGET_COUNT;
+    	    });
+
+    	    return allClear ? 1 : 0;
+    	  }
+
+    	  return TRAIN_HIS_LIST.length;
+    	}
 
     function getMemberChallenge(challengeNum) {
       return MEMBER_CHALLENGE_LIST.find((item) => item.M_NUM === M_NUM && item.CHALLENGE_NUM === challengeNum) || {
@@ -1159,32 +1240,81 @@
         });
       });
     }
+    async function saveChallengeClearDb(challengeNum) {
+    	  try {
+    	    const formData = new URLSearchParams();
 
-    function claimReward(challengeNum) {
-      const memberChallenge = getMemberChallenge(challengeNum);
-      const selectedChallenge = CHALLENGE_LIST.find((challenge) => challenge.CHALLENGE_NUM === challengeNum);
+    	    formData.append("achieveNum", challengeNum);
 
-      if (memberChallenge.REWARD_YN === "Y" || !selectedChallenge) {
-        return;
-      }
+    	    const response = await fetch("ChallengeClearService", {
+    	      method: "POST",
+    	      headers: {
+    	        "Content-Type": "application/x-www-form-urlencoded"
+    	      },
+    	      body: formData.toString()
+    	    });
 
-      memberChallenge.ACHIEVE_YN = "Y";
-      memberChallenge.REWARD_YN = "Y";
-      memberChallenge.ACHIEVE_DATE = memberChallenge.ACHIEVE_DATE || getTodayKey();
+    	    const text = await response.text();
+    	    console.log("도전과제 DB 저장 결과:", text);
 
-      const exists = MEMBER_CHALLENGE_LIST.some((item) => {
-        return item.M_NUM === memberChallenge.M_NUM && item.CHALLENGE_NUM === memberChallenge.CHALLENGE_NUM;
-      });
+    	    if (text.trim() === "LOGIN_FAIL") {
+    	      alert("로그인이 필요합니다.");
+    	      location.href = "login.jsp";
+    	      return "LOGIN_FAIL";
+    	    }
 
-      if (!exists) {
-        MEMBER_CHALLENGE_LIST.push(memberChallenge);
-      }
+    	    return text.trim();
 
-      addMemberPoint(selectedChallenge.REWARD_POINT);
-      saveMemberChallengeList();
-      renderSummary();
-      renderChallengeList();
-    }
+    	  } catch (error) {
+    	    console.error("도전과제 DB 저장 실패:", error);
+    	    return "FAIL";
+    	  }
+    	}
+    async function claimReward(challengeNum) {
+    	  const memberChallenge = getMemberChallenge(challengeNum);
+    	  const selectedChallenge = CHALLENGE_LIST.find((challenge) => challenge.CHALLENGE_NUM === challengeNum);
+
+    	  if (memberChallenge.REWARD_YN === "Y" || !selectedChallenge) {
+    	    return;
+    	  }
+
+    	  const dbResult = await saveChallengeClearDb(challengeNum);
+
+    	  if (dbResult === "FAIL") {
+    	    alert("도전과제 완료 내역 DB 저장에 실패했습니다.");
+    	    return;
+    	  }
+
+    	  if (dbResult === "LOGIN_FAIL") {
+    	    return;
+    	  }
+
+    	  memberChallenge.ACHIEVE_YN = "Y";
+    	  memberChallenge.REWARD_YN = "Y";
+    	  memberChallenge.ACHIEVE_DATE = memberChallenge.ACHIEVE_DATE || getTodayKey();
+
+    	  const exists = MEMBER_CHALLENGE_LIST.some((item) => {
+    	    return item.M_NUM === memberChallenge.M_NUM && item.CHALLENGE_NUM === memberChallenge.CHALLENGE_NUM;
+    	  });
+
+    	  if (!exists) {
+    	    MEMBER_CHALLENGE_LIST.push(memberChallenge);
+    	  }
+
+    	  if (dbResult === "OK") {
+    	    addMemberPoint(selectedChallenge.REWARD_POINT);
+    	  }
+
+    	  saveMemberChallengeList();
+    	  renderSummary();
+    	  renderChallengeList();
+
+    	  if (dbResult === "OK") {
+    	    alert("도전과제 보상을 수령했습니다.");
+    	  } else if (dbResult === "ALREADY") {
+    	    alert("이미 DB에 저장된 도전과제입니다.");
+    	  }
+    	}
 
     initializeMemberPoint();
     saveMemberChallengeList();
@@ -1192,7 +1322,8 @@
     renderMemberPoint();
     renderSummary();
     renderChallengeList();
-  </script>
+  
+    </script>
   <script>
     (function applyDarkMode() {
       const appSetting = getAppSetting();
