@@ -873,11 +873,13 @@
 
     	    formData.append("mode", mode);
 
-    	    const response = await fetch("http://127.0.0.1:5000/predict", {
-    	      method: "POST",
-    	      body: formData
-    	    });
+    	    const AI_API_URL = "http://192.168.219.47:5000/predict";
 
+    	    const response = await fetch(AI_API_URL, {
+    	    	  method: "POST",
+    	    	  body: formData
+    	    	});
+    	    
     	    const text = await response.text();
     	    console.log("AI 서버 응답:", text);
 

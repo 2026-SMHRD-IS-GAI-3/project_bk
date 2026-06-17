@@ -276,6 +276,9 @@
 
     		    stopAutoCorrectionFeedback();
 
+    		    hasSavedCorrectionHistory = false;
+    		    hasTriedSaveCorrectionHistory = false;
+
     		    if (cameraStream) {
     		      cameraStream.getTracks().forEach((track) => track.stop());
     		      cameraStream = null;
@@ -310,6 +313,26 @@
     		  }
     		}
     	
+    	function stopCamera() {
+    		  stopAutoCorrectionFeedback();
+
+    		  const video = document.getElementById("cameraVideo");
+    		  const cameraBox = document.getElementById("cameraBox");
+
+    		  if (cameraStream) {
+    		    cameraStream.getTracks().forEach((track) => track.stop());
+    		    cameraStream = null;
+    		  }
+
+    		  if (video) {
+    		    video.srcObject = null;
+    		  }
+
+    		  if (cameraBox) {
+    		    cameraBox.classList.remove("camera-on");
+    		  }
+    		}
+    	
   	  function captureBlob() {
       return new Promise((resolve) => {
         const video = document.getElementById("cameraVideo");
@@ -322,6 +345,11 @@
       });
     }
 
+  	function isPassResult(aiResult) {
+  	  const status = String(aiResult.status || "").trim().toUpperCase();
+  	  return status === "PASS";
+  	}
+  	  
     function getAnglesFromAiResult(aiResult) {
     	  if (!aiResult) {
     	    return null;
@@ -514,27 +542,33 @@
     	        "AI 서버 응답이 JSON 형식이 아닙니다.\n" + text;
     	      return null;
     	    }
-
     	    document.getElementById("feedbackText").innerText = makeFeedback(aiResult);
 
+    	    if (isPassResult(aiResult)) {
+    	      stopCamera();
+
+    	      document.getElementById("feedbackText").innerText =
+    	        makeFeedback(aiResult) +
+    	        "\n\nPASS 판정을 받아 카메라를 종료했습니다.";
+    	    }
+
     	    if (!hasTriedSaveCorrectionHistory) {
-    	    	  hasTriedSaveCorrectionHistory = true;
+    	      hasTriedSaveCorrectionHistory = true;
 
-    	    	  try {
-    	    	    const dbSaved = await saveDbHistory();
+    	      try {
+    	        const dbSaved = await saveDbHistory();
 
-    	    	    if (dbSaved) {
-    	    	      hasSavedCorrectionHistory = true;
-    	    	      saveLocalHistory();
-    	    	    } else {
-    	    	      console.warn("교정 기록 DB 저장 실패");
-    	    	    }
+    	        if (dbSaved) {
+    	          hasSavedCorrectionHistory = true;
+    	          saveLocalHistory();
+    	        } else {
+    	          console.warn("교정 기록 DB 저장 실패");
+    	        }
 
-    	    	  } catch (dbError) {
-    	    	    console.error("교정 기록 DB 저장 중 오류:", dbError);
-    	    	  }
-    	    	}
-
+    	      } catch (dbError) {
+    	        console.error("교정 기록 DB 저장 중 오류:", dbError);
+    	      }
+    	    }
     	    return aiResult;
 
     	  } catch (error) {
@@ -553,7 +587,7 @@
 
     	  feedbackTimer = setInterval(() => {
     	    runAutoCorrectionFeedback();
-    	  }, 1500);
+    	  }, 3000);
     	}
 
     	function stopAutoCorrectionFeedback() {
@@ -597,9 +631,9 @@
     	    cameraStream = null;
     	  }
     	});
-    
-    renderTargetInfo();
-    applyDarkMode();
+
+    	renderTargetInfo();
+    	applyDarkMode();
   </script>
 </body>
 </html>
