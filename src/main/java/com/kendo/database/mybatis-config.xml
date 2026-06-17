@@ -9,8 +9,11 @@
 <properties resource="com/kendo/database/db.properties"></properties>
 	
 	<typeAliases>
-		<typeAlias type="com.kendo.model.UserDTO" alias="UserDTO"/>
-	</typeAliases>
+    <typeAlias type="com.kendo.model.UserDTO" alias="UserDTO"/>
+
+    <!-- 훈련 자세 이미지/영상 정보를 담는 DTO -->
+    <typeAlias type="com.kendo.model.TrainingDTO" alias="TrainingDTO"/>
+</typeAliases>
 	
   <environments default="development">
     <environment id="development">
@@ -29,4 +32,9 @@
 	<mappers>
   		<mapper resource="com/kendo/database/UserMapper.xml"/>
 	</mappers>
+	
+	
+	
+	
+	
 </configuration>

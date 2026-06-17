@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%@ page import="com.kendo.model.UserDAO" %>
 <%@ page import="java.util.List" %>
@@ -32,17 +32,17 @@
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("login.jsp?login=required");
         return;
     }
 
     UserDAO dao = new UserDAO();
     List<Map<String, Object>> goodsList = dao.pointShopList();
+
     if (goodsList == null) {
         goodsList = new java.util.ArrayList<Map<String, Object>>();
     }
 %>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -105,8 +105,8 @@
       border-radius: 8px;
       background:
         linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-       url("Project_Logo/logo_02.png")center/cover;
-      overflow: hidden;
+		url("Project_Logo/logo_02.png") center/cover;
+		overflow: hidden;
       position: relative;
       padding: 20px;
       color: #f6fbf8;
@@ -724,85 +724,53 @@
   </div>
 
   <script>
-  /*
-  현재 로그인한 회원 번호를 JSP 세션에서 가져온다.
-  회원마다 포인트와 구매 아이템이 달라야 하므로
-  M_NUM을 기준으로 localStorage 데이터를 구분한다.
-  */
   const M_NUM = <%= loginUser.getmNum() %>;
-  /*
-  회원별 포인트 저장 key
-  예: 회원번호가 3이면 BGS_MEMBER_POINT_3 으로 저장된다.
+  const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
+  const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
 
-  현재는 DB 연동 전이라 localStorage를 사용한다.
-  추후 MEMBER.POINT 컬럼과 연결하면 이 부분을 DB 조회 방식으로 변경한다.
-  */
-    const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
-    /*
-    회원별 구매 아이템 저장 key
-    예: 회원번호가 3이면 BGS_MEMBER_ITEMS_3 으로 저장된다.
+  if (localStorage.getItem(POINT_STORAGE_KEY) === null) {
+    localStorage.setItem(POINT_STORAGE_KEY, "<%= loginUser.getPoint() %>");
+  }
 
-    추후 POINT_SHOP_HIS 또는 구매 이력 테이블과 연결할 예정이다.
-    */
-    const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
-    /*
-    상점 상품 목록이다.
+  const ITEM_LIST = [
+  <%
+      String[] icons = {"rookie", "sword", "stance", "flame", "armor", "shadow"};
 
-    현재는 DB 연동 전이라 JavaScript 배열로 임시 관리한다.
-    나중에는 GOODS 또는 POINT_SHOP_HIS 테이블에서
-    상품명, 가격, 설명을 가져오도록 변경할 예정이다.
+      for (int i = 0; i < goodsList.size(); i++) {
+          Map<String, Object> item = goodsList.get(i);
 
-    ITEM_TYPE
-    TITLE = 칭호
-    PROFILE = 프로필 장식
-    */
-    const ITEM_LIST = [
-    	<%
-    	    for (int i = 0; i < goodsList.size(); i++) {
-    	        Map<String, Object> item = goodsList.get(i);
+          Object goodsNum = mv(item, "goodsNum");
+          Object goods = mv(item, "goods");
+          Object goodsText = mv(item, "goodsText");
+          Object price = mv(item, "price");
 
-    	        Object goodsNum = mv(item, "goodsNum");
-    	        Object goods = mv(item, "goods");
-    	        Object goodsText = mv(item, "goodsText");
-    	        Object price = mv(item, "price");
-    	%>
-    	  {
-    	    ITEM_NUM: Number("<%= js(goodsNum) %>"),
-    	    GOODS_NUM: Number("<%= js(goodsNum) %>"),
-    	    ITEM_TYPE: "TITLE",
-    	    ITEM_KIND: "상품",
-    	    ITEM_ICON: "sword",
-    	    ITEM_NAME: "<%= js(goods) %>",
-    	    ITEM_DESC: "<%= js(goodsText) %>",
-    	    PRICE: Number("<%= js(price) %>")
-    	  }<%= i < goodsList.size() - 1 ? "," : "" %>
-    	<%
-    	    }
-    	%>
-    	];
+          String icon = icons[i % icons.length];
+  %>
+    {
+      ITEM_NUM: Number("<%= js(goodsNum) %>"),
+      GOODS_NUM: Number("<%= js(goodsNum) %>"),
+      ITEM_TYPE: "TITLE",
+      ITEM_ICON: "<%= icon %>",
+      ITEM_KIND: "상품",
+      ITEM_NAME: "<%= js(goods) %>",
+      ITEM_DESC: "<%= js(goodsText) %>",
+      PRICE: Number("<%= js(price) %>")
+    }<%= i < goodsList.size() - 1 ? "," : "" %>
+  <%
+      }
+  %>
+  ];
 
-    /*
-    현재 회원의 포인트를 가져온다.
-    저장된 포인트가 없으면 0P로 처리한다.
-    */
     function getMemberPoint() {
       return Number(localStorage.getItem(POINT_STORAGE_KEY)) || 0;
     }
 
-    /*
-    회원 포인트를 새 값으로 저장한다.
-    구매 후 포인트를 차감하고 화면을 다시 그리기 위해 사용한다.
-    */
     function setMemberPoint(point) {
       localStorage.setItem(POINT_STORAGE_KEY, String(point));
       renderMemberPoint();
       renderItemList();
     }
 
-    /*
-    현재 회원이 구매한 아이템 목록을 가져온다.
-    저장된 값이 없으면 빈 배열을 반환한다.
-    */
     function getMemberItems() {
       const savedItems = localStorage.getItem(ITEM_STORAGE_KEY);
 
@@ -817,15 +785,9 @@
       }
     }
 
-    /*
-    구매한 아이템 목록을 저장한다.
-    배열은 localStorage에 바로 저장할 수 없어서
-    JSON 문자열로 변환해서 저장한다.
-    */
     function saveMemberItems(items) {
       localStorage.setItem(ITEM_STORAGE_KEY, JSON.stringify(items));
     }
-
     async function savePurchaseHistoryDb(selectedItem) {
     	  try {
     	    const formData = new URLSearchParams();
@@ -856,19 +818,10 @@
     	    return false;
     	  }
     	}
-
-    	  
-    /*
-    화면 상단의 가용 포인트를 표시한다.
-    */
     function renderMemberPoint() {
       document.getElementById("memberPoint").innerText = getMemberPoint();
     }
 
-    /*
-    아이템 아이콘을 SVG로 반환한다.
-    이미지 파일을 따로 만들지 않고 코드로 아이콘을 보여주기 위해 사용한다.
-    */
     function getItemIcon(iconName) {
       if (iconName === "sword") {
         return `
@@ -943,58 +896,42 @@
         </svg>
       `;
     }
-
-    /*
-    상품 목록을 화면에 출력한다.
-
-    포인트가 부족하거나 이미 구매한 아이템이면
-    구매 버튼을 비활성화한다.
-    */
     function renderItemList() {
-      const itemList = document.getElementById("itemList");
-      const memberPoint = getMemberPoint();
-      const memberItems = getMemberItems();
+    	  const itemList = document.getElementById("itemList");
+    	  const memberPoint = getMemberPoint();
+    	  const memberItems = getMemberItems();
 
-      itemList.innerHTML = ITEM_LIST.map((item) => {
-        const isOwned = memberItems.includes(item.ITEM_NUM);
+    	  itemList.innerHTML = ITEM_LIST.map((item) => {
+    	    const isOwned = memberItems.includes(item.ITEM_NUM);
 
-        return `
-          <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
-            <div class="item-icon ${item.ITEM_ICON}">${getItemIcon(item.ITEM_ICON)}</div>
-            <div>
-              <div class="item-title-row">
-                <h2 class="item-name">${item.ITEM_NAME}</h2>
-                <span class="item-kind">${item.ITEM_KIND}</span>
-              </div>
-              <p class="item-desc">${item.ITEM_DESC}</p>
-            </div>
-            <button
-              type="button"
-              class="buy-btn"
-              data-item-num="${item.ITEM_NUM}"
-              ${memberPoint < item.PRICE || isOwned ? "disabled" : ""}
-            >${isOwned ? "보유" : `구매<span class="buy-price">${item.PRICE}P</span>`}</button>
-          </article>
-        `;
-      }).join("");
+    	    return `
+    	      <article class="item-card ${item.ITEM_TYPE.toLowerCase()}-item">
+    	        <div class="item-icon ${item.ITEM_ICON}">${getItemIcon(item.ITEM_ICON)}</div>
+    	        <div>
+    	          <div class="item-title-row">
+    	            <h2 class="item-name">${item.ITEM_NAME}</h2>
+    	            <span class="item-kind">${item.ITEM_KIND}</span>
+    	          </div>
+    	          <p class="item-desc">${item.ITEM_DESC}</p>
+    	        </div>
+    	        <button
+    	          type="button"
+    	          class="buy-btn"
+    	          data-item-num="${item.ITEM_NUM}"
+    	          ${memberPoint < item.PRICE || isOwned ? "disabled" : ""}
+    	        >${isOwned ? "보유" : `구매<span class="buy-price">${item.PRICE}P</span>`}</button>
+    	      </article>
+    	    `;
+    	  }).join("");
 
-      document.querySelectorAll(".buy-btn:not(:disabled)").forEach((button) => {
-        button.addEventListener("click", () => {
-          buyItem(Number(button.dataset.itemNum));
-        });
-      });
-    }
+    	  document.querySelectorAll(".buy-btn:not(:disabled)").forEach((button) => {
+    	    button.addEventListener("click", () => {
+    	      buyItem(Number(button.dataset.itemNum));
+    	    });
+    	  });
+    	}
 
-    /*
-    구매 버튼을 눌렀을 때 실행된다.
-
-    1. 선택한 상품 찾기
-    2. 포인트 부족 여부 확인
-    3. 중복 구매 여부 확인
-    4. 아이템 저장
-    5. 포인트 차감
-    */
-    async function buyItem(itemNum) {
+    	async function buyItem(itemNum) {
     	  const selectedItem = ITEM_LIST.find((item) => item.ITEM_NUM === itemNum);
 
     	  if (!selectedItem || getMemberPoint() < selectedItem.PRICE) {
@@ -1021,20 +958,17 @@
 
     	  alert("구매가 완료되었습니다.");
     	}
-
-    renderMemberPoint();
+   
     renderItemList();
   </script>
   <script>
-  (function applyDarkMode() {
-	  try {
-	    const appSetting = JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}");
-
-	    if (appSetting.DARK_MODE) {
-	      document.querySelector(".mobile-frame")?.classList.add("dark-mode");
-	    }
-	  } catch (error) {}
-	})();
+    (function applyDarkMode() {
+      try {
+    	  const appSetting = JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}");        if (appSetting.DARK_MODE) {
+          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+        }
+      } catch (error) {}
+    })();
   </script>
 </body>
 </html>

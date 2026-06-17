@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -25,7 +24,7 @@
 
     body {
       display: flex;
-      justify-content: center;	
+      justify-content: center;
       align-items: center;
     }
 
@@ -177,6 +176,71 @@
         box-shadow: 0 30px 80px rgba(28, 55, 58, 0.24);
       }
     }
+    .mobile-frame.dark-mode {
+      background: linear-gradient(145deg, #182527 0%, #243638 52%, #11191d 100%);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .section-title,
+    .mobile-frame.dark-mode .title,
+    .mobile-frame.dark-mode .page-title,
+    .mobile-frame.dark-mode .card-title,
+    .mobile-frame.dark-mode .posture-name,
+    .mobile-frame.dark-mode .challenge-title,
+    .mobile-frame.dark-mode .item-name,
+    .mobile-frame.dark-mode .form-label,
+    .mobile-frame.dark-mode label {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .subtitle,
+    .mobile-frame.dark-mode .desc,
+    .mobile-frame.dark-mode .visual-desc,
+    .mobile-frame.dark-mode .visual-quote,
+    .mobile-frame.dark-mode .challenge-desc,
+    .mobile-frame.dark-mode .item-desc,
+    .mobile-frame.dark-mode .summary-label,
+    .mobile-frame.dark-mode .status-text,
+    .mobile-frame.dark-mode .section-caption,
+    .mobile-frame.dark-mode .version,
+    .mobile-frame.dark-mode .forgot-link,
+    .mobile-frame.dark-mode .signup-text,
+    .mobile-frame.dark-mode .signup-link,
+    .mobile-frame.dark-mode .back-login a {
+      color: rgba(238, 247, 242, 0.64);
+    }
+
+    .mobile-frame.dark-mode .login-card,
+    .mobile-frame.dark-mode .signup-box,
+    .mobile-frame.dark-mode .summary-item,
+    .mobile-frame.dark-mode .challenge-card,
+    .mobile-frame.dark-mode .training-card,
+    .mobile-frame.dark-mode .training-panel,
+    .mobile-frame.dark-mode .bottom-nav,
+    .mobile-frame.dark-mode .form-input,
+    .mobile-frame.dark-mode .input-group input,
+    .mobile-frame.dark-mode .input-group select {
+      background-color: rgba(255, 255, 255, 0.10);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .nav-item {
+      color: rgba(238, 247, 242, 0.58);
+    }
+
+    .mobile-frame.dark-mode .nav-icon {
+      stroke: rgba(238, 247, 242, 0.58);
+    }
+
+    .mobile-frame.dark-mode .nav-item.active {
+      color: #eef7f2;
+    }
+
+    .mobile-frame.dark-mode .nav-item.active .nav-icon {
+      stroke: #eef7f2;
+    }
+
   </style>
 </head>
 
@@ -187,25 +251,33 @@
 
       <div class="main-content">
         <div class="logo-frame">
-        <img src="Project_Logo/logo_02.png" alt="방구석 검도 로고" class="logo">
+         <img src="Project_Logo/logo_02.png" alt="방구석 검도 로고" class="logo">
         </div>
 
-    	<div class="title">방구석 검도</div>
-		<div class="subtitle">대한검도 · 리히테나워</div>
-
+        <div class="title">방구석 검도</div>
+        <div class="subtitle">대한검도 · 리히테나워</div>
         <div class="tag">AI POSTURE TRAINING</div>
       </div>
 
       <div class="bottom-area">
-     <button class="start-btn" onclick="location.href='login.jsp'">
-  			수련 시작하기
-	</button>
+        <button class="start-btn" onclick="location.href='login.jsp'">
+          수련 시작하기
+        </button>
 
         <div class="version">v1.0.0</div>
       </div>
 
     </div>
   </div>
-
+  <script>
+    (function applyDarkMode() {
+      try {
+        const appSetting = JSON.parse(localStorage.getItem("BGS_APP_SETTING_1") || "{}");
+        if (appSetting.DARK_MODE) {
+          document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+        }
+      } catch (error) {}
+    })();
+  </script>
 </body>
 </html>

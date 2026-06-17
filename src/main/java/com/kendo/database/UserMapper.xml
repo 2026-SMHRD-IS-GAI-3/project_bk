@@ -117,52 +117,148 @@
 	
 	<!-- 도전과제 성공 -->
 	<insert id="successA">
-		INSERT INTO M_ACHIEVEMENT
-        (
-           M_A_NUM,
-           M_NUM,
-           ACHIEVE_NUM,
-           M_A_DATE,
-           POINT
-        )
-        VALUES
-        (
-            M_ACHIEVEMENT_SEQ.NEXTVAL,
-            #{mNum},
-            #{achieveNum},
-            SYSDATE,
-            #{point}
-        )
-	</insert>
-	
-	<!-- 포인트 상점 상품 목록 -->
-	<select id="pointShopList">
-		SELECT DISTINCT GOODS_NAME,GOODS,PRICE 
-		FROM POINT_SHOP_HIS
-	</select>
+    INSERT INTO M_ACHIEVEMENT
+    (
+       M_A_NUM,
+       M_NUM,
+       ACHIEVE_NUM,
+       M_A_DATE
+    )
+    VALUES
+    (
+        M_ACHIEVEMENT_SEQ.NEXTVAL,
+        #{mNum},
+        #{achieveNum},
+        SYSDATE
+    )
+</insert>
 	
 	<!-- 상품 구매 -->
-	<insert id="purchaseGoods">
-		INSERT INTO M_ACHIEVEMENT
-        (
-           P_S_NUM,
-           M_NUM,
-           GOODS_NUM,
-           GOODS_NAME,
-           GOODS,
-           PRICE,
-           PURCHASE
-        )
-        VALUES
-        (
-            POINT_SHOP_HIS_SEQ.NEXTVAL,
-            #{mNum},
-            #{goodsNum},
-            #{goodsName},
-            #{goods},
-            #{price},
-            #{purchase}
-        )
-	</insert>
+<insert id="purchaseGoods" parameterType="map">
+    INSERT INTO POINT_SHOP_HIS
+    (
+       P_S_NUM,
+       M_NUM,
+       GOODS_NUM,
+       GOODS,
+       GOODS_TEXT,
+       PRICE,
+       PURCHASE
+    )
+    SELECT
+       (SELECT NVL(MAX(P_S_NUM), 0) + 1 FROM POINT_SHOP_HIS),
+       #{mNum},
+       G.GOODS_NUM,
+       G.GOODS,
+       G.GOODS_TEXT,
+       G.PRICE,
+       1
+    FROM GOODS G
+    WHERE G.GOODS_NUM = #{goodsNum}
+</insert>
 	
+	
+<select id="selectTrainingData" parameterType="map" resultType="com.kendo.model.TrainingDTO">
+    SELECT
+        S.POSTURE_NUM AS postureNum,
+        S.DIVISION AS division,
+        S.GRADE AS grade,
+        S.G_NAME AS gName,
+        1 AS fileDiv,
+        CASE
+            WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 1 THEN '/uploads/img/jungdan.jpg'
+            WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 2 THEN '/uploads/img/jungdan.jpg'
+
+            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 1 THEN '/uploads/img/vonTag.jpg'
+            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 2 THEN '/uploads/img/pflug.jpg'
+            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 3 THEN '/uploads/img/ox.jpg'
+            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 4 THEN '/uploads/img/alber.jpg'
+
+            ELSE ''
+        END AS url
+    FROM SM_GRADE S
+    WHERE S.DIVISION = #{division}
+      AND S.POSTURE_NUM = #{postureNum}
+</select>
+	<!-- 훈련 기록 저장 -->
+<insert id="insertTrainHis" parameterType="map">
+    INSERT INTO TRAIN_HIS
+    (
+        HIS_NUM,
+        M_NUM,
+        T_DATE,
+        DIVISION,
+        TRAIN_NUM,
+        POSTURE_NUM
+    )
+    VALUES
+    (
+        (SELECT NVL(MAX(HIS_NUM), 0) + 1 FROM TRAIN_HIS),
+        #{mNum},
+        SYSDATE,
+        #{division},
+        #{trainNum},
+        #{postureNum}
+    )
+</insert>
+<!-- 포인트 상점 상품 목록 조회 -->
+<select id="pointShopList" resultType="map">
+    SELECT
+        GOODS_NUM AS "goodsNum",
+        GOODS AS "goods",
+        GOODS_TEXT AS "goodsText",
+        PRICE AS "price"
+    FROM GOODS
+    ORDER BY GOODS_NUM
+</select>
+
+
+
+<!-- 도전과제 완료 저장 -->
+<insert id="insertAchievementClear" parameterType="map">
+    INSERT INTO M_ACHIEVEMENT
+    (
+        M_A_NUM,
+        M_NUM,
+        ACHIEVE_NUM,
+        M_A_DATE
+    )
+    SELECT
+        (SELECT NVL(MAX(M_A_NUM), 0) + 1 FROM M_ACHIEVEMENT),
+        #{mNum},
+        #{achieveNum},
+        SYSDATE
+    FROM DUAL
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM M_ACHIEVEMENT
+        WHERE M_NUM = #{mNum}
+        AND ACHIEVE_NUM = #{achieveNum}
+    )
+</insert>
+
+<!-- 도전과제 보상 포인트 지급 -->
+<update id="addAchievementPoint" parameterType="map">
+    UPDATE MEMBER
+    SET POINT = NVL(POINT, 0) + (
+        SELECT POINT
+        FROM ACHIEVEMENT
+        WHERE ACHIEVE_NUM = #{achieveNum}
+    )
+    WHERE M_NUM = #{mNum}
+</update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </mapper>

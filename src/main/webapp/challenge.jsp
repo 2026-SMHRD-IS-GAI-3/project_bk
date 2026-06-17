@@ -4,7 +4,7 @@
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("login.jsp?login=required");
         return;
     }
 %>
@@ -68,9 +68,9 @@
     .challenge-visual {
       min-height: 150px;
       border-radius: 8px;
-      background:
-        linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
-       url("Project_Logo/logo_02.png") center/cover;
+   background:
+  linear-gradient(135deg, rgba(23, 35, 42, 0.90), rgba(61, 91, 88, 0.76)),
+  url("Project_Logo/logo_02.png") center/cover;
       overflow: hidden;
       position: relative;
       padding: 18px 20px;
@@ -179,6 +179,7 @@
     .summary-title {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
       font-size: 14px;
       font-weight: 800;
@@ -196,7 +197,9 @@
       color: rgba(33, 54, 56, 0.62);
       font-size: 9px;
       font-weight: 800;
-      white-space: nowrap;
+      line-height: 1.35;
+      white-space: normal;
+      word-break: keep-all;
     }
 
     .summary-rate {
@@ -291,28 +294,64 @@
     }
 
     .challenge-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 8px;
-      background-color: #111111;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--challenge-icon-border, rgba(255, 255, 255, 0.72));
+      background-color: var(--challenge-icon-bg, rgba(246, 251, 248, 0.78));
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      box-shadow: 0 10px 18px rgba(33, 54, 56, 0.14);
+      color: var(--challenge-icon-color, #44676b);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.74),
+        0 8px 16px rgba(33, 54, 56, 0.08);
+    }
+
+    .challenge-icon.submit {
+      --challenge-icon-bg: rgba(216, 232, 127, 0.30);
+      --challenge-icon-border: rgba(216, 232, 127, 0.56);
+      --challenge-icon-color: #60752d;
+    }
+
+    .challenge-icon.routine {
+      --challenge-icon-bg: rgba(142, 219, 237, 0.22);
+      --challenge-icon-border: rgba(142, 219, 237, 0.48);
+      --challenge-icon-color: #3e8fa2;
+    }
+
+    .challenge-icon.kendo {
+      --challenge-icon-bg: rgba(88, 212, 130, 0.20);
+      --challenge-icon-border: rgba(88, 212, 130, 0.44);
+      --challenge-icon-color: #2f8650;
+    }
+
+    .challenge-icon.liechtenauer {
+      --challenge-icon-bg: rgba(143, 122, 245, 0.18);
+      --challenge-icon-border: rgba(143, 122, 245, 0.40);
+      --challenge-icon-color: #6a57d0;
+    }
+
+    .challenge-icon.streak {
+      --challenge-icon-bg: rgba(243, 167, 102, 0.22);
+      --challenge-icon-border: rgba(243, 167, 102, 0.48);
+      --challenge-icon-color: #b76531;
     }
 
     .challenge-card.done .challenge-icon {
-      background-color: #d8e87f;
-      color: #213638;
+      --challenge-icon-bg: rgba(216, 232, 127, 0.34);
+      --challenge-icon-border: rgba(216, 232, 127, 0.62);
+      --challenge-icon-color: #526629;
     }
 
     .challenge-icon svg {
-      width: 24px;
-      height: 24px;
+      width: 25px;
+      height: 25px;
       stroke: currentColor;
-      stroke-width: 2;
+      stroke-width: 1.8;
       fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .challenge-main {
@@ -690,6 +729,41 @@
       background-color: rgba(238, 247, 242, 0.16);
     }
 
+    .mobile-frame.dark-mode .challenge-icon {
+      border-color: var(--challenge-icon-border, rgba(238, 247, 242, 0.18));
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .mobile-frame.dark-mode .challenge-icon.submit {
+      --challenge-icon-bg: rgba(216, 232, 127, 0.18);
+      --challenge-icon-border: rgba(216, 232, 127, 0.72);
+      --challenge-icon-color: #d8e87f;
+    }
+
+    .mobile-frame.dark-mode .challenge-icon.routine {
+      --challenge-icon-bg: rgba(142, 219, 237, 0.18);
+      --challenge-icon-border: rgba(142, 219, 237, 0.72);
+      --challenge-icon-color: #8edbed;
+    }
+
+    .mobile-frame.dark-mode .challenge-icon.kendo {
+      --challenge-icon-bg: rgba(88, 212, 130, 0.17);
+      --challenge-icon-border: rgba(88, 212, 130, 0.68);
+      --challenge-icon-color: #7ee29f;
+    }
+
+    .mobile-frame.dark-mode .challenge-icon.liechtenauer {
+      --challenge-icon-bg: rgba(143, 122, 245, 0.18);
+      --challenge-icon-border: rgba(143, 122, 245, 0.72);
+      --challenge-icon-color: #bdb2ff;
+    }
+
+    .mobile-frame.dark-mode .challenge-icon.streak {
+      --challenge-icon-bg: rgba(243, 167, 102, 0.18);
+      --challenge-icon-border: rgba(243, 167, 102, 0.70);
+      --challenge-icon-color: #f3bd8c;
+    }
+
     .mobile-frame.dark-mode .progress-track {
       background-color: rgba(238, 247, 242, 0.16);
     }
@@ -830,27 +904,30 @@
     </nav>
   </div>
 
-  
   <script>
   const M_NUM = <%= loginUser.getmNum() %>;
   const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
   const CHALLENGE_STORAGE_KEY = `BGS_MEMBER_CHALLENGE_${M_NUM}`;
   const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
   const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
+
+  if (localStorage.getItem(POINT_STORAGE_KEY) === null) {
+    localStorage.setItem(POINT_STORAGE_KEY, "<%= loginUser.getPoint() %>");
+  }
+
   function getTrainingHistory() {
-	  const savedHistory = localStorage.getItem(TRAIN_HISTORY_KEY);
+    const savedHistory = localStorage.getItem(TRAIN_HISTORY_KEY);
 
-	  if (!savedHistory) {
-	    return [];
-	  }
+    if (!savedHistory) {
+      return [];
+    }
 
-	  try {
-	    return JSON.parse(savedHistory);
-	  } catch (error) {
-	    return [];
-	  }
-	}
-
+    try {
+      return JSON.parse(savedHistory);
+    } catch (error) {
+      return [];
+    }
+  }
     const DIFFICULTY_OPTIONS = {
       "1": [
         { value: "k1", label: "1급" },
@@ -953,7 +1030,7 @@
     	  {
     	    CHALLENGE_NUM: 16,
     	    C_NAME: "검술의 달인",
-    	    C_DESC: "모든 주요 도전과제를 완료합니다.",
+    	    C_DESC: "다른 주요 도전과제를 모두 완료하면 달성됩니다.",
     	    C_TYPE: "ALL_CLEAR",
     	    TARGET_COUNT: 1,
     	    REWARD_POINT: 1000
@@ -994,30 +1071,37 @@
         return {
           TRAIN_DIVISION: "1",
           DIFFICULTY: "k2",
+          KENDO_DIFFICULTY: "k2",
+          LIECHTENAUER_DIFFICULTY: "l_middle",
           ...JSON.parse(localStorage.getItem(APP_SETTING_KEY) || "{}")
         };
       } catch (error) {
         return {
           TRAIN_DIVISION: "1",
-          DIFFICULTY: "k2"
+          DIFFICULTY: "k2",
+          KENDO_DIFFICULTY: "k2",
+          LIECHTENAUER_DIFFICULTY: "l_middle"
         };
       }
     }
 
+    function getDifficultyLabel(division, value) {
+      const difficultyOptions = DIFFICULTY_OPTIONS[division] || DIFFICULTY_OPTIONS["1"];
+      const difficultyItem = difficultyOptions.find((item) => item.value === value) || difficultyOptions[0];
+      return difficultyItem.label;
+    }
+
+    function getTrainingLevelText() {
+      const appSetting = getAppSetting();
+      const kendoDifficulty = appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : "k2");
+      const liechtenauerDifficulty = appSetting.LIECHTENAUER_DIFFICULTY || (appSetting.TRAIN_DIVISION === "2" ? appSetting.DIFFICULTY : "l_middle");
+
+      return `대한검도 · ${getDifficultyLabel("1", kendoDifficulty)} / 리히테나워 · ${getDifficultyLabel("2", liechtenauerDifficulty)}`;
+    }
+
     function renderTrainingLevel() {
-    	  document.getElementById("trainingLevelText").innerText =
-    	    "대한검도 · <%= loginUser.getkGrade() %>급 / 리히테나워 · <%
-    	      if (loginUser.getlGrade() == 1) {
-    	          out.print("초급");
-    	      } else if (loginUser.getlGrade() == 2) {
-    	          out.print("중급");
-    	      } else if (loginUser.getlGrade() == 3) {
-    	          out.print("고급");
-    	      } else {
-    	          out.print("-");
-    	      }
-    	    %>";
-    	}
+      document.getElementById("trainingLevelText").innerText = getTrainingLevelText();
+    }
 
     function getMemberPoint() {
       return Number(localStorage.getItem(POINT_STORAGE_KEY)) || 0;
@@ -1051,14 +1135,8 @@
     }
 
     function getTodayKey() {
-    	  const today = new Date();
-
-    	  const year = today.getFullYear();
-    	  const month = String(today.getMonth() + 1).padStart(2, "0");
-    	  const date = String(today.getDate()).padStart(2, "0");
-
-    	  return `${year}-${month}-${date}`;
-    	}
+      return new Date().toISOString().slice(0, 10);
+    }
 
     function getChallengeProgress(challenge) {
     	  if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
@@ -1124,23 +1202,107 @@
       return "진행 중";
     }
 
-    function getChallengeIcon(state) {
+    function getChallengeIconClass(challenge, state) {
+      if (state.isAchieved) {
+        return "submit";
+      }
+
+      if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
+        return "routine";
+      }
+
+      if (challenge.C_TYPE === "DIVISION_COUNT" && challenge.DIVISION === 1) {
+        return "kendo";
+      }
+
+      if (challenge.C_TYPE === "DIVISION_COUNT" && challenge.DIVISION === 2) {
+        return "liechtenauer";
+      }
+
+      return challenge.TARGET_COUNT >= 10 ? "streak" : "submit";
+    }
+
+    function getChallengeIcon(challenge, state) {
       if (state.isAchieved) {
         return `
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8 4H16V8C16 11 14 13 12 13C10 13 8 11 8 8V4Z"></path>
-            <path d="M6 6H4C4 10 6 12 9 12"></path>
-            <path d="M18 6H20C20 10 18 12 15 12"></path>
-            <path d="M12 13V18"></path>
-            <path d="M9 20H15"></path>
+            <path d="M6.5 11C6.5 6.7 8.7 4 12 4C15.3 4 17.5 6.7 17.5 11V15.5C17.5 18.2 15.1 20 12 20C8.9 20 6.5 18.2 6.5 15.5V11Z"></path>
+            <path d="M8 10H16"></path>
+            <path d="M8 13H16"></path>
+            <path d="M8 16H16"></path>
+            <path d="M10 10V16"></path>
+            <path d="M12 10V16"></path>
+            <path d="M14 10V16"></path>
+            <path d="M9 7.2C10.6 6.3 13.4 6.3 15 7.2"></path>
+          </svg>
+        `;
+      }
+
+      if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
+        return `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" stroke="none" d="M8.4 14.7C6.7 14.7 5.4 16.1 5.4 17.6C5.4 19.2 6.5 20.1 8 20.1C9.9 20.1 11.4 18.3 11.4 16.6C11.4 15.5 10.1 14.7 8.4 14.7Z"></path>
+            <path fill="currentColor" stroke="none" d="M15.6 3.9C13.9 3.9 12.6 5.3 12.6 6.9C12.6 8.6 14 9.5 15.7 9.5C17.4 9.5 18.6 8 18.6 6.5C18.6 4.9 17.4 3.9 15.6 3.9Z"></path>
+            <circle cx="6.8" cy="12.1" r="0.9" fill="currentColor" stroke="none"></circle>
+            <circle cx="9.5" cy="11.4" r="0.9" fill="currentColor" stroke="none"></circle>
+            <circle cx="12.1" cy="12.5" r="0.9" fill="currentColor" stroke="none"></circle>
+            <path d="M4.8 8.4L7.1 6.1L9.4 8.4"></path>
+            <path d="M7.1 6.1V9.8"></path>
+          </svg>
+        `;
+      }
+
+      if (challenge.C_TYPE === "DIVISION_COUNT" && challenge.DIVISION === 1) {
+        return `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5.5L12 8L16 5.5"></path>
+            <path d="M7 6.5L4.8 10.5L7.6 12.2"></path>
+            <path d="M17 6.5L19.2 10.5L16.4 12.2"></path>
+            <path d="M8 8V19H16V8"></path>
+            <path d="M8 13H16"></path>
+            <path d="M12 8V19"></path>
+            <path d="M10 19L9 14.5"></path>
+            <path d="M14 19L15 14.5"></path>
+            <path d="M7.5 15.5H16.5"></path>
+          </svg>
+        `;
+      }
+
+      if (challenge.C_TYPE === "DIVISION_COUNT" && challenge.DIVISION === 2) {
+        return `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 19L18.5 5.5"></path>
+            <path d="M19 19L5.5 5.5"></path>
+            <circle cx="8.3" cy="15.7" r="1.7"></circle>
+            <circle cx="15.7" cy="15.7" r="1.7"></circle>
+            <path d="M3.9 20.1L6.7 17.3"></path>
+            <path d="M20.1 20.1L17.3 17.3"></path>
+            <path d="M17.2 3.8L20.2 6.8"></path>
+            <path d="M3.8 6.8L6.8 3.8"></path>
+          </svg>
+        `;
+      }
+
+      if (challenge.TARGET_COUNT >= 10) {
+        return `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3.8L18.5 6.3V11.4C18.5 15.3 15.9 18.4 12 20.2C8.1 18.4 5.5 15.3 5.5 11.4V6.3L12 3.8Z"></path>
+            <path d="M8.7 12.3L11 14.6L15.7 9.4"></path>
+            <path d="M8.7 7.6L15.3 7.6"></path>
           </svg>
         `;
       }
 
       return `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9"></circle>
-          <path d="M12 7V12L15 15"></path>
+          <path d="M6.5 11C6.5 6.7 8.7 4 12 4C15.3 4 17.5 6.7 17.5 11V15.5C17.5 18.2 15.1 20 12 20C8.9 20 6.5 18.2 6.5 15.5V11Z"></path>
+          <path d="M8 10H16"></path>
+          <path d="M8 13H16"></path>
+          <path d="M8 16H16"></path>
+          <path d="M10 10V16"></path>
+          <path d="M12 10V16"></path>
+          <path d="M14 10V16"></path>
+          <path d="M9 7.2C10.6 6.3 13.4 6.3 15 7.2"></path>
         </svg>
       `;
     }
@@ -1157,7 +1319,7 @@
 
       return `
         <article class="challenge-card ${state.isAchieved ? "done" : ""}">
-          <div class="challenge-icon">${getChallengeIcon(state)}</div>
+          <div class="challenge-icon ${getChallengeIconClass(challenge, state)}">${getChallengeIcon(challenge, state)}</div>
           <div class="challenge-main">
             <div class="challenge-top">
               <div class="title-group">
@@ -1312,7 +1474,7 @@
     	  if (dbResult === "OK") {
     	    alert("도전과제 보상을 수령했습니다.");
     	  } else if (dbResult === "ALREADY") {
-    	    alert("이미 DB에 저장된 도전과제입니다.");
+    	    alert("이미 수령한 도전과제입니다.");
     	  }
     	}
 
@@ -1322,15 +1484,29 @@
     renderMemberPoint();
     renderSummary();
     renderChallengeList();
-  
-    </script>
-  <script>
-    (function applyDarkMode() {
-      const appSetting = getAppSetting();
-      if (appSetting.DARK_MODE) {
-        document.querySelector(".mobile-frame")?.classList.add("dark-mode");
-      }
-    })();
   </script>
+  <script>
+  
+  (function applyDarkMode() {
+    try {
+      const appSetting = JSON.parse(localStorage.getItem(`BGS_APP_SETTING_${M_NUM}`) || "{}");
+
+      const isDarkMode =
+        appSetting.DARK_MODE === true ||
+        appSetting.DARK_MODE === "true" ||
+        appSetting.DARK_MODE === "Y";
+
+      if (isDarkMode) {
+        document.querySelector(".mobile-frame")?.classList.add("dark-mode");
+      } else {
+        document.querySelector(".mobile-frame")?.classList.remove("dark-mode");
+      }
+
+    } catch (error) {
+      console.error("다크모드 적용 실패:", error);
+    }
+  })();
+</script>
+ 
 </body>
 </html>

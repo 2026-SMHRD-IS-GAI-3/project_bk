@@ -7,6 +7,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.kendo.database.SqlSessionManager;
 
+import com.kendo.model.TrainingDTO;
+import java.util.Map;
+
 /*
  * 회원 DB 작업을 담당하는 DAO 클래스
  *
@@ -159,8 +162,136 @@ public class UserDAO {
     }
     
     
+    public TrainingDTO selectTrainingData(int division, int postureNum) {
+
+        SqlSession sqlSession = null;
+        TrainingDTO result = null;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            java.util.Map<String, Object> param =
+                new java.util.HashMap<String, Object>();
+
+            param.put("division", division);
+            param.put("postureNum", postureNum);
+
+            result = sqlSession.selectOne(
+                "UserMapper.selectTrainingData",
+                param
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
     
+    public int insertTrainHis(Map<String, Object> param) {
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.insert(
+                "UserMapper.insertTrainHis",
+                param
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
     
+    public int purchaseGoods(Map<String, Object> param) {
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.insert(
+                "UserMapper.purchaseGoods",
+                param
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    public List<Map<String, Object>> pointShopList() {
+        SqlSession sqlSession = null;
+        List<Map<String, Object>> list = null;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            list = sqlSession.selectList("UserMapper.pointShopList");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return list;
+    }
+    
+    public int clearAchievement(Map<String, Object> param) {
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(false);
+
+            result = sqlSession.insert("UserMapper.insertAchievementClear", param);
+
+            if (result > 0) {
+                sqlSession.update("UserMapper.addAchievementPoint", param);
+            }
+
+            sqlSession.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            if (sqlSession != null) {
+                sqlSession.rollback();
+            }
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
     
     
 }
