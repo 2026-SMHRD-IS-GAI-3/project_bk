@@ -290,4 +290,25 @@
 </update>
 
 
+<!-- 내가 구매한 칭호 목록 조회 -->
+<select id="selectOwnedTitles" parameterType="int" resultType="map">
+    SELECT DISTINCT
+        GOODS_NUM AS "goodsNum",
+        GOODS AS "goods",
+        GOODS_TEXT AS "goodsText"
+    FROM POINT_SHOP_HIS
+    WHERE M_NUM = #{mNum}
+      AND PURCHASE = 1
+      AND GOODS_NUM IN (1, 2, 3, 4)
+    ORDER BY GOODS_NUM
+</select>
+
+
+<!-- 장착한 칭호 저장 -->
+<update id="updateMemberGoods" parameterType="com.kendo.model.UserDTO">
+    UPDATE MEMBER
+    SET GOODS = #{goods}
+    WHERE M_NUM = #{mNum}
+</update>
+
 </mapper>

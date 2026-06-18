@@ -373,5 +373,57 @@ public class UserDAO {
     }
     
     
+    public List<Map<String, Object>> selectOwnedTitles(int mNum) {
+
+        SqlSession sqlSession = null;
+        List<Map<String, Object>> result = null;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.selectList(
+                "UserMapper.selectOwnedTitles",
+                mNum
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
+    public int updateMemberGoods(UserDTO dto) {
+
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.update(
+                "UserMapper.updateMemberGoods",
+                dto
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
     
 }

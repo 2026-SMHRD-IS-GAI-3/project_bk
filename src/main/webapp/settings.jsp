@@ -2,6 +2,9 @@
 pageEncoding="UTF-8" isELIgnored="true"%>
 
 <%@ page import="com.kendo.model.UserDTO" %>
+<%@ page import="com.kendo.model.UserDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 
 <%
 /*
@@ -15,6 +18,46 @@ if(loginUser == null){
     response.sendRedirect("login.jsp");
     return;
 }
+%>
+<%!
+    private Object mv(Map<String, Object> map, String key) {
+        Object value = map.get(key);
+
+        if (value == null) {
+            value = map.get(key.toUpperCase());
+        }
+
+        return value;
+    }
+
+    private String js(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        return String.valueOf(value)
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\r", "")
+            .replace("\n", " ");
+    }
+%>
+
+<%
+    UserDAO dao = new UserDAO();
+
+    List<Map<String, Object>> ownedTitleList =
+        dao.selectOwnedTitles(loginUser.getmNum());
+
+    if (ownedTitleList == null) {
+        ownedTitleList = new java.util.ArrayList<Map<String, Object>>();
+    }
+
+    String currentTitle = loginUser.getGoods();
+
+    if (currentTitle == null) {
+        currentTitle = "";
+    }
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -618,7 +661,27 @@ if(loginUser == null){
   회원별 설정을 구분하기 위해 사용한다.
   */
   const M_NUM = <%= loginUser.getmNum() %>;
-    const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
+
+  const OWNED_TITLE_LIST = [
+  <%
+      for (int i = 0; i < ownedTitleList.size(); i++) {
+          Map<String, Object> title = ownedTitleList.get(i);
+
+          Object goodsNumObj = mv(title, "goodsNum");
+          Object goodsObj = mv(title, "goods");
+  %>
+    {
+      ITEM_NUM: <%= goodsNumObj == null ? 0 : goodsNumObj %>,
+      ITEM_NAME: "<%= js(goodsObj) %>"
+    }<%= i < ownedTitleList.size() - 1 ? "," : "" %>
+  <%
+      }
+  %>
+  ];
+
+  const CURRENT_TITLE_NAME = "<%= js(currentTitle) %>";
+
+  const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
     const PROFILE_SETTING_KEY = `BGS_PROFILE_SETTING_${M_NUM}`;
     const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
 
@@ -715,49 +778,67 @@ if(loginUser == null){
     회원이 구매한 아이템만 표시한다.
     */
     function renderProfileControls() {
-      const profileSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
-      const titleSelect = document.getElementById("titleSelect");
-      const profileSelect = document.getElementById("profileSelect");
-      const titleItems = getOwnedItemsByType("TITLE");
-      const profileItems = getOwnedItemsByType("PROFILE");
-      const selectedTitleNum = titleItems.some((item) => item.ITEM_NUM === Number(profileSetting.TITLE_ITEM_NUM))
-        ? Number(profileSetting.TITLE_ITEM_NUM)
-        : 0;
+    	  const profileSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
 
-      if (Number(profileSetting.TITLE_ITEM_NUM) !== selectedTitleNum) {
-        saveJson(PROFILE_SETTING_KEY, {
-          ...profileSetting,
-          TITLE_ITEM_NUM: selectedTitleNum
-        });
-      }
+    	  const titleSelect = document.getElementById("titleSelect");
+    	  const profileSelect = document.getElementById("profileSelect");
 
-      titleSelect.innerHTML = [
-        { ITEM_NUM: 0, ITEM_NAME: "칭호 없음" },
-        ...titleItems
-      ].map((item) => `
-        <option value="${item.ITEM_NUM}" ${selectedTitleNum === item.ITEM_NUM ? "selected" : ""}>${item.ITEM_NAME}</option>
-      `).join("");
+    	  const titleItems = OWNED_TITLE_LIST;
+    	  const profileItems = getOwnedItemsByType("PROFILE");
 
-      profileSelect.innerHTML = [
-        { ITEM_NUM: 0, ITEM_NAME: "기본 프로필" },
-        ...profileItems
-      ].map((item) => `
-        <option value="${item.ITEM_NUM}" ${Number(profileSetting.PROFILE_ITEM_NUM) === item.ITEM_NUM ? "selected" : ""}>${item.ITEM_NAME}</option>
-      `).join("");
+    	  const selectedTitleName = titleItems.some((item) => {
+    	    return item.ITEM_NAME === CURRENT_TITLE_NAME;
+    	  }) ? CURRENT_TITLE_NAME : "";
 
-      titleSelect.addEventListener("change", () => {
-        const nextSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
-        nextSetting.TITLE_ITEM_NUM = Number(titleSelect.value);
-        saveJson(PROFILE_SETTING_KEY, nextSetting);
-      });
+    	  titleSelect.innerHTML = [
+    	    `<option value="" ${selectedTitleName === "" ? "selected" : ""}>칭호 없음</option>`,
+    	    ...titleItems.map((item) => {
+    	      return `
+    	        <option value="${item.ITEM_NAME}" ${selectedTitleName === item.ITEM_NAME ? "selected" : ""}>
+    	          ${item.ITEM_NAME}
+    	        </option>
+    	      `;
+    	    })
+    	  ].join("");
 
-      profileSelect.addEventListener("change", () => {
-        const nextSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
-        nextSetting.PROFILE_ITEM_NUM = Number(profileSelect.value);
-        saveJson(PROFILE_SETTING_KEY, nextSetting);
-      });
-    }
+    	  profileSelect.innerHTML = [
+    	    { ITEM_NUM: 0, ITEM_NAME: "기본 프로필" },
+    	    ...profileItems
+    	  ].map((item) => `
+    	    <option value="${item.ITEM_NUM}" ${Number(profileSetting.PROFILE_ITEM_NUM) === item.ITEM_NUM ? "selected" : ""}>${item.ITEM_NAME}</option>
+    	  `).join("");
 
+    	  titleSelect.addEventListener("change", async () => {
+    	    const body = new URLSearchParams();
+    	    body.append("goods", titleSelect.value);
+
+    	    try {
+    	      const response = await fetch("ProfileItemService", {
+    	        method: "POST",
+    	        headers: {
+    	          "Content-Type": "application/x-www-form-urlencoded"
+    	        },
+    	        body: body.toString()
+    	      });
+
+    	      const text = await response.text();
+
+    	      if (text.trim() !== "OK") {
+    	        alert("칭호 저장에 실패했습니다.");
+    	      }
+
+    	    } catch (error) {
+    	      console.error("칭호 저장 실패:", error);
+    	      alert("칭호 저장 중 오류가 발생했습니다.");
+    	    }
+    	  });
+
+    	  profileSelect.addEventListener("change", () => {
+    	    const nextSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);
+    	    nextSetting.PROFILE_ITEM_NUM = Number(profileSelect.value);
+    	    saveJson(PROFILE_SETTING_KEY, nextSetting);
+    	  });
+    	}
     /*
     다크모드, 훈련 알림 설정을 불러온다.
 
