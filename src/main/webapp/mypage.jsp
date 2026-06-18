@@ -1,11 +1,45 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
+<%@ page import="com.kendo.model.UserDAO" %>
+<%@ page import="java.util.Map" %>
+
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("login.jsp?login=required");
         return;
+    }
+
+    UserDAO dao = new UserDAO();
+
+    Map<String, Object> myPageStats =
+        dao.selectMyPageStats(loginUser.getmNum());
+
+    int completeCount = 0;
+    int avgAccuracy = 0;
+
+    if (myPageStats != null) {
+        Object completeObj = myPageStats.get("completeCount");
+        Object avgObj = myPageStats.get("avgAccuracy");
+
+        if (completeObj == null) {
+            completeObj = myPageStats.get("COMPLETECOUNT");
+        }
+
+        if (avgObj == null) {
+            avgObj = myPageStats.get("AVGACCURACY");
+        }
+
+        if (completeObj != null) {
+            completeCount = Integer.parseInt(String.valueOf(completeObj));
+        }
+
+        if (avgObj != null) {
+            avgAccuracy = (int) Math.round(
+                Double.parseDouble(String.valueOf(avgObj))
+            );
+        }
     }
 %>
 <!DOCTYPE html>
@@ -1080,6 +1114,9 @@ onclick="location.href='LogoutService'">
     const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
+    const DB_COMPLETE_COUNT = <%= completeCount %>;
+    const DB_AVG_ACCURACY = <%= avgAccuracy %>;
+    
     const ITEM_LIST = [
       { ITEM_NUM: 1, ITEM_TYPE: "TITLE", ITEM_ICON: "rookie", ITEM_NAME: "견습 기사" },
       { ITEM_NUM: 2, ITEM_TYPE: "TITLE", ITEM_ICON: "sword", ITEM_NAME: "초심의 검" },
@@ -1321,28 +1358,15 @@ onclick="location.href='LogoutService'">
     }
 
     function renderStats() {
-      const trainingHistory = getTrainingHistory();
-      const completedStages = new Set(
-        trainingHistory
-          .filter((history) => history.DIVISION && history.TRAIN_NUM && history.POSTURE_NUM)
-          .map((history) => {
-            return `${history.DIVISION}-${history.TRAIN_NUM}-${history.POSTURE_NUM}`;
-          })
-      );
-      const accuracyValues = trainingHistory
-        .filter((history) => history.ACCURACY !== null && history.ACCURACY !== undefined && history.ACCURACY !== "")
-        .map((history) => Number(history.ACCURACY))
-        .filter((accuracy) => Number.isFinite(accuracy));
-      const averageAccuracy = accuracyValues.length
-        ? `${Math.round(accuracyValues.reduce((sum, accuracy) => sum + accuracy, 0) / accuracyValues.length)}%`
-        : "-";
+    	  document.getElementById("memberPoint").innerText = `${getMemberPoint()}P`;
+    	  document.getElementById("ownedTitleCount").innerText = getOwnedItems().length;
 
-      document.getElementById("memberPoint").innerText = `${getMemberPoint()}P`;
-      document.getElementById("ownedTitleCount").innerText = getOwnedItems().length;
-      document.getElementById("completedStageCount").innerText = `${completedStages.size}개`;
-      document.getElementById("averageAccuracy").innerText = averageAccuracy;
-    }
+    	  document.getElementById("completedStageCount").innerText =
+    	    `${DB_COMPLETE_COUNT}개`;
 
+    	  document.getElementById("averageAccuracy").innerText =
+    	    DB_COMPLETE_COUNT > 0 ? `${DB_AVG_ACCURACY}%` : "-";
+    	}
     function applyAppSettings() {
       const appSetting = loadJson(APP_SETTING_KEY, DEFAULT_APP_SETTING);
       const mobileFrame = document.getElementById("mobileFrame");
