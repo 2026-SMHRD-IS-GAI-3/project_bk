@@ -350,7 +350,49 @@
   	  return status === "PASS";
   	}
   	  
-    function getAnglesFromAiResult(aiResult) {
+    
+    function getAiPoseName(aiResult) {
+      if (!aiResult) {
+        return "";
+      }
+
+      return String(
+        aiResult.pose ||
+        aiResult.label ||
+        aiResult.prediction ||
+        aiResult.predicted_pose ||
+        aiResult.class_name ||
+        ""
+      ).trim();
+    }
+
+    function normalizePoseKey(poseName) {
+      const name = String(poseName || "")
+        .toLowerCase()
+        .replace(/[\s_-]/g, "");
+
+      if (name.includes("jungdan") || name.includes("중단")) return "jungdan";
+      if (name.includes("sangdan") || name.includes("상단")) return "sangdan";
+      if (name.includes("vomtag") || name.includes("vom") || name.includes("tag")) return "vomtag";
+      if (name.includes("pflug")) return "pflug";
+      if (name.includes("ochs") || name.includes("ox")) return "ochs";
+      if (name.includes("alber")) return "alber";
+
+      return name;
+    }
+
+    function isTargetPoseResult(aiResult) {
+      const targetPoseKey = getCurrentPoseKey();
+      const aiPoseKey = normalizePoseKey(getAiPoseName(aiResult));
+
+      return aiPoseKey === targetPoseKey;
+    }
+
+    function isCorrectionSuccess(aiResult) {
+      return isPassResult(aiResult) && isTargetPoseResult(aiResult);
+    }
+
+function getAnglesFromAiResult(aiResult) {
     	  if (!aiResult) {
     	    return null;
     	  }
@@ -375,7 +417,7 @@
     	  const standardAngles = REFERENCE_ANGLES[poseKey];
     	  const userAngles = getAnglesFromAiResult(aiResult);
 
-    	  const aiPose = aiResult.pose || aiResult.label || "분석 결과 없음";
+    	  const aiPose = getAiPoseName(aiResult) || "분석 결과 없음";
     	  const aiScore = Math.round(Number(aiResult.final_score || aiResult.score || 0));
     	  const status = aiResult.status || "";
 
@@ -542,15 +584,24 @@
     	        "AI 서버 응답이 JSON 형식이 아닙니다.\n" + text;
     	      return null;
     	    }
-    	    document.getElementById("feedbackText").innerText = makeFeedback(aiResult);
+        const feedback = makeFeedback(aiResult);
+        const feedbackText = document.getElementById("feedbackText");
 
-    	    if (isPassResult(aiResult)) {
-    	      stopCamera();
+        if (isCorrectionSuccess(aiResult)) {
+          stopCamera();
 
-    	      document.getElementById("feedbackText").innerText =
-    	        makeFeedback(aiResult) +
-    	        "\n\nPASS 판정을 받아 카메라를 종료했습니다.";
-    	    }
+          feedbackText.innerText =
+            feedback +
+            "\n\n목표 자세와 AI 판단이 일치하고 PASS 판정을 받아 카메라를 종료했습니다.";
+        } else {
+          feedbackText.innerText = feedback;
+
+          if (isPassResult(aiResult) && !isTargetPoseResult(aiResult)) {
+            feedbackText.innerText +=
+              "\n\nPASS 판정이지만 목표 자세와 AI 판단이 달라 카메라를 계속 유지합니다.";
+          }
+        }
+
 
     	    if (!hasTriedSaveCorrectionHistory) {
     	      hasTriedSaveCorrectionHistory = true;
