@@ -1,11 +1,48 @@
-﻿﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
+<%@ page import="com.kendo.model.UserDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+
+<%!
+    private Object mv(Map<String, Object> map, String key) {
+        Object value = map.get(key);
+
+        if (value == null) {
+            value = map.get(key.toUpperCase());
+        }
+
+        return value;
+    }
+
+    private String js(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        return String.valueOf(value)
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\r", "")
+            .replace("\n", " ");
+    }
+%>
+
 <%
     UserDTO loginUser = (UserDTO) session.getAttribute("loginUser");
 
     if (loginUser == null) {
         response.sendRedirect("login.jsp?login=required");
         return;
+    }
+
+    UserDAO dao = new UserDAO();
+
+    List<Map<String, Object>> dbTrainHisList =
+        dao.selectChallengeTrainHistory(loginUser.getmNum());
+
+    if (dbTrainHisList == null) {
+        dbTrainHisList = new java.util.ArrayList<Map<String, Object>>();
     }
 %>
 <!DOCTYPE html>
@@ -911,11 +948,38 @@
   const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
   const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
 
+  const DB_TRAIN_HIS_LIST = [
+  <%
+      for (int i = 0; i < dbTrainHisList.size(); i++) {
+          Map<String, Object> row = dbTrainHisList.get(i);
+
+          Object divisionObj = mv(row, "DIVISION");
+          Object trainNumObj = mv(row, "TRAIN_NUM");
+          Object postureNumObj = mv(row, "POSTURE_NUM");
+          Object tDateObj = mv(row, "T_DATE");
+          Object accuracyObj = mv(row, "ACCURACY");
+  %>
+    {
+      DIVISION: <%= divisionObj == null ? 0 : divisionObj %>,
+      TRAIN_NUM: <%= trainNumObj == null ? 0 : trainNumObj %>,
+      POSTURE_NUM: <%= postureNumObj == null ? 0 : postureNumObj %>,
+      T_DATE: "<%= js(tDateObj) %>",
+      ACCURACY: <%= accuracyObj == null ? 0 : accuracyObj %>
+    }<%= i < dbTrainHisList.size() - 1 ? "," : "" %>
+  <%
+      }
+  %>
+  ];
+
   if (localStorage.getItem(POINT_STORAGE_KEY) === null) {
     localStorage.setItem(POINT_STORAGE_KEY, "<%= loginUser.getPoint() %>");
   }
 
   function getTrainingHistory() {
+    if (DB_TRAIN_HIS_LIST.length > 0) {
+      return DB_TRAIN_HIS_LIST;
+    }
+
     const savedHistory = localStorage.getItem(TRAIN_HISTORY_KEY);
 
     if (!savedHistory) {
@@ -1096,7 +1160,8 @@
       const kendoDifficulty = appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : "k2");
       const liechtenauerDifficulty = appSetting.LIECHTENAUER_DIFFICULTY || (appSetting.TRAIN_DIVISION === "2" ? appSetting.DIFFICULTY : "l_middle");
 
-      return `대한검도 · ${getDifficultyLabel("1", kendoDifficulty)} / 리히테나워 · ${getDifficultyLabel("2", liechtenauerDifficulty)}`;
+      return "대한검도 · " + getDifficultyLabel("1", kendoDifficulty)
+      + " / 리히테나워 · " + getDifficultyLabel("2", liechtenauerDifficulty);
     }
 
     function renderTrainingLevel() {
@@ -1138,33 +1203,58 @@
       return new Date().toISOString().slice(0, 10);
     }
 
+    function getHistoryDate(history) {
+      return String(
+        history.T_DATE ||
+        history.tDate ||
+        history.trainDate ||
+        history.HIS_DATE ||
+        history.createdAt ||
+        ""
+      );
+    }
+
+    function getHistoryDivision(history) {
+      return Number(
+        history.DIVISION ??
+        history.division ??
+        history.TRAIN_DIVISION ??
+        history.trainDivision ??
+        history.DIVISION_NUM ??
+        history.divisionNum ??
+        0
+      );
+    }
+
     function getChallengeProgress(challenge) {
-    	  if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
-    	    return TRAIN_HIS_LIST.filter((history) => {
-    	      return String(history.T_DATE || "").slice(0, 10) === getTodayKey();
-    	    }).length;
-    	  }
+      const trainHisList = getTrainingHistory();
 
-    	  if (challenge.C_TYPE === "DIVISION_COUNT") {
-    	    return TRAIN_HIS_LIST.filter((history) => {
-    	      return Number(history.DIVISION) === Number(challenge.DIVISION);
-    	    }).length;
-    	  }
+      if (challenge.C_TYPE === "TODAY_TRAIN_COUNT") {
+        return trainHisList.filter((history) => {
+          return getHistoryDate(history).slice(0, 10) === getTodayKey();
+        }).length;
+      }
 
-    	  if (challenge.C_TYPE === "ALL_CLEAR") {
-    	    const otherChallenges = CHALLENGE_LIST.filter((item) => {
-    	      return item.CHALLENGE_NUM !== challenge.CHALLENGE_NUM;
-    	    });
+      if (challenge.C_TYPE === "DIVISION_COUNT") {
+        return trainHisList.filter((history) => {
+          return getHistoryDivision(history) === Number(challenge.DIVISION);
+        }).length;
+      }
 
-    	    const allClear = otherChallenges.every((item) => {
-    	      return getChallengeProgress(item) >= item.TARGET_COUNT;
-    	    });
+      if (challenge.C_TYPE === "ALL_CLEAR") {
+        const otherChallenges = CHALLENGE_LIST.filter((item) => {
+          return item.CHALLENGE_NUM !== challenge.CHALLENGE_NUM;
+        });
 
-    	    return allClear ? 1 : 0;
-    	  }
+        const allClear = otherChallenges.every((item) => {
+          return getChallengeProgress(item) >= item.TARGET_COUNT;
+        });
 
-    	  return TRAIN_HIS_LIST.length;
-    	}
+        return allClear ? 1 : 0;
+      }
+
+      return trainHisList.length;
+    }
 
     function getMemberChallenge(challengeNum) {
       return MEMBER_CHALLENGE_LIST.find((item) => item.M_NUM === M_NUM && item.CHALLENGE_NUM === challengeNum) || {
@@ -1177,30 +1267,73 @@
     }
 
     function getChallengeState(challenge) {
-      const memberChallenge = getMemberChallenge(challenge.CHALLENGE_NUM);
-      const currentCount = getChallengeProgress(challenge);
-      const isAchieved = currentCount >= challenge.TARGET_COUNT;
-      const isRewarded = isAchieved && memberChallenge.REWARD_YN === "Y";
+    	  const memberChallenge = getMemberChallenge(challenge.CHALLENGE_NUM);
+    	  const currentCount = getChallengeProgress(challenge);
+    	  const isAchieved = memberChallenge.ACHIEVE_YN === "Y" || currentCount >= challenge.TARGET_COUNT;
+    	  const isRewarded = memberChallenge.REWARD_YN === "Y";
+    	  const displayCount = isAchieved
+    	    ? challenge.TARGET_COUNT
+    	    : Math.min(currentCount, challenge.TARGET_COUNT);
+    	  const progressPercent = isAchieved
+    	    ? 100
+    	    : Math.min(100, Math.round((currentCount / challenge.TARGET_COUNT) * 100));
 
-      return {
-        currentCount: Math.min(currentCount, challenge.TARGET_COUNT),
-        isAchieved,
-        isRewarded,
-        progressPercent: Math.min(100, Math.round((currentCount / challenge.TARGET_COUNT) * 100))
-      };
-    }
+    	  return {
+    	    currentCount: displayCount,
+    	    isAchieved,
+    	    isRewarded,
+    	    progressPercent
+    	  };
+    	}
+    
+    function syncChallengeAchievementStatus() {
+    	  let changed = false;
+
+    	  CHALLENGE_LIST.forEach((challenge) => {
+    	    const currentCount = getChallengeProgress(challenge);
+
+    	    if (currentCount < challenge.TARGET_COUNT) {
+    	      return;
+    	    }
+
+    	    const memberChallenge = getMemberChallenge(challenge.CHALLENGE_NUM);
+
+    	    if (memberChallenge.ACHIEVE_YN === "Y") {
+    	      return;
+    	    }
+
+    	    memberChallenge.ACHIEVE_YN = "Y";
+    	    memberChallenge.ACHIEVE_DATE = memberChallenge.ACHIEVE_DATE || getTodayKey();
+
+    	    const exists = MEMBER_CHALLENGE_LIST.some((item) => {
+    	      return Number(item.M_NUM) === Number(memberChallenge.M_NUM)
+    	        && Number(item.CHALLENGE_NUM) === Number(memberChallenge.CHALLENGE_NUM);
+    	    });
+
+    	    if (!exists) {
+    	      MEMBER_CHALLENGE_LIST.push(memberChallenge);
+    	    }
+
+    	    changed = true;
+    	  });
+
+    	  if (changed) {
+    	    saveMemberChallengeList();
+    	  }
+    	}
+    
 
     function getStatusText(state) {
-      if (state.isRewarded) {
-        return "보상 수령 완료";
-      }
+    	  if (state.isRewarded) {
+    	    return "완료";
+    	  }
 
-      if (state.isAchieved) {
-        return "보상 수령 가능";
-      }
+    	  if (state.isAchieved) {
+    	    return "완료";
+    	  }
 
-      return "진행 중";
-    }
+    	  return "진행 중";
+    	}
 
     function getChallengeIconClass(challenge, state) {
       if (state.isAchieved) {
@@ -1479,6 +1612,7 @@
     	}
 
     initializeMemberPoint();
+    syncChallengeAchievementStatus();
     saveMemberChallengeList();
     renderTrainingLevel();
     renderMemberPoint();

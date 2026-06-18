@@ -320,4 +320,58 @@ public class UserDAO {
     }
     
     
+    
+    public List<Map<String, Object>> selectChallengeTrainHistory(int mNum) {
+
+        SqlSession sqlSession = null;
+        List<Map<String, Object>> result = null;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.selectList(
+                "UserMapper.selectChallengeTrainHistory",
+                mNum
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
+    public int updateTrainingGrade(Map<String, Object> param) {
+
+        SqlSession sqlSession = null;
+        int result = 0;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.update(
+                "UserMapper.updateTrainingGrade",
+                param
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
+    
 }

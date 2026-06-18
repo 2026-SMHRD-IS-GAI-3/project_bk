@@ -266,6 +266,29 @@
 
 
 
+<!-- 도전과제용 훈련 기록 조회 -->
+<select id="selectChallengeTrainHistory" parameterType="int" resultType="map">
+    SELECT
+        DIVISION AS "DIVISION",
+        TRAIN_NUM AS "TRAIN_NUM",
+        POSTURE_NUM AS "POSTURE_NUM",
+        TO_CHAR(T_DATE, 'YYYY-MM-DD') AS "T_DATE",
+        NVL(A_P, 0) AS "ACCURACY"
+    FROM TRAIN_HIS
+    WHERE M_NUM = #{mNum}
+    ORDER BY T_DATE DESC
+</select>
+
+
+
+<update id="updateTrainingGrade" parameterType="map">
+    UPDATE MEMBER
+    SET
+        K_GRADE = #{kGrade},
+        L_GRADE = #{lGrade},
+        PROFILE_SET = 'Y'
+    WHERE M_NUM = #{mNum}
+</update>
 
 
 </mapper>

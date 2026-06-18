@@ -857,6 +857,30 @@ url("Project_Logo/logo_02.png") center/cover;      overflow: hidden;
 
   <script>
   const M_NUM = <%= loginUser.getmNum() %>;
+  const DB_K_GRADE = <%= loginUser.getkGrade() %>;
+  const DB_L_GRADE = <%= loginUser.getlGrade() %>;
+
+  const gradeParams = new URLSearchParams(location.search);
+
+  if (gradeParams.get("gradeUpdated") === "1") {
+    const updatedKGrade = Number(gradeParams.get("kGrade")) || DB_K_GRADE;
+    const updatedLGrade = Number(gradeParams.get("lGrade")) || DB_L_GRADE;
+
+    const appSettingKey = `BGS_APP_SETTING_${M_NUM}`;
+    const appSetting = JSON.parse(localStorage.getItem(appSettingKey) || "{}");
+
+    appSetting.KENDO_GRADE = updatedKGrade;
+    appSetting.LIECHTENAUER_GRADE = updatedLGrade;
+    appSetting.KENDO_DIFFICULTY = `k${updatedKGrade}`;
+    appSetting.LIECHTENAUER_DIFFICULTY =
+      updatedLGrade === 1 ? "l_beginner" :
+      updatedLGrade === 2 ? "l_middle" :
+      "l_high";
+
+    localStorage.setItem(appSettingKey, JSON.stringify(appSetting));
+
+    history.replaceState(null, "", "main.jsp");
+  }
   const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;
   const MAIN_STATE_KEY = `BGS_MAIN_STATE_${M_NUM}`;
 
@@ -963,18 +987,42 @@ url("Project_Logo/logo_02.png") center/cover;      overflow: hidden;
       return selectedOption.label;
     }
 
-    function getTrainingLevelText() {
-      const appSetting = getAppSetting();
-      const kendoDifficulty = appSetting.KENDO_DIFFICULTY || (appSetting.TRAIN_DIVISION === "1" ? appSetting.DIFFICULTY : "k2");
-      const liechtenauerDifficulty = appSetting.LIECHTENAUER_DIFFICULTY || (appSetting.TRAIN_DIVISION === "2" ? appSetting.DIFFICULTY : "l_middle");
+    function getKendoGradeLabel(grade) {
+    	  const gradeNum = Number(grade);
 
-      return `대한검도 · ${getDifficultyLabel("1", kendoDifficulty)} / 리히테나워 · ${getDifficultyLabel("2", liechtenauerDifficulty)}`;
-    }
+    	  if (!gradeNum || gradeNum <= 0) {
+    	    return "10급";
+    	  }
 
-    function renderTrainingLevel() {
-      document.getElementById("trainingLevelText").innerText = getTrainingLevelText();
-    }
+    	  return gradeNum + "급";
+    	}
 
+    	function getLiechtenauerGradeLabel(grade) {
+    	  const gradeNum = Number(grade);
+
+    	  if (gradeNum === 1) {
+    	    return "초급";
+    	  }
+
+    	  if (gradeNum === 2) {
+    	    return "중급";
+    	  }
+
+    	  if (gradeNum === 3) {
+    	    return "고급";
+    	  }
+
+    	  return "초급";
+    	}
+
+    	function getTrainingLevelText() {
+    	  return "대한검도 · " + getKendoGradeLabel(DB_K_GRADE)
+    	    + " / 리히테나워 · " + getLiechtenauerGradeLabel(DB_L_GRADE);
+    	}
+
+    	function renderTrainingLevel() {
+    	  document.getElementById("trainingLevelText").innerText = getTrainingLevelText();
+    	}
     const TRAINING_QUOTES = [
       "오늘의 한 걸음이 내일의 실력을 만든다.",
       "자세는 흔들려도 마음은 흔들리지 않는다.",

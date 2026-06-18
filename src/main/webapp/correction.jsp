@@ -503,15 +503,11 @@ function getAnglesFromAiResult(aiResult) {
     }
 
     function saveLocalHistory() {
-      const history = getTrainingHistory();
-      const exists = history.some((item) => {
-        return Number(item.M_NUM) === Number(M_NUM)
-          && Number(item.DIVISION) === Number(CORRECTION_HIS.DIVISION)
-          && Number(item.TRAIN_NUM) === Number(CORRECTION_HIS.TRAIN_NUM)
-          && Number(item.POSTURE_NUM) === Number(CORRECTION_HIS.POSTURE_NUM);
-      });
+      if (hasSavedCorrectionHistory) {
+        return;
+      }
 
-      if (exists) return;
+      const history = getTrainingHistory();
 
       history.push({
         HIS_NUM: Date.now(),
@@ -524,6 +520,9 @@ function getAnglesFromAiResult(aiResult) {
       });
 
       localStorage.setItem(TRAIN_HISTORY_KEY, JSON.stringify(history));
+      hasSavedCorrectionHistory = true;
+
+      console.log("도전과제용 훈련 기록 저장 완료:", TRAIN_HISTORY_KEY, history);
     }
 
     async function saveDbHistory() {
@@ -586,8 +585,10 @@ function getAnglesFromAiResult(aiResult) {
     	    }
         const feedback = makeFeedback(aiResult);
         const feedbackText = document.getElementById("feedbackText");
+        const correctionSuccess = isCorrectionSuccess(aiResult);
 
-        if (isCorrectionSuccess(aiResult)) {
+        if (correctionSuccess) {
+          saveLocalHistory();
           stopCamera();
 
           feedbackText.innerText =
@@ -603,7 +604,7 @@ function getAnglesFromAiResult(aiResult) {
         }
 
 
-    	    if (!hasTriedSaveCorrectionHistory) {
+    	    if (correctionSuccess && !hasTriedSaveCorrectionHistory) {
     	      hasTriedSaveCorrectionHistory = true;
 
     	      try {
@@ -611,7 +612,6 @@ function getAnglesFromAiResult(aiResult) {
 
     	        if (dbSaved) {
     	          hasSavedCorrectionHistory = true;
-    	          saveLocalHistory();
     	        } else {
     	          console.warn("교정 기록 DB 저장 실패");
     	        }

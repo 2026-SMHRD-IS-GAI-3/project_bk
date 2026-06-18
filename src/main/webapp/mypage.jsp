@@ -1314,7 +1314,8 @@ onclick="location.href='LogoutService'">
     }
 
     function goTrainingSetup() {
-    	location.href = "login.jsp?setup=training";   }
+        location.href = "trainingSetting.jsp?mode=reset";
+    }
 
     function renderProfile() {
       const profileSetting = loadJson(PROFILE_SETTING_KEY, DEFAULT_PROFILE_SETTING);

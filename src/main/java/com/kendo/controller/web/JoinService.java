@@ -42,8 +42,8 @@ public class JoinService extends HttpServlet {
         int age = Integer.parseInt(ageStr);
 
         // 회원가입 기본값
-        int kGrade = 0;
-        int lGrade = 0;
+        int kGrade = 10;
+        int lGrade = 1;
         int adminM = 0;
         int point = 0;
 
@@ -54,11 +54,29 @@ public class JoinService extends HttpServlet {
         UserDAO dao = new UserDAO();
         int result = dao.join(dto);
 
-        // 회원가입 성공/실패에 따라 이동할 페이지 결정
+
         if (result > 0) {
+
+            UserDTO loginDto = new UserDTO();
+            loginDto.setId(id);
+            loginDto.setPw(pw);
+
+            UserDTO loginUser = dao.login(loginDto);
+
+            System.out.println("회원가입 후 자동 로그인 결과 = " + loginUser);
+
+            if (loginUser != null) {
+                request.getSession().setAttribute("loginUser", loginUser);
+                response.sendRedirect("trainingSetting.jsp?mode=first");
+                return;
+            }
+
             response.sendRedirect("login.jsp");
+            return;
+
         } else {
             response.sendRedirect("join.jsp");
+            return;
         }
     }
 }
