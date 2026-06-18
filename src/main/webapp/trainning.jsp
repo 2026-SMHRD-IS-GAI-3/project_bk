@@ -763,6 +763,7 @@
 
     async function saveTrainingHistoryDb() {
     	  if (!CURRENT_TRAIN_HIS) {
+    	    console.warn("CURRENT_TRAIN_HIS 없음");
     	    return false;
     	  }
 
@@ -772,9 +773,14 @@
     	    formData.append("division", CURRENT_TRAIN_HIS.DIVISION);
     	    formData.append("trainNum", CURRENT_TRAIN_HIS.TRAIN_NUM);
     	    formData.append("postureNum", CURRENT_TRAIN_HIS.POSTURE_NUM);
-
-    	    // TRAIN_HIS 테이블에 ACCURACY 컬럼이 없으면 서버에서 무시해도 됨
     	    formData.append("accuracy", CURRENT_TRAIN_HIS.ACCURACY || 0);
+
+    	    console.log("DB 저장 요청 데이터:", {
+    	      division: CURRENT_TRAIN_HIS.DIVISION,
+    	      trainNum: CURRENT_TRAIN_HIS.TRAIN_NUM,
+    	      postureNum: CURRENT_TRAIN_HIS.POSTURE_NUM,
+    	      accuracy: CURRENT_TRAIN_HIS.ACCURACY || 0
+    	    });
 
     	    const response = await fetch("TrainHisService", {
     	      method: "POST",
@@ -794,7 +800,6 @@
     	    return false;
     	  }
     	}
-    
     async function startCamera() {
       const cameraStage = document.getElementById("cameraStage");
       const cameraVideo = document.getElementById("cameraVideo");
@@ -808,6 +813,7 @@
           audio: false
         });
         cameraVideo.srcObject = cameraStream;
+        await cameraVideo.play();
         cameraStage.classList.add("camera-on");
       } catch (error) {
         alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
@@ -908,51 +914,53 @@
     	}
 
     	async function finishTrainingWithAiResult(aiResult) {
-    	  const cameraStage = document.getElementById("cameraStage");
-    	  const cameraVideo = document.getElementById("cameraVideo");
+    		  const cameraStage = document.getElementById("cameraStage");
+    		  const cameraVideo = document.getElementById("cameraVideo");
 
-    	  if (cameraStream) {
-    	    cameraStream.getTracks().forEach((track) => track.stop());
-    	    cameraStream = null;
-    	  }
+    		  if (cameraStream) {
+    		    cameraStream.getTracks().forEach((track) => track.stop());
+    		    cameraStream = null;
+    		  }
 
-    	  cameraVideo.srcObject = null;
-    	  cameraStage.classList.remove("camera-on");
-    	  cameraStage.classList.add("submitted");
+    		  cameraVideo.srcObject = null;
+    		  cameraStage.classList.remove("camera-on");
+    		  cameraStage.classList.add("submitted");
 
-    	  const score = Math.round(Number(aiResult.final_score) || 0);
-    	  const aiPose = aiResult.pose || "분석 결과 없음";
-    	  const aiStatus = aiResult.status || "결과 없음";
+    		  const score = Math.round(Number(aiResult.final_score) || 0);
+    		  const aiPose = aiResult.pose || "분석 결과 없음";
+    		  const aiStatus = aiResult.status || "결과 없음";
 
-    	  CURRENT_TRAIN_HIS.ACCURACY = score;
-    	  CURRENT_TRAIN_HIS.AI_POSE = aiPose;
-    	  CURRENT_TRAIN_HIS.STATUS = aiStatus;
+    		  CURRENT_TRAIN_HIS.ACCURACY = score;
+    		  CURRENT_TRAIN_HIS.AI_POSE = aiPose;
+    		  CURRENT_TRAIN_HIS.STATUS = aiStatus;
 
-    	  const submitTitle = document.querySelector(".submit-title");
-    	  const submitResultDesc = document.getElementById("submitResultDesc");
+    		  const submitTitle = document.querySelector(".submit-title");
+    		  const submitResultDesc = document.getElementById("submitResultDesc");
 
-    	  if (submitTitle) {
-    	    submitTitle.innerText = "자세 분석 완료";
-    	  }
+    		  if (submitTitle) {
+    		    submitTitle.innerText = "자세 분석 완료";
+    		  }
 
-    	  if (submitResultDesc) {
-    	    submitResultDesc.innerText =
-    	      "표준 자세 : " + CURRENT_TRAIN_HIS.G_NAME +
-    	      "\nAI 판단 자세 : " + aiPose +
-    	      "\n나의 자세 점수 : " + score + "점" +
-    	      "\n결과 : " + aiStatus;
-    	  }
+    		  if (submitResultDesc) {
+    		    submitResultDesc.innerText =
+    		      "표준 자세 : " + CURRENT_TRAIN_HIS.G_NAME +
+    		      "\nAI 판단 자세 : " + aiPose +
+    		      "\n나의 자세 점수 : " + score + "점" +
+    		      "\n결과 : " + aiStatus;
+    		  }
 
-    	  saveTrainingHistory();
+    		  saveTrainingHistory();
 
-    	  const dbSaved = await saveTrainingHistoryDb();
+    		  const dbSaved = await saveTrainingHistoryDb();
 
-    	  if (!dbSaved) {
-    	    console.warn("DB 저장 실패. localStorage에는 저장됨.");
-    	  }
-    	}
-    
-    	function goNextPosture() {
+    		  if (dbSaved) {
+    		    console.log("훈련 기록 DB 저장 성공");
+    		  } else {
+    		    console.warn("훈련 기록 DB 저장 실패");
+    		  }
+    		}
+
+    		function goNextPosture() {
     		  const nextData = getNextTrainingData();
 
     		  if (!nextData) {
@@ -971,7 +979,7 @@
     		  location.href = `trainning.jsp?${nextParams.toString()}`;
     		}
 
-    renderTrainingSession();
+    		renderTrainingSession();
   </script>
   <script>
     (function applyDarkMode() {

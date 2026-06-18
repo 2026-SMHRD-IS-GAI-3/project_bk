@@ -33,11 +33,25 @@ public class TrainHisService extends HttpServlet {
         int trainNum = Integer.parseInt(request.getParameter("trainNum"));
         int postureNum = Integer.parseInt(request.getParameter("postureNum"));
 
+        int accuracy = 0;
+
+        if (request.getParameter("accuracy") != null) {
+            accuracy = Integer.parseInt(request.getParameter("accuracy"));
+        }
+
+        System.out.println("훈련 기록 저장 요청");
+        System.out.println("mNum = " + loginUser.getmNum());
+        System.out.println("division = " + division);
+        System.out.println("trainNum = " + trainNum);
+        System.out.println("postureNum = " + postureNum);
+        System.out.println("accuracy = " + accuracy);
+
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("mNum", loginUser.getmNum());
         param.put("division", division);
         param.put("trainNum", trainNum);
         param.put("postureNum", postureNum);
+        param.put("accuracy", accuracy);
 
         UserDAO dao = new UserDAO();
         int result = dao.insertTrainHis(param);

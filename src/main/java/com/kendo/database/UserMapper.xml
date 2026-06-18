@@ -167,7 +167,7 @@
         1 AS fileDiv,
         CASE
             WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 1 THEN '/uploads/img/jungdan.jpg'
-            WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 2 THEN '/uploads/img/jungdan.jpg'
+            WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 2 THEN '/uploads/img/sangdan.jpg'
 
             WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 1 THEN '/uploads/img/vonTag.jpg'
             WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 2 THEN '/uploads/img/pflug.jpg'
@@ -180,27 +180,7 @@
     WHERE S.DIVISION = #{division}
       AND S.POSTURE_NUM = #{postureNum}
 </select>
-	<!-- 훈련 기록 저장 -->
-<insert id="insertTrainHis" parameterType="map">
-    INSERT INTO TRAIN_HIS
-    (
-        HIS_NUM,
-        M_NUM,
-        T_DATE,
-        DIVISION,
-        TRAIN_NUM,
-        POSTURE_NUM
-    )
-    VALUES
-    (
-        (SELECT NVL(MAX(HIS_NUM), 0) + 1 FROM TRAIN_HIS),
-        #{mNum},
-        SYSDATE,
-        #{division},
-        #{trainNum},
-        #{postureNum}
-    )
-</insert>
+
 <!-- 포인트 상점 상품 목록 조회 -->
 <select id="pointShopList" resultType="map">
     SELECT
@@ -251,10 +231,37 @@
 
 
 
+<insert id="insertTrainHis" parameterType="map">
+    INSERT INTO TRAIN_HIS
+    (
+        HIS_NUM,
+        M_NUM,
+        T_DATE,
+        DIVISION,
+        TRAIN_NUM,
+        POSTURE_NUM,
+        A_P
+    )
+    VALUES
+    (
+        (SELECT NVL(MAX(HIS_NUM), 0) + 1 FROM TRAIN_HIS),
+        #{mNum},
+        SYSDATE,
+        #{division},
+        #{trainNum},
+        #{postureNum},
+        #{accuracy}
+    )
+</insert>
 
 
-
-
+<select id="selectMyPageStats" parameterType="int" resultType="map">
+    SELECT
+        COUNT(DISTINCT DIVISION || '-' || TRAIN_NUM || '-' || POSTURE_NUM) AS "completeCount",
+        NVL(ROUND(AVG(A_P)), 0) AS "avgAccuracy"
+    FROM TRAIN_HIS
+    WHERE M_NUM = #{mNum}
+</select>
 
 
 

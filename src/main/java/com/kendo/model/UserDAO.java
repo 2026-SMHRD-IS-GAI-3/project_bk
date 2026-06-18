@@ -294,4 +294,30 @@ public class UserDAO {
     }
     
     
+    public Map<String, Object> selectMyPageStats(int mNum) {
+
+        SqlSession sqlSession = null;
+        Map<String, Object> result = null;
+
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
+
+            result = sqlSession.selectOne(
+                "UserMapper.selectMyPageStats",
+                mNum
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+
+        return result;
+    }
+    
+    
 }
