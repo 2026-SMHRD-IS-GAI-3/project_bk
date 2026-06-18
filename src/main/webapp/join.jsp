@@ -345,17 +345,16 @@
           회원 정보를 입력해주세요.
         </p>
 
-       <form action="JoinService" method="post">
+<form action="${pageContext.request.contextPath}/JoinService" method="post">
           <div class="input-group">
             <label for="NAME">이름</label>
             <input type="text" id="NAME" name="name" placeholder="이름을 입력하세요" required>
           </div>
 
-          <div class="input-group">
-            <label for="AGE">나이</label>
-            <input type="number" id="AGE" name="ahe" placeholder="나이를 입력하세요" required>
-          </div>
-
+         <div class="input-group">
+  <label for="AGE">나이</label>
+  <input type="number" id="AGE" name="age" placeholder="나이를 입력하세요" required>
+</div>
           <div class="input-group">
             <label for="GENDER">성별</label>
             <select id="GENDER" name="gender" required>

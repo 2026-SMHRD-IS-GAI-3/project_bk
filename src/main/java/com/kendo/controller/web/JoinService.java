@@ -33,7 +33,13 @@ public class JoinService extends HttpServlet {
         String gender = request.getParameter("gender");
 
         // 숫자는 문자열로 넘어오므로 int로 변환한다.
-        int age = Integer.parseInt(request.getParameter("age"));
+        String ageStr = request.getParameter("age");
+
+        if (ageStr == null || ageStr.trim().isEmpty()) {
+            response.sendRedirect("join.jsp");
+            return;
+        }
+        int age = Integer.parseInt(ageStr);
 
         // 회원가입 기본값
         int kGrade = 0;
