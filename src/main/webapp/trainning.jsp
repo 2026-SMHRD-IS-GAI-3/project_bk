@@ -604,6 +604,11 @@
     let cameraStream = null;
     let CURRENT_TRAIN_HIS = null;
 
+    const AUTO_SUBMIT_SCORE = 70;
+    let autoSubmitTimer = null;
+    let isAutoAnalyzing = false;
+    let isAutoSubmitted = false;
+
     function getTrainingParams() {
       const params = new URLSearchParams(location.search);
 
@@ -800,25 +805,101 @@
     	    return false;
     	  }
     	}
-    async function startCamera() {
-      const cameraStage = document.getElementById("cameraStage");
-      const cameraVideo = document.getElementById("cameraVideo");
-      cameraStage.classList.remove("submitted");
+    
+    function stopAutoSubmitTraining() {
+    	  if (autoSubmitTimer) {
+    	    clearInterval(autoSubmitTimer);
+    	    autoSubmitTimer = null;
+    	  }
 
-      try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "user"
-          },
-          audio: false
-        });
-        cameraVideo.srcObject = cameraStream;
-        await cameraVideo.play();
-        cameraStage.classList.add("camera-on");
-      } catch (error) {
-        alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
-      }
-    }
+    	  isAutoAnalyzing = false;
+    	}
+
+    	function startAutoSubmitTraining() {
+    	  stopAutoSubmitTraining();
+
+    	  isAutoSubmitted = false;
+
+    	  autoSubmitTimer = setInterval(async () => {
+    	    await runAutoSubmitCheck();
+    	  }, 1500);
+    	}
+
+    	async function runAutoSubmitCheck() {
+    	  if (isAutoAnalyzing || isAutoSubmitted) {
+    	    return;
+    	  }
+
+    	  if (!cameraStream) {
+    	    return;
+    	  }
+
+    	  isAutoAnalyzing = true;
+
+    	  try {
+    	    const aiResult = await analyzePose(false);
+
+    	    if (!aiResult || aiResult.error) {
+    	      return;
+    	    }
+
+    	    const score = Math.round(Number(aiResult.final_score) || 0);
+
+    	    console.log("자동 분석 점수:", score);
+
+    	    if (score >= AUTO_SUBMIT_SCORE) {
+    	      isAutoSubmitted = true;
+    	      stopAutoSubmitTraining();
+
+    	      stopAutoSubmitTraining();
+
+    	      await finishTrainingWithAiResult(aiResult);    	    }
+
+    	  } catch (error) {
+    	    console.error("자동 제출 분석 실패:", error);
+
+    	  } finally {
+    	    isAutoAnalyzing = false;
+    	  }
+    	}
+    
+    	async function startCamera() {
+    		  const cameraStage = document.getElementById("cameraStage");
+    		  const cameraVideo = document.getElementById("cameraVideo");
+
+    		  stopAutoSubmitTraining();
+
+    		  isAutoSubmitted = false;
+
+    		  cameraStage.classList.remove("submitted");
+
+    		  try {
+    		    if (cameraStream) {
+    		      cameraStream.getTracks().forEach((track) => track.stop());
+    		      cameraStream = null;
+    		    }
+
+    		    cameraStream = await navigator.mediaDevices.getUserMedia({
+    		      video: {
+    		        facingMode: "user"
+    		      },
+    		      audio: false
+    		    });
+
+    		    cameraVideo.srcObject = cameraStream;
+    		    await cameraVideo.play();
+
+    		    cameraStage.classList.add("camera-on");
+
+    		    setTimeout(() => {
+    		      startAutoSubmitTraining();
+    		    }, 1000);
+
+    		  } catch (error) {
+    		    console.error(error);
+    		    alert("카메라를 사용할 수 없습니다. 브라우저 권한을 확인해주세요.");
+    		  }
+    		}
 
     async function submitPosture() {
     	  const cameraVideo = document.getElementById("cameraVideo");
@@ -914,6 +995,8 @@
     	}
 
     	async function finishTrainingWithAiResult(aiResult) {
+    		  stopAutoSubmitTraining();
+
     		  const cameraStage = document.getElementById("cameraStage");
     		  const cameraVideo = document.getElementById("cameraVideo");
 
