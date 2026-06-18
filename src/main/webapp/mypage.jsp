@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true"%>
 <%@ page import="com.kendo.model.UserDTO" %>
 <%@ page import="com.kendo.model.UserDAO" %>
 <%@ page import="java.util.Map" %>
@@ -1110,6 +1110,10 @@ onclick="location.href='LogoutService'">
   const M_NUM = <%= loginUser.getmNum() %>;
     const POINT_STORAGE_KEY = `BGS_MEMBER_POINT_${M_NUM}`;
     const ITEM_STORAGE_KEY = `BGS_MEMBER_ITEMS_${M_NUM}`;
+
+    if (localStorage.getItem(POINT_STORAGE_KEY) === null) {
+      localStorage.setItem(POINT_STORAGE_KEY, "<%= loginUser.getPoint() %>");
+    }
     const PROFILE_SETTING_KEY = `BGS_PROFILE_SETTING_${M_NUM}`;
     const APP_SETTING_KEY = `BGS_APP_SETTING_${M_NUM}`;
     const TRAIN_HISTORY_KEY = `BGS_TRAIN_HISTORY_${M_NUM}`;

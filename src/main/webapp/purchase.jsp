@@ -959,6 +959,7 @@
     	  alert("구매가 완료되었습니다.");
     	}
    
+    renderMemberPoint();
     renderItemList();
   </script>
   <script>
