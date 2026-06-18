@@ -587,8 +587,7 @@
         DIVISION: <%= trainingData != null ? trainingData.getDivision() : division %>,
         TRAIN_NUM: <%= trainNum %>,
         POSTURE_NUM: <%= trainingData != null ? trainingData.getPostureNum() : postureNum %>,
-        G_NAME: "<%= js(trainingData != null && trainingData.getgName() != null ? trainingData.getgName() : (requestGName != null ? requestGName : "훈련")) %>",
-        FILE_DIV: <%= trainingData != null ? trainingData.getFileDiv() : 1 %>,
+        G_NAME: "<%= js(requestGName != null && !requestGName.trim().isEmpty() ? requestGName : (trainingData != null && trainingData.getgName() != null ? trainingData.getgName() : "훈련")) %>",        FILE_DIV: <%= trainingData != null ? trainingData.getFileDiv() : 1 %>,
         URL: "<%= js(trainingData != null && trainingData.getUrl() != null ? trainingData.getUrl() : "") %>"
       }
     ];
@@ -644,20 +643,19 @@
       let imageUrl = selectedData.URL || "";
 
       const fallbackImageMap = {
-        "1_1": "/uploads/img/jungdan.jpg",
-        "1_2": "/uploads/img/jungdan.jpg",
+    		  "1_1": "/uploads/img/jungdan.jpg",
+    		  "1_2": "/uploads/img/jungdan.jpg",
 
-        "2_1": "/uploads/img/vonTag.jpg",
-        "2_2": "/uploads/img/pflug.jpg",
-        "2_3": "/uploads/img/ox.jpg",
-        "2_4": "/uploads/img/alber.jpg",
+    		  "2_1": "/uploads/img/vonTag.jpg",
+    		  "2_2": "/uploads/img/pflug.jpg",
+    		  "2_3": "/uploads/img/ox.jpg",
+    		  "2_4": "/uploads/img/alber.jpg",
 
-        "2_5": "/uploads/img/vonTag.jpg",
-        "2_6": "/uploads/img/pflug.jpg",
-        "2_7": "/uploads/img/ox.jpg",
-        "2_8": "/uploads/img/alber.jpg"
-      };
-
+    		  "2_5": "/uploads/img/vonTag.jpg",
+    		  "2_6": "/uploads/img/pflug.jpg",
+    		  "2_7": "/uploads/img/ox.jpg",
+    		  "2_8": "/uploads/img/alber.jpg"
+    		};
       if (!imageUrl) {
         imageUrl = fallbackImageMap[`${selectedData.DIVISION}_${selectedData.POSTURE_NUM}`] || "";
       }

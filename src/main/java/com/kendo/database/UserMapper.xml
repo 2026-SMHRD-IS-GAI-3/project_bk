@@ -169,12 +169,11 @@
             WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 1 THEN '/uploads/img/jungdan.jpg'
             WHEN S.DIVISION = 1 AND S.POSTURE_NUM = 2 THEN '/uploads/img/sangdan.jpg'
 
-            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 1 THEN '/uploads/img/vonTag.jpg'
-            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 2 THEN '/uploads/img/pflug.jpg'
-            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 3 THEN '/uploads/img/ox.jpg'
-            WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 4 THEN '/uploads/img/alber.jpg'
-
-            ELSE ''
+        WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 1 THEN '/uploads/img/vonTag.jpg'
+		WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 2 THEN '/uploads/img/pflug.jpg'
+		WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 3 THEN '/uploads/img/ox.jpg'
+		WHEN S.DIVISION = 2 AND S.POSTURE_NUM = 4 THEN '/uploads/img/alber.jpg'
+			            ELSE ''
         END AS url
     FROM SM_GRADE S
     WHERE S.DIVISION = #{division}
