@@ -171,7 +171,7 @@ Oracle Database
 
 ### 메인 화면
 
-(이미지 추가)
+<img width="402" height="782" alt="Image" src="https://github.com/user-attachments/assets/81786d3c-bbf2-462c-a5f3-6b2b91b173cc" />
 
 ### AI 자세 분석 화면
 
