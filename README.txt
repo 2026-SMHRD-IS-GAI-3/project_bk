@@ -19,7 +19,9 @@ YOLOv11 Pose 기반 자세 인식 기술을 활용하여 사용자의 검술 자
 * 게임화(Gamification)를 활용한 지속적인 수련 유도
 * 사용자 맞춤형 학습 환경 구축
 
+
 ---
+
 
 ## 🎯 제안 배경
 
@@ -29,7 +31,9 @@ YOLOv11 Pose 기반 자세 인식 기술을 활용하여 사용자의 검술 자
 
 본 프로젝트는 AI 기반 자세 분석 기술을 활용하여 사용자가 언제 어디서나 검술을 학습하고 교정받을 수 있는 서비스를 제공하고자 기획되었습니다.
 
+
 ---
+
 
 ## ✨ 주요 기능
 
@@ -66,7 +70,9 @@ YOLOv11 Pose 기반 자세 인식 기술을 활용하여 사용자의 검술 자
 * 수련 기록 조회
 * 다크모드 설정
 
+
 ---
+
 
 ## 🛠 Tech Stack
 
@@ -102,7 +108,9 @@ YOLOv11 Pose 기반 자세 인식 기술을 활용하여 사용자의 검술 자
 * Git
 * GitHub
 
+
 ---
+
 
 ## 🏗 System Architecture
 
@@ -128,31 +136,9 @@ YOLOv11 Pose Model
 
 Oracle Database
 
----
-
-## 👨‍💻 My Role
-
-### Project Manager (PM)
-
-* 프로젝트 일정 수립 및 관리
-* 요구사항 분석
-* 기능 정의 및 우선순위 관리
-* 팀 협업 및 진행 상황 관리
-
-### Database Developer
-
-* ERD 설계
-* 테이블 설계
-* PK/FK/UK 설계
-* 데이터 무결성 관리
-
-### Backend Development
-
-* Java 기반 서버 로직 개발
-* 데이터베이스 연동
-* AI 서버 API 연동
 
 ---
+
 
 ## 📊 Database Design
 
@@ -166,7 +152,9 @@ Oracle Database
 * 칭호
 * 상점 상품
 
+
 ---
+
 
 ## 🚀 Expected Effects
 
@@ -175,7 +163,9 @@ Oracle Database
 * 사용자 맞춤형 학습 경험 제공
 * 게임화를 통한 학습 지속성 향상
 
+
 ---
+
 
 ## 📷 Screenshots
 
@@ -195,7 +185,9 @@ Oracle Database
 
 (이미지 추가)
 
+
 ---
+
 
 ## 📜 License
 
