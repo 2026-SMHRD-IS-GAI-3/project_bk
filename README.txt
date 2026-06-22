@@ -175,15 +175,17 @@ Oracle Database
 
 ### AI 자세 분석 화면
 
-(이미지 추가)
+<img width="403" height="782" alt="Image" src="https://github.com/user-attachments/assets/954bc9c2-3cff-4cd4-aca9-21d1b35faf0c" />
+<img width="403" height="907" alt="Image" src="https://github.com/user-attachments/assets/c225b02e-7243-41fb-810c-9341f5e4eb3a" />
 
 ### 마이페이지
 
-(이미지 추가)
+<img width="404" height="785" alt="Image" src="https://github.com/user-attachments/assets/0d092365-08e5-4b10-bb08-327a0f1b915c" />
 
 ### 업적 및 칭호 시스템
 
-(이미지 추가)
+<img width="404" height="783" alt="Image" src="https://github.com/user-attachments/assets/9556b8bc-98a1-4fc8-990b-bc3cd9b13ad5" />
+<img width="401" height="787" alt="Image" src="https://github.com/user-attachments/assets/b583810a-4183-4065-b966-bf6de1d769e8" />
 
 
 ---
